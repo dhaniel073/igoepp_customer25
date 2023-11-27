@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Alert } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Alert, Platform, Modal } from 'react-native'
 import React, { useContext, useState } from 'react'
 import AuthContent from '../Component/Auth/AuthContent'
 import Input from '../Component/Ui/Input'
@@ -79,9 +79,11 @@ const Login = ({navigation}) => {
         setIsAuthenticated(result.success);
         if(result.success === true){
           BiometricSignUp()
-        }else{
+        }else if(result.error === 'not_enrolled'){
           Alert.alert("", result.error)
           console.log(result)
+        }else{
+          Alert.alert("Error", "Try again later")
         }
       })
     }
@@ -90,15 +92,16 @@ const Login = ({navigation}) => {
       try {
         setIsloading(true)
         const response = await LoginWithBiometric(log)
-        console.log(response)
-        // authCtx.authenticated(response.access_token)  
-        // authCtx.customerId(response.customer_id)
-        // authCtx.customerEmail(response.email)
-        // authCtx.customerFirstName(response.first_name)
-        // authCtx.customerLastName(response.last_name)
-        // authCtx.customerBalance(response.wallet_balance)
-        // authCtx.customerPhone(response.phone)
-        // authCtx.customerPicture(response.picture)
+        console.log(response.data)
+        authCtx.authenticated(response.data.access_token)  
+        authCtx.customerId(response.data.customer_id)
+        authCtx.customerEmail(response.data.email)
+        authCtx.customerFirstName(response.data.first_name)
+        authCtx.customerLastName(response.data.last_name)
+        authCtx.customerBalance(response.data.wallet_balance)
+        authCtx.customerPhone(response.data.phone)
+        authCtx.customerPicture(response.data.picture)
+        authCtx.customerShowAmount('show')
         setIsloading(false)
       } catch (error) {
         setIsloading(true)
@@ -153,7 +156,13 @@ const Login = ({navigation}) => {
         </View>
 
         <TouchableOpacity style={{alignItems:'center', justifyContent:'center', marginTop: 10}} onPress={() => onAuthenticate()}>
-          <Ionicons name="finger-print" size={35} color={Color.darkolivegreen_100} />
+          {
+            Platform.OS === 'android' ? 
+            <Ionicons name="finger-print" size={35} color={Color.darkolivegreen_100} />
+            :
+            <Ionicons name="finger-print" size={35} color={Color.darkolivegreen_100} />
+
+          }
         </TouchableOpacity>
 
         <View style={styles.button}>
@@ -168,6 +177,8 @@ const Login = ({navigation}) => {
         </TouchableOpacity>
       </View>
       </ScrollView>
+
+      
     
     </SafeAreaView>
   )

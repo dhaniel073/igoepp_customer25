@@ -1053,9 +1053,27 @@ async function loginwithbiometric(fingerprinttoken){
     "biometric": fingerprinttoken,
   }) 
 
-  const data = response.data
+  const data = response
   return data
 }
+
+async function setuppin(id, pin, token){
+  const url = `http://phixotech.com/igoepp/public/api/auth/customer/${id}/setuppin`
+  const response = axios.put(url, {
+    "pin": pin,
+  }, {
+    headers:{
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  }) 
+  const data = response
+  return data
+}
+
+
+
+
 
 
 

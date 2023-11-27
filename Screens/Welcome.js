@@ -53,13 +53,19 @@ const Welcome = ({navigation}) => {
   }, [])
 
   const Visible = () => {
-    const status = 'false'
-    authCtx.customerAmtVisible(status)    
+    console.log("visible")
   }
   
   const NotVisible = () => {
-    const status = 'true'
-    authCtx.customerAmtVisible(status)
+    console.log("not-visible")
+  }
+
+  const ShowAmount = () => {
+    authCtx.customerShowAmount('show')
+  }
+  
+  const HideAmount = () => {
+    authCtx.customerShowAmount('hide')
   }
 
   function onAuthenticate (spec){
@@ -70,20 +76,22 @@ const Welcome = ({navigation}) => {
     auth.then(result => {
       setIsAuthenticated(result.success);
       if(result.success === true){
-        if(spec === 'true'){
-          NotVisible()
+        if(spec === 'hide'){
+          HideAmount()
         }else{
-          Visible()
+          ShowAmount()
         }
+      }else if(result.error === "not_enrolled"){
+        Alert.alert("", "Device not enrolled, setup up a screen lock to use this feature")
       }
     })
   }
 
 
     useEffect(() => {
-        TrendsArray()
-        customerget()
-        slider()
+      TrendsArray()
+      customerget()
+      slider()
     }, [])
 
 
@@ -200,33 +208,31 @@ const Welcome = ({navigation}) => {
               {isLoading ? <LoadingOverlay/> :
               <View style={styles.slide1}>
                 {/* <Image style={{height:30, width:30}} source={require("../assets/vectors/vector2.png")}/> */}
-                <TouchableOpacity style={{flexDirection:'row',}}>
+                <View style={{flexDirection:'row',}}>
                   <View>
                   <Text style={styles.text}>
                     <MaterialCommunityIcons name="currency-ngn" size={20} color={Color.white} />
-                    {/* {authCtx.amtVisible === ''|| authCtx.amtVisible  === null || authCtx.amtVisible  === undefined  ? authCtx.balance : authCtx.amtVisible === 'true' ? 'XXXXX.XX' : authCtx.balance}  */}
-                    {authCtx.amtVisible === '' || authCtx.amtVisible === undefined || authCtx.amtVisible === null || authCtx.amtVisible === 'false'  ?  authCtx.balance : 'XXXXX.XX' } 
+                   
+                    {authCtx.showAmount === 'show' ?  authCtx.balance : 'XXXXX.XX' } 
+                   
                   </Text>
                   </View>
 
-                  {authCtx.amtVisible === '' ?
-                   <TouchableOpacity style={{alignSelf:'center', marginLeft:10, marginTop:5}} onPress={() => onAuthenticate('true')}>
+                  
+
+                  {authCtx.showAmount === 'show' ?
+                   <TouchableOpacity style={{alignSelf:'center', marginLeft:10}} onPress={() => onAuthenticate('hide')}>
 
                       <Entypo name="eye-with-line" size={24} color="white" />
                     </TouchableOpacity>
-                  : authCtx.amtVisible === 'true' ?
-                    <TouchableOpacity style={{alignSelf:'center', marginLeft:10, marginTop:5}} onPress={() => onAuthenticate('false')}>
+                  :
+                    <TouchableOpacity style={{alignSelf:'center', marginLeft:10}} onPress={() => onAuthenticate('show')}>
 
                       <Entypo name="eye" size={24} color="white" />
                     </TouchableOpacity>
-                  : 
-                  <TouchableOpacity style={{alignSelf:'center', marginLeft:10, marginTop:5}} onPress={() => onAuthenticate('true')}>
-
-                    <Entypo name="eye-with-line" size={24} color="white" />
-                  </TouchableOpacity>
                   }
 
-                </TouchableOpacity>
+                </View>
 
                 <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                   <Text style={{fontSize: 15, fontFamily: 'interBold', color: Color.white}}>Wallet Balance</Text>

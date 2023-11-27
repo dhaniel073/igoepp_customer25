@@ -258,13 +258,12 @@ const Requests = ({navigation}) => {
     }
   }
   
-  console.log(authCtx.amtVisible)
   
   const NoSubCategoryNote = () => {
     return (
       <View style={{ justifyContent:'center', alignItems:'center', marginTop: DIMENSION.HEIGHT * 0.33 }}>
         <Text style={{ fontSize: 14, color: 'grey', fontFamily: 'poppinsSemiBold' }}>No Request Made</Text>
-        <TouchableOpacity onPress={()=> navigation.navigate('MarketPlace')}>
+        <TouchableOpacity onPress={()=> navigation.navigate('RequestHelp')}>
         <Text style={{  fontSize: 14, color:Color.limegreen, fontFamily: 'poppinsSemiBold'  }}>Make Request</Text>
         </TouchableOpacity>
       </View>
@@ -406,12 +405,39 @@ const Requests = ({navigation}) => {
                       <Text style={styles.requestName}>{item.cat_name}</Text>
                       <Text style={{fontSize:12, top:3}}> (RID:{item.id}) </Text>
                     </View>
-                    <View style={{flexDirection:'row', justifyContent:'space-between', width:DIMENSION.WIDTH * 0.85, top:5}}>
-                      <Text style={{fontFamily:'poppinsMedium', color: Color.saddlebrown_200, fontSize:10}}>
-                      <Ionicons name="location" size={14} color="tomato" />
-                        {item.help_lga} {item.help_state} { item.help_country} </Text>
-                    </View>
-                    <View style={{position:'absolute', padding:5, left:'80%', top:'17%', flexDirection:'row'}}>
+
+                      <View style={{flexDirection:'row', justifyContent:'space-between', width:DIMENSION.WIDTH * 0.85, top:10}}>
+                        <Text style={{fontFamily:'poppinsMedium', color: Color.saddlebrown_200, fontSize:10}}>
+                        <Ionicons name="location" size={14} color="tomato" />
+                          {item.help_lga} {item.help_state} { item.help_country} </Text>
+                      </View>
+                      <View style={{marginBottom:10}}/>
+                      {
+                        item.customer_statisfy === null &&
+                        <View style={{position:'absolute', padding:5, left:'83%', top:'35%', flexDirection:'row'}}>
+
+                        {/* phone */}
+                        <TouchableOpacity style={{top:5}}  onPress={()=> {HelperDetails(item.assigned_helper)}}>
+                          <Feather name="phone-call" size={20} color={Color.limegreen} />
+                        </TouchableOpacity>
+  
+                          {/* //chat */}
+                        <TouchableOpacity style={{paddingLeft:5}} onPress={() => navigation.navigate('ChatScreen', {
+                            helperId: item.assigned_helper,
+                            bid_id: item.id
+                          })}>
+                          <Ionicons name="chatbubbles" size={24} color={Color.limegreen} />
+                            { item.chat_unread === 0  ? null :
+                              <ImageBackground  source={require("../assets/ellipse-127.png")} contentFit="contain" style={{height:15, width:15, justifyContent:'center', position: 'absolute', marginLeft:15, marginTop:-4}}>
+                                <Text style={{ fontSize: 8,  color: Color.white, fontFamily:'poppinsBold', textAlign:'center'}}>{item.chat_unread}</Text>
+                              </ImageBackground>
+                            }
+                          </TouchableOpacity>
+  
+                      </View>
+                      }
+
+                    <View style={{position:'absolute', padding:5, left:'80%', top:'15%', flexDirection:'row'}}>
                       <Text style={{ fontFamily: 'poppinsBold', color: Color.brown, fontSize:12 }}>Completed</Text>
                     </View>
 
@@ -423,9 +449,11 @@ const Requests = ({navigation}) => {
 
                       {
                         item.customer_statisfy === null ?
+                       
                         <TouchableOpacity style={styles.viewbtn} onPress={() =>  toggleSatisfiedModal(item.id)}>
                           <Text style={styles.viewtext}>Satisfied</Text>
                         </TouchableOpacity> 
+                       
                         :
                         <>
                         {item.helper_rating === null && item.helper_rating_detail === null ? 

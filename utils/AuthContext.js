@@ -9,22 +9,22 @@ export const AuthContext = createContext({
     firstname: "",
     lastname:"",
     isAuthenticated: false,
-    amtVisible: "",
     phone: "",
     picture: "",
     balance: "",
     sessionid: "",
+    showAmount: "",
 
     authenticated: (token) => {},
     customerId: (Id) => {},
     customerEmail: (email) => {},
     customerFirstName: (firstname) => {},
     customerLastName: (lastname) => {},
-    customerAmtVisible: (amtVisible) => {},
     customerBalance: (balance) => {},
     customerPhone: (phone) => {},
     customerPicture: (picture) => {},
     customerSessionId: (sessionid) => {},
+    customerShowAmount: (showAmount) => {},
     logout: () => {}
 
 })
@@ -36,7 +36,7 @@ function AuthContextProvider({children}){
     const [authId, setauthId] = useState()
     const [authFirstName, setauthFirstName] = useState()
     const [authLastName, setauthLastName] = useState()
-    const [authAmountVisible, setauthAmountVisible] = useState()
+    const [authShowAmount, setauthShowAmount] = useState()
     const [authBalance, setauthBalance] = useState()
     const [authphone, setauthphone] = useState()
     const [authSessionId, setauthSessionId] = useState()
@@ -80,19 +80,8 @@ function AuthContextProvider({children}){
         AsyncStorage.setItem('customerLastname', lastname)
     }
 
-    function customerAmtVisible(status){
-        if(status === 'true'){
-            setauthAmountVisible(status)
-            AsyncStorage.setItem('customerAmtVisible', 'true')
-        }else if(status === 'false'){
-            setauthAmountVisible(status)
-            AsyncStorage.setItem('customerAmtVisible', 'false')
-        }else{
-            status === ''
-            setauthAmountVisible('')
-            AsyncStorage.setItem('customerAmtVisible', '')
-        }
-    }
+    
+    
 
     function customerBalance(amount){
         if(amount === null || '' || undefined){
@@ -104,6 +93,16 @@ function AuthContextProvider({children}){
             AsyncStorage.setItem('customerBalance', amountcheck)
         }
     }
+
+    function customerShowAmount (status) {
+        if(status === null || status === undefined || status === "" || status === 'show'){
+            setauthShowAmount('show')
+            AsyncStorage.setItem('customerShowAmount', "show")
+        }else{
+            setauthShowAmount(status)
+            AsyncStorage.setItem('customerShowAmount', 'hide')
+        }
+    }   
 
     function customerPicture (picture){
         if(picture === null || picture === undefined || picture === ""){
@@ -135,21 +134,21 @@ function AuthContextProvider({children}){
         setauthFirstName(null)
         setauthLastName(null)
         setauthEmail(null)
-        setauthAmountVisible(null)
         setauthBalance(null)
         setauthphone(null)
         setauthpicture(null) 
         setauthSessionId(null)
+        setauthShowAmount(null)
         AsyncStorage.removeItem('customertoken')
         AsyncStorage.removeItem('customerId')
         AsyncStorage.removeItem('customerPhone')
         AsyncStorage.removeItem('customerEmail')
         AsyncStorage.removeItem('customerFirstname')
         AsyncStorage.removeItem('customerLastname')
-        AsyncStorage.removeItem('customerAmtVisible')
         AsyncStorage.removeItem('customerBalance')
         AsyncStorage.removeItem('customerPicture')
         AsyncStorage.removeItem('customerSessionId')
+        AsyncStorage.removeItem('customerShowAmount')
         setIsLogout(false)
     }
 
@@ -160,21 +159,21 @@ function AuthContextProvider({children}){
         firstname: authFirstName,
         lastname: authLastName,
         isAuthenticated: !!authToken,
-        amtvisible: authAmountVisible,
         balance: authBalance,
         phone: authphone,
         picture: authpicture, 
         sessionid: authSessionId,
+        showAmount: authShowAmount,
         authenticated:authenticated,
         customerId:customerId,
         customerEmail: customerEmail,
         customerFirstName: customerFirstName,
         customerLastName: customerLastName, 
-        customerAmtVisible: customerAmtVisible,
         customerBalance: customerBalance,
         customerPhone: customerPhone,
         customerPicture: customerPicture,
         customerSessionId: customerSessionId,
+        customerShowAmount: customerShowAmount,
         logout: logout
     }
 

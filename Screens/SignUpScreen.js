@@ -1,13 +1,22 @@
-import { ScrollView, StyleSheet, Text, SafeAreaView, TouchableOpacity, View, Alert } from 'react-native'
+import { ScrollView, StyleSheet, Text, SafeAreaView, TouchableOpacity, View, Alert, Platform } from 'react-native'
 import React, { useContext, useState }  from 'react'
 import { Image } from 'expo-image'
 import Input from '../Component/Ui/Input'
 import SubmitButton from '../Component/Ui/SubmitButton';
-import { Color } from '../Component/Ui/GlobalStyle';
+import { Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle';
 import { Dropdown } from 'react-native-element-dropdown';
 import { SignUp } from '../utils/AuthRoute';
 import { AuthContext } from '../utils/AuthContext';
 import LoadingOverlay from '../Component/Ui/LoadingOverlay';
+import  Modal  from 'react-native-modal';
+import {MaterialIcons} from '@expo/vector-icons'
+
+const data = [
+  {
+    id:"Y",
+    name: "Accept"
+  },
+]
 
   const sex = [
     { label: 'Male', value: 'M' },
@@ -49,6 +58,10 @@ const SignUpScreen = ({navigation}) => {
     const [isgenderfocus, setisgenderfocus] = useState(false)
 
     const [isloading, setisloading] = useState(false)
+    const [isAcceptTermsModalBisible, setisAcceptTermsModalBisible] = useState(false)
+  const [avail, setavail] = useState()
+
+
 
     const updateInputValueHandler = (inputType, enteredValue) => {
       switch (inputType) {
@@ -76,23 +89,28 @@ const SignUpScreen = ({navigation}) => {
       }
     }
 
-    const signuphandler = async () => {
+    const toggleAcceptTermsModal = () => {
+      setisAcceptTermsModalBisible(!isAcceptTermsModalBisible)
+    }
+
+    const signupValaidate = () => {
       const emailIsValid = enteredEmail.includes('@') && enteredEmail.includes('.com');
       const passwordIsValid = enteredPassword.length < 7;
-      const passcheck =  enteredPassword === enteredConfirmPassword || enteredConfirmPassword !== null || undefined
+      const passcheck =  enteredPassword !== enteredConfirmPassword && enteredConfirmPassword === null || undefined || "" || enteredConfirmPassword.length === 0
       const phonecheck = enteredPhone === null || undefined || "" || enteredPhone.length === 0
       const gendercheck = enteredGender === null || undefined || "" || enteredGender.length === 0
       const idnumcheck = idnum === null || undefined || "" || idnum.length === 0
       const idtypecheck = idtype === null || undefined || "" || idtype.length === 0
 
+
       console.log(passcheck)
     
-      if(!emailIsValid || passwordIsInvalid || !passcheck || phonecheck || gendercheck || idnumcheck || idtypecheck || !enteredfirstname || !enteredlastname){
+      if(!emailIsValid || passwordIsInvalid || passcheck || phonecheck || gendercheck || idnumcheck || idtypecheck || !enteredfirstname || !enteredlastname){
 
         const InvalidPhone = phonecheck
         setEmailIsInvalid(!emailIsValid)
         setPasswordIsInvalid(passwordIsValid)
-        setConfirmPasswordIsInvalid(!passcheck)
+        setConfirmPasswordIsInvalid(passcheck)
         setPhoneIsInvalid(InvalidPhone)
         setGenderIsInvalid(gendercheck)
         setFirstNameIsInvalid(!enteredfirstname)
@@ -100,40 +118,37 @@ const SignUpScreen = ({navigation}) => {
         setIsIdnum(idnumcheck)
         setIsIdtype(idtypecheck)
 
-        console.log(emailIsInvalid, passwordIsInvalid, confirmpasswordIsInvalid, phoneIsInvalid, genderIsInvalid, firstnameIsInvalid, lastnameIsInvalid, Isidtype, Isidnum)
+        // console.log(emailIsInvalid, passwordIsInvalid, confirmpasswordIsInvalid, phoneIsInvalid, genderIsInvalid, firstnameIsInvalid, lastnameIsInvalid, Isidtype, Isidnum)
 
         Alert.alert('Invalid details', 'Please check your entered credentials.')
       }else{
-          console.log(enteredEmail,
-            enteredPassword,
-            enteredConfirmPassword,
-            enteredfirstname,
-            enteredlastname,
-            enteredPhone,
-            idnum,
-            idtype,
-            enteredGender)
-          try {
-            setisloading(true)
-            const response = await SignUp(enteredEmail, enteredPassword, enteredGender, enteredPhone, enteredfirstname, enteredlastname, idtype, idnum)
-            console.log(response)
-            authCtx.authenticated(response.access_token)  
-            authCtx.customerId(response.customer_id)
-            authCtx.customerEmail(response.email)
-            authCtx.customerFirstName(response.first_name)
-            authCtx.customerLastName(response.last_name)
-            authCtx.customerBalance(response.wallet_balance)
-            authCtx.customerPhone(response.phone)
-            authCtx.customerPicture(response.picture)
-            setisloading(false)
-          } catch (error) {
-            setisloading(true)
-            console.log(error.response)
-            const myObj = error.response.data.email[0];
-            Alert.alert('SignUp Failed', myObj)
-            setisloading(false)
-          }
+        toggleAcceptTermsModal()
       }
+    }
+
+    const signuphandler = async () => {         
+      try {
+        setisloading(true)
+        const response = await SignUp(enteredEmail, enteredPassword, enteredGender, enteredPhone, enteredfirstname, enteredlastname, idtype, idnum)
+        console.log(response)
+        authCtx.authenticated(response.access_token)  
+        authCtx.customerId(response.customer_id)
+        authCtx.customerEmail(response.email)
+        authCtx.customerFirstName(response.first_name)
+        authCtx.customerLastName(response.last_name)
+        authCtx.customerBalance(response.wallet_balance)
+        authCtx.customerPhone(response.phone)
+        authCtx.customerPicture(response.picture)
+        authCtx.customerShowAmount('show')
+        setisloading(false)
+      } catch (error) {
+        setisloading(true)
+        console.log(error.response)
+        const myObj = error.response.data.email[0];
+        Alert.alert('SignUp Failed', myObj)
+        setisloading(false)
+      }
+      
     }
 
     if(isloading){
@@ -141,9 +156,9 @@ const SignUpScreen = ({navigation}) => {
     }
 
   return (
-    <SafeAreaView>
-    <ScrollView showsVerticalScrollIndicator={false} style={{marginTop:35}}>
-      <View style={{justifyContent:'center', flex:1, marginTop:'10%', marginHorizontal:20}}>
+    <SafeAreaView style={{flex:1, marginTop:35}}>
+    <ScrollView showsVerticalScrollIndicator={false} style={{marginTop:20}}>
+      <View style={{justifyContent:'center', flex:1, marginHorizontal:20}}>
       <Image style={{ width:100, height:100, alignSelf:'center'}} source={require("../assets/igoepp_transparent2.png")}   placeholder={'blurhash'} contentFit="contain"/>
       <Text style={styles.Title}>SignUp</Text>
 
@@ -241,7 +256,6 @@ const SignUpScreen = ({navigation}) => {
           onUpdateValue={updateInputValueHandler.bind(this, 'idnum')}
           placeholder={idtype === "nin" ? "Nin number" : idtype === "DL" ? "Drivers license Number" : "Id card number"}
           isInvalid={Isidnum}
-          keyboardType={"numeric"}      
           onFocus={() => setIsIdnum(false)}
         />
         }
@@ -292,7 +306,7 @@ const SignUpScreen = ({navigation}) => {
       </View>
 
       <View style={{marginHorizontal:50, marginTop:10, }}>
-        <SubmitButton message={"SignUp"} onPress={() => signuphandler()}/>
+        <SubmitButton message={"SignUp"} onPress={() => signupValaidate()}/>
       </View>
 
     <View style={{flexDirection:'row', marginTop:15, alignItem:'center', justifyContent:'center', }}>
@@ -300,7 +314,81 @@ const SignUpScreen = ({navigation}) => {
         <Text style={styles.backtext}>Login</Text>
       </TouchableOpacity>
     </View>
+    <View style={{marginBottom:20}}/>
     </ScrollView>
+
+    <Modal isVisible={isAcceptTermsModalBisible}>
+
+    <SafeAreaView style={styles.centeredView}>
+
+    <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => toggleAcceptTermsModal()}>
+      <MaterialIcons name="cancel" size={30} color="white" />
+    </TouchableOpacity>
+
+    <View style={styles.modalView}>
+    <Text style={styles.modalText}>Accept Bid</Text>
+ 
+    <View style={{marginBottom:'2%'}}/>
+    <ScrollView showsVerticalScrollIndicator={false}>
+    <View style={{alignItems:'center'}}>
+      <Text style={{textAlign:'center'}}>CUSTOMER SERVICE LEVEL AGREEMENT</Text> 
+    </View>
+
+    <Text> A.	SERVICE LEVEL AGREEMENT(SLA)</Text>
+
+    <Text style={styles.textsty}> 
+    1.	Services to be Performed
+    I have agreed to work in the capacity of <Text> {enteredfirstname} {enteredlastname}</Text> as an Artisan 
+    </Text>
+
+    <Text style={styles.textsty}>
+    2.	Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae quo quos laboriosam numquam facilis enim vel iusto similique earum nulla. Aliquid praesentium debitis nihil sed possimus sit corrupti veniam dolores.
+    </Text>
+
+    <Text style={styles.textsty}>
+    3.  Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae quo quos laboriosam numquam facilis enim vel iusto similique earum nulla. Aliquid praesentium debitis nihil sed possimus sit corrupti veniam dolores.
+    </Text>
+
+    <Text style={styles.textsty}>
+    4.	Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae quo quos laboriosam numquam facilis enim vel iusto similique earum nulla. Aliquid praesentium debitis nihil sed possimus sit corrupti veniam dolores.
+    </Text>
+
+    <Text style={styles.textsty}>
+    5.	Terminating the Agreement
+    With reasonable cause, either IGOEPP or Artisan may terminate the Agreement, effective immediately upon giving written notice.
+    Reasonable cause includes:
+    •	A material violation of this Agreement, or
+    •	Any act exposing the other party of liability to others for the personal injury or property damage.
+    OR
+    Either party may terminate this Agreement at any time by giving 30 days written notice to the other party of the intention to terminate. However, Artisan cannot terminate this agreement when there is a pending dispute with one of IGOEPP’s customers involving him.
+    </Text>
+
+    <View style={{marginTop:'1%'}}>
+      {data.map((item, key) => 
+        <View key={key} style={{flexDirection:'row', justifyContent:'center', }}>
+          <TouchableOpacity style={[styles.outer, ]} onPress={() => setavail(item.id)}>
+            {avail === item.id && <View style={styles.inner}/>} 
+          </TouchableOpacity>
+          <Text> Accept</Text>
+      </View>
+      )}
+    </View>
+        <View style={{marginBottom:10}}/>
+    {
+      avail  && 
+      <View style={{marginHorizontal:20}}>
+        <SubmitButton message={"Continue"} onPress={() => signuphandler()}/>
+      </View>
+    }
+      <View style={{marginBottom:10}}/>
+
+    </ScrollView>
+
+      </View>
+
+
+      </SafeAreaView>
+    </Modal>
   
   </SafeAreaView>
   )
@@ -309,6 +397,57 @@ const SignUpScreen = ({navigation}) => {
 export default SignUpScreen
 
 const styles = StyleSheet.create({
+  shadow:{
+    marginBottom: 20,
+    borderRadius: 20, 
+    elevation: 7,
+    shadowColor: '#000',
+    shadowOpacity: 0.25,
+    shadowOffset: {width: 0, height: 2},
+    shadowRadius: 4,
+    backgroundColor: 'white',
+    overflow: Platform.OS === 'andriod' ? 'hidden' : 'visible',
+  },
+  containerBoard:{
+    borderTopLeftRadius: 30,
+    borderTopRightRadius:30,
+    width:DIMENSION.WIDTH, 
+    height:DIMENSION.HEIGHT, 
+    padding: 10, 
+    marginTop:20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 8,
+    backgroundColor: 'white',
+    overflow: Platform.OS === 'andriod' ? 'hidden' : 'visible',
+  },
+  availtext:{
+    fontSize:15,
+    fontFamily:'poppinsSemiBold',
+    color: Color.new_color
+  },
+  outer:{
+    width:25,
+    height: 25,
+    borderWidth: 1,
+    borderRadius: 15,
+    justifyContent:'center',
+    alignItems: 'center'
+  },
+  inner:{
+    width:15,
+    height:15,
+    backgroundColor: Color.darkolivegreen_100,
+    borderRadius:10
+  },
+  textsty:{
+    fontFamily:'poppinsRegular'
+  },
   backtext:{
     fontSize:16,
     fontFamily: 'poppinsMedium'
@@ -357,5 +496,35 @@ const styles = StyleSheet.create({
   placeholderStyle: {
     fontSize: 16,
     color: Color.gray
+  },
+  centeredView: {
+    flex: 1,
+    // backgroundColor: Color.light_black,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // marginTop: 22,
+  },
+  modalView: {
+    margin: 15,
+    backgroundColor: 'white',
+    width: DIMENSION.WIDTH  * 0.9,
+    borderRadius: 20,
+    padding: 25,
+    // alignItems: 'center',
+    maxHeight: DIMENSION.HEIGHT * 0.7,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    // marginBottom: 15,
+    textAlign: 'center',
+    fontSize:18, 
+    fontFamily:'poppinsRegular'
   },
 })

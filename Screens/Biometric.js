@@ -46,7 +46,7 @@ const Biometric = ({navigation}) => {
     }, [])
 
 
-    function toggleEmailSwitch(){
+    function toggleBiometric(){
       onAuthenticate()
     }
 
@@ -78,10 +78,10 @@ const Biometric = ({navigation}) => {
             setBiometric(previousState => !previousState)
             console.log('disable')
             DisEnabled()
-            Enabled()
+            // Enabled()
           }
-        }else{
-          Alert.alert('', 'Device not compactible')
+        }else if (result.error === 'not_enrolled'){
+          Alert.alert("", "Device not enrolled, setup up a screen lock to use this feature")
         }
       })
     }
@@ -105,7 +105,7 @@ const Biometric = ({navigation}) => {
           trackColor={{ false: 'grey', true: Color.darkolivegreen_100 }}
           thumbColor={'white'}
           ios_backgroundColor={'white'}
-          onValueChange={toggleEmailSwitch}
+          onValueChange={toggleBiometric}
           value={check === "N" ? !biometric : biometric}
         />
       </View>

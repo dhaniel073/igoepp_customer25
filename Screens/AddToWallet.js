@@ -16,16 +16,12 @@ const AddToWallet = ({route, navigation}) => {
 
 
 
-const Visible = () => {
-  // console.log('false')
-  const status = 'false'
-  authCtx.customeramtVisible(status)    
+const ShowAmount = () => {
+  authCtx.customerShowAmount('show')
 }
 
-const NotVisible = () => {
-  // console.log('true')
-  const status = 'true'
-  authCtx.customeramtVisible(status)
+const HideAmount = () => {
+  authCtx.customerShowAmount('hide')
 }
 
   useEffect(() => {
@@ -35,6 +31,7 @@ const NotVisible = () => {
   })
   }, [])
 
+
 function onAuthenticate (spec){
   const auth = LocalAuthentication.authenticateAsync({
     promptMessage:'Authenticate with Touch ID',
@@ -42,17 +39,19 @@ function onAuthenticate (spec){
   });
     auth.then(result => {
       setIsAuthenticated(result.success);
-      // console.log(result.success)
       if(result.success === true){
-          if(spec === 'true'){
-            NotVisible()
-          }else{
-            Visible()
-          }
+        if(spec === 'hide'){
+          HideAmount()
+        }else{
+          ShowAmount()
+        }
+      }else if(result.error === "not_enrolled"){
+        Alert.alert("", "Device not enrolled, setup up a screen lock to use this feature")
       }
     })
-}
+  }
 
+  console.log(authCtx.showAmount)
   return (
     <View style={{marginTop: marginStyle.marginTp, marginHorizontal:10}}>
       <GoBack onPress={() => navigation.goBack()}>Back</GoBack>
@@ -66,25 +65,24 @@ function onAuthenticate (spec){
               
               <Text style={styles.amount}>
               <MaterialCommunityIcons name="currency-ngn" size={25} color="white" />
-                  {authCtx.amtVisible === ''  ||  authCtx.amtVisible === 'false' || authCtx.amtVisible === undefined ?  authCtx.balance : 'XXXXX.XX'} 
+                  {authCtx.showAmount === 'show'  ? authCtx.balance :  'XXXXX.XX'} 
               </Text>
 
-              {authCtx.amtVisible === '' ?
-                   <TouchableOpacity style={{alignSelf:'center', marginLeft:10}} onPress={() => onAuthenticate('true')}>
+              {/* <TouchableOpacity style={{alignSelf:'center', marginLeft:10}} onPress={() => onAuthenticate('Yes')}>
+                <Entypo name="eye-with-line" size={24} color="white" /> 
+              </TouchableOpacity> */}
+
+                {authCtx.showAmount === 'show' ?
+                   <TouchableOpacity style={{alignSelf:'center', marginLeft:10}} onPress={() => onAuthenticate('hide')}>
 
                       <Entypo name="eye-with-line" size={24} color="white" />
                     </TouchableOpacity>
-                  : authCtx.amtVisible === 'true' ?
-                    <TouchableOpacity style={{alignSelf:'center', marginLeft:10}} onPress={() => onAuthenticate('false')}>
+                  : 
+                    <TouchableOpacity style={{alignSelf:'center', marginLeft:10}} onPress={() => onAuthenticate('show')}>
 
                       <Entypo name="eye" size={24} color="white"/>
                     </TouchableOpacity>
-                  : 
-                  <TouchableOpacity style={{alignSelf:'center', marginLeft:10}} onPress={() => onAuthenticate('true')}>
-
-                    <Entypo name="eye-with-line" size={24} color="white"/>
-                  </TouchableOpacity>
-                  }
+                }
               </View>
               <Text style={styles.walletbalanceText}>Balance</Text>
           </View>

@@ -557,7 +557,7 @@ export default function App() {
       const storedlastname = await AsyncStorage.getItem('customerLastname')
       const storedphone = await AsyncStorage.getItem('customerPhone')
       const storedpicture = await AsyncStorage.getItem('customerPicture')
-      const storedamtvisible = await AsyncStorage.getItem('customerAmtVisible')
+      const storedshowamount = await AsyncStorage.getItem('customerShowAmount')
       const storedbalance = await AsyncStorage.getItem('customerBalance')
       
       
@@ -567,12 +567,11 @@ export default function App() {
         authCtx.customerEmail(storedemail)
         authCtx.customerFirstName(storedfirstname)
         authCtx.customerLastName(storedlastname)
-        authCtx.customerAmtVisible(storedamtvisible)
         authCtx.customerBalance(storedbalance)
         authCtx.customerPhone(storedphone)
         authCtx.customerPicture(storedpicture)
+        authCtx.customerShowAmount(storedshowamount)
       }
-
       setisTrying(false)
     }
 
