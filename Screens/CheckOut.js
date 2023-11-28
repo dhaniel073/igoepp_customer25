@@ -1,16 +1,17 @@
-import { Alert, Platform, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useContext, useState, useEffect } from 'react'
-import { Color, marginStyle } from '../Component/Ui/GlobalStyle'
+import { Alert, Platform, SafeAreaView, ScrollView, StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native'
+import React, { useContext, useState, useEffect, useRef } from 'react'
+import { Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle'
 import GoBack from '../Component/Ui/GoBack'
 import Input from '../Component/Ui/Input'
 import { Dropdown } from 'react-native-element-dropdown'
 import SubmitButton from '../Component/Ui/SubmitButton'
-import { CartCheckout } from '../utils/AuthRoute'
+import { CartCheckout, CustomerInfoCheck, ValidatePin } from '../utils/AuthRoute'
 import { AuthContext } from '../utils/AuthContext'
 import {Ionicons, Entypo, MaterialCommunityIcons, MaterialIcons, FontAwesome5} from '@expo/vector-icons'
 import axios from 'axios'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
 import * as Notification from 'expo-notifications'
+import Modal from 'react-native-modal'
 
 const data = [
   // { label: 'Cash ', value: 'C' },
@@ -44,7 +45,7 @@ const CheckOut = ({navigation, route}) => {
   const [paymentinvalid, setpaymentinvalid] = useState(false)
 
 
-  console.log(priceToShow)
+  // console.log(priceToShow)
 
   const [paymentmethod, setPaymentMethod] = useState('')
 
@@ -67,6 +68,34 @@ const CheckOut = ({navigation, route}) => {
   const [cityName, setCityName] = useState('');
 
   const [isLoading,setIsLoading]=useState(false)
+
+  const  [pin, setpin] = useState()
+  const [pinvalid, setpinvalid] = useState(false)
+  const [isSetpinModalVisible, setisSetpinModalVisible] = useState(false)
+  const [pincheckifempty, setpincheckifempty] = useState([])
+
+  let ref = useRef(0);
+
+  function handleClick() {
+    ref.current = ref.current + 1;
+    // alert('You clicked ' + ref.current + ' times!');
+  }
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      try {
+        setIsLoading(true)
+        const response = await CustomerInfoCheck(authCtx.Id, authCtx.token)
+        setpincheckifempty(response.transaction_pin_setup)
+        setIsLoading(false)
+      } catch (error) {
+        setIsLoading(true)
+        setIsLoading(false)
+        return;
+      }
+    })
+    return unsubscribe;
+  }, [])
 
   useEffect(() => {
     var config = {
@@ -161,13 +190,16 @@ const handleCity = (countryCode, stateCode) => {
     })
   }
 
+  const togglePinModal = () => {
+    setisSetpinModalVisible(!isSetpinModalVisible)
+  }
 
   async function CheckoutHandler(){
     const emailICheck = email.includes('@') && email.includes(".com")
     const firstnamecheck = first_name === null || first_name === undefined ||  first_name === ""
     const lastnamecheck = last_name === null || last_name === undefined ||  last_name === ""
     const landmarkcheck = landmark === null || landmark === undefined ||  landmark === ""
-    const phonecheck = phone === null || phone === undefined ||  phone === ""
+    const phonecheck = phone === null || phone === undefined ||  phone === "" || phone.length === 0
     const addresscheck = address === null || address === undefined ||  address === ""
     const countrycheck = countryName === null || countryName === undefined ||  countryName === ""
     const statecheck = stateName === null || stateName === undefined ||  stateName === ""
@@ -176,7 +208,7 @@ const handleCity = (countryCode, stateCode) => {
 
 
 
-    // console.log(phone)
+    // console.log(phonecheck)
     // console.log(emailICheck,firstnamecheck,lastnamecheck,landmarkcheck,phonecheck,addresscheck,countrycheck,statecheck,citycheck)
 
     if(!emailICheck || firstnamecheck || lastnamecheck || landmarkcheck || phonecheck || addresscheck || countrycheck || statecheck || citycheck){
@@ -192,7 +224,44 @@ const handleCity = (countryCode, stateCode) => {
       setcityinvalid(citycheck)
       setpaymentinvalid(paymentcheck)
     }else{
-      setIsLoading(true)
+      togglePinModal()
+    }
+  }
+
+  const pinValidateCheck = async () => {
+    togglePinModal()
+    if(ref.current > 3){
+      Alert.alert("", "To many pin trials try again later", [
+        {
+          text: "Ok",
+          onPress: () => {}
+        }
+      ])
+    }else{
+      try {
+        setIsLoading(true)
+        const response = await ValidatePin(authCtx.Id, pin, authCtx.token)
+        // console.log(response)
+        setpin()
+        MakePurchase()
+      } catch (error) {
+        setIsLoading(true)
+        setpin()
+        // console.log(error.response)
+        Alert.alert("Error", error.response.data.message+ " " + "Try again", [
+          {
+            text: "Ok",
+            onPress: () => {}
+          },
+        ])
+        setIsLoading(false)
+
+      }
+    }
+  }
+
+  const MakePurchase= async () => {
+    setIsLoading(true)
 
       try {
       setIsLoading(true)
@@ -227,7 +296,6 @@ const handleCity = (countryCode, stateCode) => {
         ])
       }
       setIsLoading(false)
-    }
   }
 
   async function schedulePushNotification() {
@@ -251,195 +319,251 @@ const handleCity = (countryCode, stateCode) => {
       <GoBack onPress={() => navigation.goBack()}>Back</GoBack>
       <Text style={styles.checkouttxt}>CheckOut</Text>
 
+      {
+        pincheckifempty === "N" ? Alert.alert("Message", "No transaction pin, set a transaction pin to be able to make transactions", [
+          {
+            text: "Ok",
+            onPress: () => navigation.goBack()
+          }
+        ]) 
+        :
+
 
       <ScrollView style={{ margin: 10}} showsVerticalScrollIndicator={false}>
-          {/* <Ionicons style={{ marginTop: Platform.OS === 'ios' ? 10 : 0 }}  size={20} color={'black'} name="person"/>   */}
-          <Input
-            placeholder="First Name"
-            placeholderTextColor="#666666"
-            onUpdateValue={setFirstName}
-            autoCorrect={false}
-            autoCapitalize='sentences'
-            value={first_name}
-            isInvalid={firstnameinvalid}
-            onFocus={() => setfirstnameinvalid(false)}
-            // autoCapitalize={true}
+      {/* <Ionicons style={{ marginTop: Platform.OS === 'ios' ? 10 : 0 }}  size={20} color={'black'} name="person"/>   */}
+      <View style={{flexDirection:'row', flex:1}}>
+      <View style={{flex:1, marginRight:5}}>
+        <Input
+          placeholder="First Name"
+          placeholderTextColor="#666666"
+          onUpdateValue={setFirstName}
+          autoCorrect={false}
+          autoCapitalize='sentences'
+          value={first_name}
+          isInvalid={firstnameinvalid}
+          onFocus={() => setfirstnameinvalid(false)}
+          // autoCapitalize={true}
           />      
+      </View>
 
-          {/* <Ionicons size={20} style={{ marginTop: Platform.OS === 'ios' ? 10 : 0 }} color={'black'} name="person"/> */}
-          <Input
-            placeholder="Last Name"
-            placeholderTextColor="#666666"
-            onUpdateValue={setLastName}
-            autoCorrect={false}
-            autoCapitalize='sentences'
-            value={last_name}
-            isInvalid={lastnameinvalid}
-            onFocus={() => setlastnameinvalid(false)}
-            // autoCapitalize={true}
-           
-          />      
+      {/* <Ionicons size={20} style={{ marginTop: Platform.OS === 'ios' ? 10 : 0 }} color={'black'} name="person"/> */}
+      <View style={{flex:1, marginLeft:5}}>
+      <Input
+        placeholder="Last Name"
+        placeholderTextColor="#666666"
+        onUpdateValue={setLastName}
+        autoCorrect={false}
+        autoCapitalize='sentences'
+        value={last_name}
+        isInvalid={lastnameinvalid}
+        onFocus={() => setlastnameinvalid(false)}
+        // autoCapitalize={true}
+      />  
+      </View>    
+      </View>
+    
+      {/* <Ionicons style={{ marginTop: Platform.OS === 'ios' ? 10 : 0 }}  size={20} color={'black'} name="call"/> */}
+      <Input
+        placeholder="Phone number"
+        onUpdateValue={setPhone}
+        placeholderTextColor="#666666"
+        autoCorrect={false}
+        autoCapitalize='none'
+        value={phone}
+        maxLength={11}
+        keyboardType="numeric"
+        isInvalid={phoneinvalid}
+        onFocus={() => setphoneinvalid(false)}
+      />        
+
+      {/* <Ionicons style={{ marginTop: Platform.OS === 'ios' ? 10 : 0 }}  size={20} color={'black'} name="mail"/> */}
+      <Input
+        placeholder="Email"
+        onUpdateValue={setEmail}
+        placeholderTextColor="#666666"
+        autoCorrect={false}
+        autoCapitalize='none'
+        value={email}
+        keyboardType="email-address"
+        isInvalid={emailinvalid}
+        onFocus={() => setemailinvalid(false)}
+      />      
+
+      <Dropdown
+        style={[styles.dropdown, isFocus && { borderColor: 'blue' }, paymentinvalid && styles.invalid]}
+        placeholderStyle={styles.placeholderStyle}
+        selectedTextStyle={styles.selectedTextStyle}
+        inputSearchStyle={styles.inputSearchStyle}
+        iconStyle={styles.iconStyle}
+        data={data}
+        search
+        maxHeight={300}
+        labelField="label"
+        valueField="value"
+        placeholder={!isFocus ? 'Select Payment Method' : '...'}
+        searchPlaceholder="Search..."
+        value={paymentmethod}
+        onFocus={() => [setIsFocus(true), setpaymentinvalid(false)]}
+        onBlur={() => setIsFocus(false)}
+        onChange={item => {
+          setPaymentMethod(item.value);
+          setIsFocus(false);
+        }}
+        //   onChangeText={updateInputValueHandler.bind(this, 'sex')}
+        renderLeftIcon= {() => (
+          <MaterialIcons name="payments" style={{marginRight:5}} size={24} color="black" />
+        )}
+      />
+
+      {/* <Entypo style={{ marginTop: Platform.OS === 'ios' ? 10 : 0 }}  name="address" size={24} color="black" /> */}
+      <Input
+        placeholder="Address"
+        onUpdateValue={setAddress}
+        placeholderTextColor="#666666"
+        autoCorrect={false}
+        value={address}
+        // keyboardType="email-address"
+        isInvalid={addressinvalid}
+        onFocus={() => setaddressinvalid(false)}
+      />      
+
+      {/* <FontAwesome5 name="landmark" size={24} color="black" /> */}
+      <Input
+        placeholder="Landmark"
+        onUpdateValue={setLandmark}
+        placeholderTextColor="#666666"
+        autoCorrect={false}
+        value={landmark}
+        isInvalid={landmarkinvalid}
+        onFocus={() => setlamdmarkinvalid(false)}
+      />      
+
+      <Dropdown
+        style={[styles.dropdown, isCountryFocus && { borderColor: 'blue' }, countryinvalid && styles.invalid]}
+        placeholderStyle={[styles.placeholderStyle, {fontFamily: 'poppinsRegular'}]}
+        selectedTextStyle={[styles.selectedTextStyle, {fontFamily: 'poppinsRegular'}]}
+        inputSearchStyle={[styles.inputSearchStyle, {fontFamily: 'poppinsRegular'}]}
+        iconStyle={styles.iconStyle}
+        data={countryData}
+        search
+        maxHeight={300}
+        labelField="label"
+        valueField="value"
+        placeholder={!isCountryFocus ? 'Select Country' : '...'}
+        searchPlaceholder="Search..."
+        value={country}
+        onFocus={() => [setIsCountryFocus(true), setcountryinvalid(false)]}
+        onBlur={() => setIsCountryFocus(false)}
+        onChange={item => {
+          setCountry(item.value);
+          handleState(item.value);
+          setCountryName(item.label)
+          setIsCountryFocus(false);
+        }}
+        renderLeftIcon={() => (
+          <Entypo name="globe" size={24} style={{marginRight:5}} color="black" />
+        )}
+        />
+
+        <Dropdown
+          style={[styles.dropdown, isStateFocus && { borderColor: 'blue' }, stateinvalid && styles.invalid]}
+          placeholderStyle={[styles.placeholderStyle, {fontFamily: 'poppinsRegular'}]}
+          selectedTextStyle={[styles.selectedTextStyle, {fontFamily: 'poppinsRegular'}]}
+          inputSearchStyle={[styles.inputSearchStyle, {fontFamily: 'poppinsRegular'}]}
+          iconStyle={styles.iconStyle}
+          data={stateData}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!isStateFocus ? 'Select State' : '...'}
+          searchPlaceholder="Search..."
+          value={state}
+          onFocus={() => [setIsStateFocus(true), setstateinvalid(false)]}
+          onBlur={() => setIsStateFocus(false)}
+          onChange={item => {
+            setState(item.value);
+            handleCity(country, item.value)
+            setStateName(item.label)
+            setIsStateFocus(false);
+          }}
+          renderLeftIcon={() => (
+            <Entypo name="location" size={24} style={{marginRight:5}} color="black" />
+          )}
+        />
+
         
-          {/* <Ionicons style={{ marginTop: Platform.OS === 'ios' ? 10 : 0 }}  size={20} color={'black'} name="call"/> */}
-          <Input
-            placeholder="Phone number"
-            onUpdateValue={setPhone}
-            placeholderTextColor="#666666"
-            autoCorrect={false}
-            autoCapitalize='none'
-            value={phone}
-            maxLength={11}
-            keyboardType="numeric"
-            isInvalid={phoneinvalid}
-            onFocus={() => setemailinvalid}
-          />        
-
-          {/* <Ionicons style={{ marginTop: Platform.OS === 'ios' ? 10 : 0 }}  size={20} color={'black'} name="mail"/> */}
-          <Input
-            placeholder="Email"
-            onUpdateValue={setEmail}
-            placeholderTextColor="#666666"
-            autoCorrect={false}
-            autoCapitalize='none'
-            value={email}
-            keyboardType="email-address"
-            isInvalid={emailinvalid}
-            onFocus={() => setemailinvalid}
-          />      
-
-          <Dropdown
-            style={[styles.dropdown, isFocus && { borderColor: 'blue' }, paymentinvalid && styles.invalid]}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            inputSearchStyle={styles.inputSearchStyle}
-            iconStyle={styles.iconStyle}
-            data={data}
-            search
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder={!isFocus ? 'Select Payment Method' : '...'}
-            searchPlaceholder="Search..."
-            value={paymentmethod}
-            onFocus={() => [setIsFocus(true), setpaymentinvalid(false)]}
-            onBlur={() => setIsFocus(false)}
-            onChange={item => {
-              setPaymentMethod(item.value);
-              setIsFocus(false);
-            }}
-            //   onChangeText={updateInputValueHandler.bind(this, 'sex')}
-            renderLeftIcon= {() => (
-              <MaterialIcons name="payments" style={{marginRight:5}} size={24} color="black" />
-            )}
-          />
-
-          {/* <Entypo style={{ marginTop: Platform.OS === 'ios' ? 10 : 0 }}  name="address" size={24} color="black" /> */}
-          <Input
-            placeholder="Address"
-            onUpdateValue={setAddress}
-            placeholderTextColor="#666666"
-            autoCorrect={false}
-            value={address}
-            // keyboardType="email-address"
-            isInvalid={addressinvalid}
-            onFocus={() => setaddressinvalid(false)}
-          />      
-
-          {/* <FontAwesome5 name="landmark" size={24} color="black" /> */}
-          <Input
-            placeholder="Landmark"
-            onUpdateValue={setLandmark}
-            placeholderTextColor="#666666"
-            autoCorrect={false}
-            value={landmark}
-            isInvalid={landmarkinvalid}
-            onFocus={() => setlamdmarkinvalid(false)}
-          />      
-
-          <Dropdown
-            style={[styles.dropdown, isCountryFocus && { borderColor: 'blue' }, countryinvalid && styles.invalid]}
-            placeholderStyle={[styles.placeholderStyle, {fontFamily: 'poppinsRegular'}]}
-            selectedTextStyle={[styles.selectedTextStyle, {fontFamily: 'poppinsRegular'}]}
-            inputSearchStyle={[styles.inputSearchStyle, {fontFamily: 'poppinsRegular'}]}
-            iconStyle={styles.iconStyle}
-            data={countryData}
-            search
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder={!isCountryFocus ? 'Select Country' : '...'}
-            searchPlaceholder="Search..."
-            value={country}
-            onFocus={() => [setIsCountryFocus(true), setcountryinvalid(false)]}
-            onBlur={() => setIsCountryFocus(false)}
-            onChange={item => {
-              setCountry(item.value);
-              handleState(item.value);
-              setCountryName(item.label)
-              setIsCountryFocus(false);
-            }}
-            renderLeftIcon={() => (
-              <Entypo name="globe" size={24} style={{marginRight:5}} color="black" />
-            )}
-            />
-
-            <Dropdown
-              style={[styles.dropdown, isStateFocus && { borderColor: 'blue' }, stateinvalid && styles.invalid]}
-              placeholderStyle={[styles.placeholderStyle, {fontFamily: 'poppinsRegular'}]}
-              selectedTextStyle={[styles.selectedTextStyle, {fontFamily: 'poppinsRegular'}]}
-              inputSearchStyle={[styles.inputSearchStyle, {fontFamily: 'poppinsRegular'}]}
-              iconStyle={styles.iconStyle}
-              data={stateData}
-              search
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder={!isStateFocus ? 'Select State' : '...'}
-              searchPlaceholder="Search..."
-              value={state}
-              onFocus={() => [setIsStateFocus(true), setstateinvalid(false)]}
-              onBlur={() => setIsStateFocus(false)}
-              onChange={item => {
-                setState(item.value);
-                handleCity(country, item.value)
-                setStateName(item.label)
-                setIsStateFocus(false);
-              }}
-              renderLeftIcon={() => (
-                <Entypo name="location" size={24} style={{marginRight:5}} color="black" />
-              )}
-            />
-
-           
-            <Dropdown
-              style={[styles.dropdown, isCityFocus && { borderColor: 'blue' }, cityinvalid && styles.invalid]}
-              placeholderStyle={[styles.placeholderStyle, {fontFamily: 'poppinsRegular'}]}
-              selectedTextStyle={[styles.selectedTextStyle, {fontFamily: 'poppinsRegular'}]}
-              inputSearchStyle={[styles.inputSearchStyle, {fontFamily: 'poppinsRegular'}]}
-              iconStyle={styles.iconStyle}
-              data={cityData}
-              search
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder={!isCityFocus ? 'Select City' : '...'}
-              searchPlaceholder="Search..."
-              value={city}
-              onFocus={() => [setIsCityFocus(true), setcityinvalid(false)]}
-              onBlur={() => setIsCityFocus(false)}
-              onChange={item => {
-                setCity(item.value);
-                setCityName(item.label)
-                setIsCityFocus(false);
-              }}
-              renderLeftIcon={() => (
-                <MaterialCommunityIcons name="city-variant-outline" style={{marginRight:5}} size={24} color="black" />
-              )}
-            />
-        <View style={{marginBottom:'10%', marginHorizontal:15, marginTop:10}}>
+        <Dropdown
+          style={[styles.dropdown, isCityFocus && { borderColor: 'blue' }, cityinvalid && styles.invalid]}
+          placeholderStyle={[styles.placeholderStyle, {fontFamily: 'poppinsRegular'}]}
+          selectedTextStyle={[styles.selectedTextStyle, {fontFamily: 'poppinsRegular'}]}
+          inputSearchStyle={[styles.inputSearchStyle, {fontFamily: 'poppinsRegular'}]}
+          iconStyle={styles.iconStyle}
+          data={cityData}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!isCityFocus ? 'Select City' : '...'}
+          searchPlaceholder="Search..."
+          value={city}
+          onFocus={() => [setIsCityFocus(true), setcityinvalid(false)]}
+          onBlur={() => setIsCityFocus(false)}
+          onChange={item => {
+            setCity(item.value);
+            setCityName(item.label)
+            setIsCityFocus(false);
+          }}
+          renderLeftIcon={() => (
+            <MaterialCommunityIcons name="city-variant-outline" style={{marginRight:5}} size={24} color="black" />
+          )}
+        />
+        <View style={{marginBottom:'10%',marginTop: '5%',  marginHorizontal:15}}>
           <SubmitButton onPress={CheckoutHandler} message={'Submit'}/>
         </View>
         </ScrollView>
+      }
+
+
+        <Modal isVisible={isSetpinModalVisible} animationInTiming={500}
+      >
+        <SafeAreaView style={styles.centeredView}>
+        <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => [togglePinModal(), setpin()]}>
+          <MaterialIcons name="cancel" size={30} color="white" />
+        </TouchableOpacity>
+          <View style={styles.modalView}>
+            <View>
+            <Text style={styles.modalText}>Enter Transaction Pin</Text>
+
+            <SafeAreaView style={{justifyContent:'center', alignItems:'center', marginHorizontal:40}}>
+              <TextInput
+                keyboardType={"numeric"}
+                maxLength={4}
+                style={{fontSize:25, textAlign:'center',width:150, margin:5, borderBottomWidth:1, padding:5}}
+                onChangeText={setpin}
+                value={pin}
+                isInvalid={pinvalid}
+                onFocus={() => setpinvalid(false)}
+                secureTextEntry
+              />
+              {
+                pinvalid &&
+                <Text style={{fontSize:11, textAlign:'center', color:Color.tomato}}>Pin must be 4 characters</Text>
+              }
+            </SafeAreaView>
+            <View style={{marginBottom:'5%'}}/>
+            </View>
+            {/* <View style={styles.buttonView}> */}
+
+            <View style={{flexDirection:'row', justifyContent:'center'}}>
+              <TouchableOpacity style={styles.viewbtn} onPress={() => [ pin === null || pin === undefined || pin === "" || pin.length < 4  ? setpinvalid(true) : handleClick(), pinValidateCheck()]}>
+                <Text style={styles.viewtext}>Continue</Text>
+              </TouchableOpacity>
+            </View>             
+              {/* </View> */}
+          </View>
+          </SafeAreaView>
+      </Modal>
 
     </ScrollView>
   )
@@ -498,5 +622,50 @@ const styles = StyleSheet.create({
   placeholderStyle: {
     fontSize: 14,
     color: Color.gray
+  },
+  centeredView: {
+    flex: 1,
+    // backgroundColor: Color.light_black,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    width: DIMENSION.WIDTH  * 0.7,
+    borderRadius: 20,
+    padding: 25,
+    // alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    // marginBottom: 15,
+    textAlign: 'center',
+    fontSize:14, 
+    fontFamily:'poppinsRegular'
+  },
+  viewbtn:{
+    backgroundColor:Color.darkolivegreen_100,
+    borderColor: Color.darkolivegreen_100,
+    borderWidth: 1,
+    justifyContent:'center',
+    borderRadius: 3,
+    width: DIMENSION.WIDTH * 0.36,
+    padding: 5
+  },
+  viewtext:{
+    textAlign:'center',
+    alignSelf:'center',
+    fontFamily: 'poppinsMedium',
+    fontSize: 12,
+    color: Color.white
   },
 })

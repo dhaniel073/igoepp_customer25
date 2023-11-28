@@ -4,21 +4,26 @@ import { Border, Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalSty
 import GoBack from '../Component/Ui/GoBack'
 import { AllTransaction } from '../utils/AuthRoute'
 import { AuthContext } from '../utils/AuthContext'
+import LoadingOverlay from '../Component/Ui/LoadingOverlay'
 
 const Payments = ({navigation}) => {
   const authCtx = useContext(AuthContext)
   const [PaymentHis, setPaymentHis] = useState([])
   const [refresh, setRefresh] = useState(false)
+  const [isloading, setisloading] = useState(false)
 
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async() => {
       // do something
       try {
+        setisloading(true)
         const response = await AllTransaction(authCtx.Id, authCtx.token)
         console.log(response)
         setPaymentHis(response)
+        setisloading(false)
       } catch (error) {
+        setisloading(true)
         console.log(error)
         Alert.alert("Error", "Error fetching Payment History", [
           {
@@ -26,6 +31,7 @@ const Payments = ({navigation}) => {
             onPress: () => navigation.goBack()
           }
         ])
+        setisloading(false)
       }
     });
     return unsubscribe;
@@ -47,6 +53,11 @@ const Payments = ({navigation}) => {
       </View>
     )
   }
+
+  if(isloading){
+    return <LoadingOverlay message={"..."}/>
+  }
+
 
   return (
     <SafeAreaView style={{marginTop: marginStyle.marginTp, marginHorizontal:10, flex:1}}>

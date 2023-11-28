@@ -60,6 +60,7 @@ const Login = ({navigation}) => {
             authCtx.customerBalance(response.wallet_balance)
             authCtx.customerPhone(response.phone)
             authCtx.customerPicture(response.picture)
+            authCtx.customerShowAmount('show')
             setIsloading(false)
           } catch (error) {
             setIsloading(true)
@@ -105,8 +106,9 @@ const Login = ({navigation}) => {
         setIsloading(false)
       } catch (error) {
         setIsloading(true)
+        Alert.alert('Login Failed', error.response.data.message)
         setIsloading(false)   
-        console.log(error.response)     
+        // console.log(error.response)     
       }
     }
 
@@ -160,10 +162,15 @@ const Login = ({navigation}) => {
             Platform.OS === 'android' ? 
             <Ionicons name="finger-print" size={35} color={Color.darkolivegreen_100} />
             :
-            <Ionicons name="finger-print" size={35} color={Color.darkolivegreen_100} />
+            <Image source={require("../assets/faceid.jpg")} style={{width:50, height:50}} contentFit='cover'/>
 
           }
         </TouchableOpacity>
+
+        {/* <TouchableOpacity style={{alignItems:'center', justifyContent:'center', marginTop: 10}} onPress={() => onAuthenticate()}>
+        <Image source={require("../assets/faceid.jpg")} style={{width:50, height:50}} contentFit='cover'/>
+
+        </TouchableOpacity> */}
 
         <View style={styles.button}>
           <Flat onPress={() => navigation.navigate("ForgotPassword")}>

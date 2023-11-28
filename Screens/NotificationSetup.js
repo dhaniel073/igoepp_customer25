@@ -97,7 +97,7 @@ const NotificationSetup = ({navigation}) => {
             <Text style={styles.text}>Email</Text>
 
             <Switch
-                trackColor={{ false: 'grey', true: Color.new_color }}
+                trackColor={{ false: 'grey', true: Color.darkolivegreen_100 }}
                 thumbColor={'white'}
                 ios_backgroundColor={'white'}
                 onValueChange={toggleEmailSwitch}
@@ -110,7 +110,7 @@ const NotificationSetup = ({navigation}) => {
             <Text style={styles.text}>SMS</Text>
 
             <Switch
-                trackColor={{ false: 'grey', true: Color.new_color }}
+                trackColor={{ false: 'grey', true: Color.darkolivegreen_100 }}
                 thumbColor={'white'}
                 ios_backgroundColor={'white'}
                 onValueChange={toggleSMSSwitch}
@@ -123,7 +123,7 @@ const NotificationSetup = ({navigation}) => {
             <Text style={styles.text}>Pop Ups</Text>
 
             <Switch
-                trackColor={{ false: 'grey', true: Color.new_color }}
+                trackColor={{ false: 'grey', true: Color.darkolivegreen_100 }}
                 thumbColor={'white'}
                 ios_backgroundColor={'white'}
                 onValueChange={togglePopupSwitch}

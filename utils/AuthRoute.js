@@ -1071,6 +1071,22 @@ async function setuppin(id, pin, token){
   return data
 }
 
+async function validatepin(id, pin, token){
+  const url = `http://phixotech.com/igoepp/public/api/auth/customer/${id}/validatepin`
+  const response = axios.put(url, {
+    "pin": pin,
+  }, {
+    headers:{
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  }) 
+  const data = response
+  return data
+}
+
+
+
 
 
 
@@ -1376,4 +1392,12 @@ export const BiometricSetup = (id, fingerprinttoken, token) => {
 
 export const LoginWithBiometric = (fingerprinttoken) => {
   return loginwithbiometric(fingerprinttoken)
+}
+
+export const SetupPin = (id, pin, token) => {
+  return setuppin(id, pin, token)
+}
+
+export const ValidatePin = (id, pin, token) => {
+  return validatepin(id, pin, token)
 }

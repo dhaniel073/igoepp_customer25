@@ -45,12 +45,17 @@ const Welcome = ({navigation}) => {
   
 
 
-  useEffect(() => {
-    (async () => {
-    const compatible = await LocalAuthentication.hasHardwareAsync();
-    setIsBiometricSupported(compatible)
-  })
-  }, [])
+  // useEffect(() => {
+  //   async function authenticate(){
+  //   const compatible = await LocalAuthentication.authenticateAsync();
+  //   setIsBiometricSupported(compatible)
+  //   console.log(compatible)
+  //   if(compatible.success === true){
+  //     return;
+  //   }
+  // }
+  // authenticate()
+  // }, [])
 
   const Visible = () => {
     console.log("visible")
@@ -235,16 +240,37 @@ const Welcome = ({navigation}) => {
                 </View>
 
                 <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-                  <Text style={{fontSize: 15, fontFamily: 'interBold', color: Color.white}}>Wallet Balance</Text>
-                  <View style={{justifyContent:'center', alignItems: 'center',}}>
-                    <TouchableOpacity 
-                      onPress={() => navigation.navigate("AddToWallet")}
-                      style={{right:10}}
-                    >
-                      <AntDesign name="pluscircle" size={36} color="white" />
-                    </TouchableOpacity>
-                    <Text style={{fontSize: 15, right:15, fontFamily: 'interRegular', color: Color.white}}>Add Money</Text>  
-                  </View>
+                  {
+                    Platform.OS === "android" ?
+                    <Text style={{fontSize: 15, fontFamily: 'interBold', color: Color.white}}>Wallet Balance</Text>
+                    :
+                    <Text style={{fontSize: 15, fontFamily: 'interBold', color: Color.white, marginTop:10}}>Wallet Balance</Text>
+                  }
+                  
+                    {
+                      Platform.OS === "android" ?
+                      <View style={{justifyContent:'center', alignItems: 'center',}}>
+                      <TouchableOpacity 
+                        onPress={() => navigation.navigate("AddToWallet")}
+                        style={{right:10,}}
+                        >
+                        <AntDesign name="pluscircle" size={36} color="white" />
+                      </TouchableOpacity>
+                      <Text style={{fontSize: 15, right:15, fontFamily: 'interRegular', color: Color.white}}>Add Money</Text>  
+                      </View>
+                      :
+                      <View style={{justifyContent:'center', alignItems: 'center',}}>
+                      <TouchableOpacity 
+                        onPress={() => navigation.navigate("AddToWallet")}
+                        style={{right:10, marginTop:15}}
+                        >
+                        <AntDesign name="pluscircle" size={36} color="white" />
+                      </TouchableOpacity>
+                      <Text style={{fontSize: 15, right:15, fontFamily: 'interRegular', color: Color.white}}>Add Money</Text>  
+                    </View>
+
+                    }
+                  
                 </View>  
               </View>
               }
@@ -552,26 +578,10 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     height: DIMENSION.HEIGHT * 0.18,
-    // width: "100%",
-    shadowOpacity: 1,
     elevation: 4,
-    shadowRadius: 2,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowColor: "black",
   },
   wrapper1: {
     height: HEIGHT * 0.14,
-    shadowOpacity: 1,
-    elevation: 4,
-    shadowRadius: 2,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowColor: "black",
     alignItems:'center',
     justifyContent:'center'
   },

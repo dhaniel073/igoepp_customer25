@@ -88,16 +88,12 @@ const CartHistory = ({navigation}) => {
                 </View>
 
                 <Text style={{position:'absolute', fontSize:11, left:'46%', top:5}}>Tap to view</Text>
-
-
-
-
             </TouchableOpacity>
         )}
       />
       }
 
-<Modal isVisible={isModalVisible}>
+      <Modal isVisible={isModalVisible}>
         <SafeAreaView style={styles.centeredView}>
 
             <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => toggleViewbyIdModal()}>
@@ -112,7 +108,7 @@ const CartHistory = ({navigation}) => {
                   keyExtractor={(item) => item.id}
                   renderItem={({item}) => (
                    
-                   <View>
+                   <View style={{marginTop:15}}>
                     <Image source={require("../assets/igoepp_transparent2.png")} style={{height:110, width:110, position:'absolute', alignContent:'center', alignSelf:'center', top:DIMENSION.HEIGHT * 0.02,justifyContent:'center', opacity:0.3, }} contentFit='contain'/>
                       
                       <View style={{justifyContent:'space-between', flexDirection:'row'}}>
@@ -150,9 +146,6 @@ const CartHistory = ({navigation}) => {
                         <Text style={{fontFamily:'poppinsRegular', fontSize:11}}>Subtotal :</Text>
                         <Text  style={{fontFamily:'poppinsRegular', fontSize:11}}>{item.sub_total_amount}</Text>
                       </View>
-
-
-                    
                     </View>
                   )}    
                 />

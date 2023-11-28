@@ -53,6 +53,8 @@ import Payments from './Screens/Payments';
 import TransactionPin from './Screens/TransactionPin';
 import HelperDetails from './Screens/HelperDetails';
 import Biometric from './Screens/Biometric';
+import * as LocalAuthentication from 'expo-local-authentication'
+
 
 Notification.setNotificationHandler({
   handleNotification: async () => ({

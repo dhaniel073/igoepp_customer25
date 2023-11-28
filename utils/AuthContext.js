@@ -95,7 +95,7 @@ function AuthContextProvider({children}){
     }
 
     function customerShowAmount (status) {
-        if(status === null || status === undefined || status === "" || status === 'show'){
+        if(status === 'show'){
             setauthShowAmount('show')
             AsyncStorage.setItem('customerShowAmount', "show")
         }else{

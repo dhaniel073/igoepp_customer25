@@ -1,4 +1,4 @@
-import { Alert, FlatList, Linking, Pressable, RefreshControl, TextInput, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, FlatList, Linking, Pressable, RefreshControl, TextInput, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Platform } from 'react-native'
 import React, { useContext, useEffect, useLayoutEffect, useState } from 'react'
 import { Border, Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle'
 import GoBack from '../Component/Ui/GoBack'
@@ -514,6 +514,7 @@ const Requests = ({navigation}) => {
         <Modal isVisible={ismodalVisible}>
             <SafeAreaView style={styles.centeredView}>
 
+           
             <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => toggleModal()}>
               <MaterialIcons name="cancel" size={30} color="white" />
             </TouchableOpacity>
@@ -526,7 +527,13 @@ const Requests = ({navigation}) => {
                   keyExtractor={(item) => item.id}
                   renderItem={({item}) => (
                     <View>
-                    <Image source={require("../assets/igoepp_transparent2.png")} style={{height:130, width:130, position:'absolute', alignContent:'center', alignSelf:'center', top:DIMENSION.HEIGHT * 0.1,justifyContent:'center', opacity:0.3, }} contentFit='contain'/>
+                       {
+                          Platform.OS === 'android' ?
+                            <Image source={require("../assets/igoepp_transparent2.png")} style={{height:130, width:130, position:'absolute', alignContent:'center', alignSelf:'center', top:DIMENSION.HEIGHT * 0.1,justifyContent:'center', opacity:0.3, }} contentFit='contain'/>
+                          :
+                          <Image source={require("../assets/igoepp_transparent2.png")} style={{height:130, width:130, position:'absolute', alignContent:'center', alignSelf:'center', top:DIMENSION.HEIGHT * 0.05,justifyContent:'center', opacity:0.3, }} contentFit='contain'/>
+                        }
+
                       <View style={{justifyContent:'space-between', flexDirection:'row'}}>
                         <Text style={{fontFamily:'poppinsRegular', fontSize:11}}>Price : </Text>
                         <Text style={{fontFamily:'poppinsRegular', fontSize:11}}>{item.agreed_price === null ? '0.00' : item.agreed_price}</Text>
