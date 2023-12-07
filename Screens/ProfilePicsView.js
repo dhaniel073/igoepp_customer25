@@ -37,7 +37,7 @@ const ProfilePicsView = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.goBack() }>
+      <TouchableOpacity onPress={() => navigation.goBack() } style={{marginHorizontal:10}}>
           <AntDesign name="arrowleft" size={24} color={Color.orange_100} />  
       </TouchableOpacity>
 
@@ -64,7 +64,6 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       marginTop:marginStyle.marginTp,
-      marginHorizontal:10
     },
     image:{
       flex:1,

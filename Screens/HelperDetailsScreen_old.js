@@ -37,7 +37,7 @@ const HelperDetailsScreen = ({navigation, route}) => {
       setIsLoading(false)
     } catch (error) {
       setIsLoading(true)
-      console.log(error)
+      // console.log(error)
       setIsLoading(false)
       return;
     }
@@ -52,7 +52,7 @@ const HelperDetailsScreen = ({navigation, route}) => {
       setIsLoading(false)
     } catch (error) {
       setIsLoading(true)
-      console.log(error)
+      // console.log(error)
       setIsLoading(false)
       return;
     }
@@ -62,7 +62,7 @@ const HelperDetailsScreen = ({navigation, route}) => {
     try {
       setIsLoading(true)
       const response = await ViewHelperRating(helperid, authCtx.token)
-      console.log(response.data.length)
+      // console.log(response.data.length)
       const myObj = response.data[0];
       // console.log(myObj.helper_rating)
       if(response.data.length === 0){
@@ -73,7 +73,7 @@ const HelperDetailsScreen = ({navigation, route}) => {
       setIsLoading(false)
     } catch (error) {
       setIsLoading(true)
-      console.log(error)
+      // console.log(error)
       setIsLoading(false)
       return;
     }  

@@ -52,6 +52,7 @@ const Requests = ({navigation}) => {
       try {
         setIsFetching(true)
         const response = await ShowFetchedRequests(authCtx.Id , authCtx.token)
+        // console.log(response)
         setFetchedRequest(response)
         setIsFetching(false)
       } catch (error) {
@@ -347,7 +348,7 @@ const Requests = ({navigation}) => {
                   <Pressable style={styles.pressable}>
                     <View style={{flexDirection:'row'}}>
                       <Text style={styles.requestName}>{item.cat_name}</Text>
-                      <Text style={{fontSize:12, top:3}}> (RID:{item.id}) {item.help_status}</Text>
+                      <Text style={{fontSize:12, top:3}}> (RID:{item.id})</Text>
                     </View>
                     <View style={{flexDirection:'row', justifyContent:'space-between', width:DIMENSION.WIDTH * 0.85, top:5}}>
                       <Text style={{fontFamily:'poppinsMedium', color: Color.saddlebrown_200, fontSize:10}}>
@@ -368,9 +369,9 @@ const Requests = ({navigation}) => {
                           bid_id: item.id
                         })}>
                         <Ionicons name="chatbubbles" size={24} color={Color.limegreen} />
-                          { item.chat_unread === 0  ? null :
+                          { item.chat_unread_customer === 0  ? null :
                             <ImageBackground  source={require("../assets/ellipse-127.png")} contentFit="contain" style={{height:15, width:15, justifyContent:'center', position: 'absolute', marginLeft:15, marginTop:-4}}>
-                              <Text style={{ fontSize: 8,  color: Color.white, fontFamily:'poppinsBold', textAlign:'center'}}>{item.chat_unread}</Text>
+                              <Text style={{ fontSize: 8,  color: Color.white, fontFamily:'poppinsBold', textAlign:'center'}}>{item.chat_unread_customer}</Text>
                             </ImageBackground>
                           }
                         </TouchableOpacity>
@@ -427,9 +428,9 @@ const Requests = ({navigation}) => {
                             bid_id: item.id
                           })}>
                           <Ionicons name="chatbubbles" size={24} color={Color.limegreen} />
-                            { item.chat_unread === 0  ? null :
+                            { item.chat_unread_customer === 0  ? null :
                               <ImageBackground  source={require("../assets/ellipse-127.png")} contentFit="contain" style={{height:15, width:15, justifyContent:'center', position: 'absolute', marginLeft:15, marginTop:-4}}>
-                                <Text style={{ fontSize: 8,  color: Color.white, fontFamily:'poppinsBold', textAlign:'center'}}>{item.chat_unread}</Text>
+                                <Text style={{ fontSize: 8,  color: Color.white, fontFamily:'poppinsBold', textAlign:'center'}}>{item.chat_unread_customer}</Text>
                               </ImageBackground>
                             }
                           </TouchableOpacity>
@@ -438,7 +439,7 @@ const Requests = ({navigation}) => {
                       }
 
                     <View style={{position:'absolute', padding:5, left:'80%', top:'15%', flexDirection:'row'}}>
-                      <Text style={{ fontFamily: 'poppinsBold', color: Color.brown, fontSize:12 }}>Completed</Text>
+                      <Text style={{ fontFamily: 'poppinsBold', color: Color.brown, fontSize:11 }}>Completed</Text>
                     </View>
 
                     <View style={{flexDirection:'row',   marginTop: 15, marginBottom:10, justifyContent:'space-evenly'}}>   
@@ -494,7 +495,7 @@ const Requests = ({navigation}) => {
                     </View>
 
                     <View style={{position:'absolute', padding:5, left:'80%', top:'17%', flexDirection:'row'}}>
-                    <Text style={{ fontFamily: 'poppinsBold', color: Color.brown, fontSize:12 }}>Cancelled</Text>
+                    <Text style={{ fontFamily: 'poppinsBold', color: Color.brown, fontSize:11 }}>Cancelled</Text>
                     </View>
 
                     <View style={{flexDirection:'row', marginLeft:20,  marginTop: 15, marginBottom:10}}>                    

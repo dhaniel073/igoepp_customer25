@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Alert, Platform, StyleSheet, Text, View, AppState } from 'react-native';
 import SubmitButton from './Component/Ui/SubmitButton';
 import { useFonts } from 'expo-font';
 import LoadingOverlay from './Component/Ui/LoadingOverlay';
@@ -12,7 +12,7 @@ import SignUpScreen from './Screens/SignUpScreen';
 import FirstDisplayScreen from './Screens/FirstDisplayScreen';
 import ForgotPassword from './Screens/ForgotPassword';
 import AuthContextProvider, { AuthContext } from './utils/AuthContext';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BillPayment from './Screens/BillPayment';
 import RequestHelp from './Screens/RequestHelp';
@@ -54,6 +54,10 @@ import TransactionPin from './Screens/TransactionPin';
 import HelperDetails from './Screens/HelperDetails';
 import Biometric from './Screens/Biometric';
 import * as LocalAuthentication from 'expo-local-authentication'
+import * as Device from 'expo-device'
+import PasswordReset from './Screens/PasswordReset';
+
+
 
 
 Notification.setNotificationHandler({
@@ -70,6 +74,63 @@ const Tabs = createBottomTabNavigator()
 export default function App() {
   const [location, setLocation]= useState(null)
   const [errorMsg, setErrorMsg] = useState(null)   
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+
+    notificationListener.current = Notification.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    responseListener.current = Notification.addNotificationResponseReceivedListener(response => {
+      console.log(response);
+    });
+
+    return () => {
+      Notification.removeNotificationSubscription(notificationListener.current);
+      Notification.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  async function registerForPushNotificationsAsync() {
+    let token;
+  
+    if (Platform.OS === 'android') {
+      await Notification.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notification.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+  
+    if (Device.isDevice) {
+      const { status: existingStatus } = await Notification.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notification.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+
+      // Learn more about projectId:
+      // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
+      token = (await Notification.getExpoPushTokenAsync({ projectId: '0e18ffeb-cbc7-439c-8348-da5e8ba93af1' })).data;
+      console.log(token);
+    } else {
+      // alert('Must use physical device for Push Notifications');
+    }
+  
+    return token;
+  }
+
 
   const [fontloaded] =  useFonts({
     'poppinsRegular': require("./assets/Fonts/Poppins-Regular.ttf"),
@@ -128,21 +189,6 @@ export default function App() {
 
   function AuthStack (){
 
-    const [isFirstLaunch, setIsFirstLaunch] = useState(null)
-      useEffect(() => {
-        AsyncStorage.getItem('alreadyLaunched').then(value => {
-          if(value === null){
-            AsyncStorage.setItem('alreadyLaunched', 'true');
-            setIsFirstLaunch(true);
-          }else{
-            setIsFirstLaunch(false)
-          }
-        })
-      }, [])
-
-      if(isFirstLaunch === null){
-        return null
-      }else if(isFirstLaunch === true){
         return  (
           <Stack.Navigator
           screenOptions={{
@@ -179,37 +225,8 @@ export default function App() {
             />
           </Stack.Navigator>
         )
-      }else{
-        return (
-        <Stack.Navigator
-        screenOptions={{
-          contentStyle:{backgroundColor: "#fff"}
-        }}
-        >
-          <Stack.Screen
-            name='Login'
-            component={Login}
-            options={{
-              headerShown: false
-            }} 
-          />
-            <Stack.Screen
-            name='SignUp'
-            component={SignUpScreen}
-            options={{
-              headerShown: false
-            }} 
-          />
-            <Stack.Screen
-            name='ForgotPassword'
-            component={ForgotPassword}
-            options={{
-              headerShown: false
-            }} 
-          />
-        </Stack.Navigator>
-        )
-      }
+      
+      
   }
 
   function TabNav(){
@@ -287,6 +304,57 @@ export default function App() {
   }
 
   function AuthenticatedStack(){
+    const authCtx = useContext(AuthContext)
+    const [isLoading, setisLoading] = useState(false)
+
+    useEffect(() => {
+      try {
+        setisLoading(true)
+        checkLastLoginTimestamp()
+        setisLoading(false)
+      } catch (error) {
+        setisLoading(true)
+        setisLoading(false)
+        return;
+      }
+    },[])
+    
+      // console.log(authCtx.lastLoginTimestamp + " timestamp")
+  
+      const checkLastLoginTimestamp =  () => {
+        const storedTimestamp = authCtx.lastLoginTimestamp
+        const lastLoginTimestamp = new Date(storedTimestamp);
+        const currentTimestamp = new Date();
+    
+        if(authCtx.lastLoginTimestamp === null || undefined || ""){
+          return 
+        }else{
+          console.log(storedTimestamp + " storedtime")
+          console.log(lastLoginTimestamp + " lastlogintime")
+          console.log(currentTimestamp + " current time")
+
+          const timeDifferenceInMinutes = Math.floor(
+            (currentTimestamp - lastLoginTimestamp) / (1000 * 60)
+          );
+
+          console.log(timeDifferenceInMinutes + " difference")
+      
+          // Adjust the threshold based on your requirements (e.g., 30 minutes)
+          const authenticationThresholdInMinutes = 5;
+      
+          if (timeDifferenceInMinutes > authenticationThresholdInMinutes) {
+            // Prompt the user to reauthenticate
+            // You can navigate to a login screen or show a modal for reauthentication
+            console.log('Reauthentication required');
+            authCtx.logout()
+          }
+        }
+      };
+
+      if(isLoading){
+        return <LoadingOverlay message={"..."}/>
+      }
+
     return (
       <Stack.Navigator
         screenOptions={{
@@ -531,16 +599,71 @@ export default function App() {
             headerShown: false
           }} 
         />
+        <Stack.Screen
+          name='PasswordReset'
+          component={PasswordReset}
+          options={{
+            headerShown: false
+          }} 
+        />
       </Stack.Navigator>
     )
   }
 
-  const Navigation = () => {
+  const AppLogoutcheck = () => {
+    const appState = useRef(AppState.currentState);
+    const lastActiveTime = useRef(Date.now());
+
+    useEffect(() => {
+      const handleAppStateChange = (nextAppState) => {
+        if (appState.current === 'active' && nextAppState.match(/inactive|background/)) {
+          // App went into background or inactive state
+          lastActiveTime.current = Date.now();
+        }
+  
+        if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+          // App came to the foreground
+          const idleTime = Date.now() - lastActiveTime.current;
+          console.log(`Idle time: ${idleTime} milliseconds`);
+        }
+  
+        appState.current = nextAppState;
+      };
+    
+      // Set up the AppState event listener
+      AppState.addEventListener('change', handleAppStateChange);
+     
+    }, []);
+  
+  }
+
+  const Navigation =  () => {
     const authCtx = useContext(AuthContext)
+    const idleTimerRef = useRef(null);
+
+    const logoutUser = () => {
+      // Perform the logout action
+      Alert.alert('Idle Timeout', 'You have been logged out due to inactivity.');
+      // Implement your logout logic here, such as navigating to the login screen.
+    };
+  
+    // setIdleTimerDisabled
+
+    
+
+    const checkAuth =  () => {
+      if(authCtx.isAuthenticated === false){
+        return <AuthStack/>
+      }else{
+        return <AuthenticatedStack/>
+      }
+    }
+
     return(
       <NavigationContainer>
-        {!authCtx.isAuthenticated && <AuthStack/>}
-        {authCtx.isAuthenticated && <AuthenticatedStack/>}
+        {/* {!authCtx.isAuthenticated && <AuthStack/>}
+        {authCtx.isAuthenticated && <AuthenticatedStack/>} */}
+        {checkAuth()}
       </NavigationContainer>
     )
   }
@@ -549,6 +672,7 @@ export default function App() {
   function Root(){
     const authCtx = useContext(AuthContext)
     const [isTrying, setisTrying] = useState(false)
+
   
     async function fetchData(){
       setisTrying(true)
@@ -561,6 +685,9 @@ export default function App() {
       const storedpicture = await AsyncStorage.getItem('customerPicture')
       const storedshowamount = await AsyncStorage.getItem('customerShowAmount')
       const storedbalance = await AsyncStorage.getItem('customerBalance')
+      const storedlastlogintime = await AsyncStorage.getItem('customerlastLoginTimestamp')
+      const storedpoint = await AsyncStorage.getItem('customerPoints')
+      
       
       
       if(storedToken && storedId && storedemail){
@@ -573,6 +700,8 @@ export default function App() {
         authCtx.customerPhone(storedphone)
         authCtx.customerPicture(storedpicture)
         authCtx.customerShowAmount(storedshowamount)
+        authCtx.customerlastLoginTimestamp(storedlastlogintime)
+        authCtx.customerPoints(storedpoint)
       }
       setisTrying(false)
     }
@@ -589,6 +718,7 @@ export default function App() {
 
   
   }
+
 
 
 

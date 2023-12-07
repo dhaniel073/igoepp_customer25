@@ -19,12 +19,12 @@ const Payments = ({navigation}) => {
       try {
         setisloading(true)
         const response = await AllTransaction(authCtx.Id, authCtx.token)
-        console.log(response)
+        // console.log(response)
         setPaymentHis(response)
         setisloading(false)
       } catch (error) {
         setisloading(true)
-        console.log(error)
+        // console.log(error)
         Alert.alert("Error", "Error fetching Payment History", [
           {
             text: "Ok",

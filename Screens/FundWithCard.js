@@ -39,7 +39,7 @@ const FundWithCard = ({navigation}) => {
       setisloading(false)
     } catch (error) {
       setisloading(true)
-      console.log(error.response)
+      // console.log(error.response)
       Alert.alert("Sorry", "An error occured try again later", [
         {
           text:"Ok",

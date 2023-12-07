@@ -49,7 +49,7 @@ const ServiceHistory = ({navigation}) => {
       return unsubscribe;
     }, [navigation]);
 
-    console.log(fetchedRequest.length)
+    // console.log(fetchedRequest.length)
 
     // console.log(fullData)
     const handleSearch = (query) => {

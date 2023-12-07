@@ -50,7 +50,7 @@ const TransactionPin = ({navigation}) => {
     //     }
 
             value.push(text)
-        console.log(value)
+        // console.log(value)
     } 
 
   return (

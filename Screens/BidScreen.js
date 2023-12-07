@@ -3,14 +3,15 @@ import React, { useContext, useState, useEffect } from 'react'
 import { Border, Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle'
 import GoBack from '../Component/Ui/GoBack'
 import { AuthContext } from '../utils/AuthContext';
-import { BidAccept, BidAcceptCash, BidDecline, BidNegotiate, BidRequests, SessionIDCheck } from '../utils/AuthRoute';
+import { BidAccept, BidAcceptCash, BidDecline, BidNegotiate, BidRequests, CustomerInfoCheck, SessionIDCheck, ValidatePin } from '../utils/AuthRoute';
 import LoadingOverlay from '../Component/Ui/LoadingOverlay';
 import { Image, ImageBackground } from 'expo-image';
-import {MaterialCommunityIcons} from "@expo/vector-icons"
+import {MaterialCommunityIcons, MaterialIcons} from "@expo/vector-icons"
 import Modal from 'react-native-modal'
 import Input from '../Component/Ui/Input';
 import { Dropdown } from 'react-native-element-dropdown';
 import * as Notification from 'expo-notifications'
+import { useRef } from 'react';
 
 
 const data = [
@@ -39,6 +40,12 @@ const BidScreen = ({navigation, route}) => {
   const date = maindate.toDateString()
   const [amount, setamount] = useState()
   const time = maindate.toLocaleTimeString()
+  const  [pin, setpin] = useState()
+  const [pinvalid, setpinvalid] = useState(false)
+  const [pincheckifempty, setpincheckifempty] = useState('')
+  const [isSetpinModalVisible, setisSetpinModalVisible] = useState(false)
+  const [pinerrormessage, setPinerrorMessage] = useState('')
+  const [ischecking, setischecking] = useState(false)
 
 
 
@@ -46,7 +53,7 @@ const BidScreen = ({navigation, route}) => {
   const fetchBidRequest = async() => {
     setisloading(true)
     const response = await BidRequests(bid_id, authCtx.token)
-    console.log(response)
+    // console.log(response)
     setbidRequest(response)
     setisloading(false)
   }
@@ -54,7 +61,7 @@ const BidScreen = ({navigation, route}) => {
   const unsubscribe = async () => {
     try {
     const response = await SessionIDCheck(authCtx.email, authCtx.token)
-    console.log(response)
+    // console.log(response)
     authCtx.customerSessionId(response.login_session_id)
     } catch (error) {
     // console.log(error.response.data)
@@ -66,6 +73,22 @@ const BidScreen = ({navigation, route}) => {
       fetchBidRequest()
       unsubscribe()
     })
+  }, [])
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      try {
+        setisloading(true)
+        const response = await CustomerInfoCheck(authCtx.Id, authCtx.token)
+        setpincheckifempty(response.transaction_pin_setup)
+        setisloading(false)
+      } catch (error) {
+        setisloading(true)
+        setisloading(false)
+        return;
+      }
+    })
+    return unsubscribe;
   }, [])
 
 
@@ -85,9 +108,10 @@ const BidScreen = ({navigation, route}) => {
     let sendprice = pricetag
     setamount(sendprice)
     // setPrice(pricetag)
+    // console.log(id, pricetag)
   }
 
-  const toggleNegotiateModal = (id, ) => {
+  const toggleNegotiateModal = (id) => {
     let sendId = id
     setId(sendId)
     setNegotiatetModalVisible(!isNegotiateModalVisible)
@@ -99,8 +123,8 @@ const BidScreen = ({navigation, route}) => {
   
     if(negotiationcheck){
       setbudgetInvalid(negotiationcheck)
-      console.log(negotiationcheck)
-      console.log(budget)
+      // console.log(negotiationcheck)
+      // console.log(budget)
       Alert.alert('Invalid Budget', 'Invalid Budget Amount')
     }else{
     try {
@@ -154,6 +178,7 @@ const BidScreen = ({navigation, route}) => {
   }
 
   const AcceptBidHandler = async() => {
+    togglePinModal()
     if(!paymentmethod){
         Alert.alert('Payment Method', 'Select payment method to continue')
     }else{
@@ -162,7 +187,7 @@ const BidScreen = ({navigation, route}) => {
       try {
         setisloading(true)
         const response = await BidAcceptCash(Id, paymentmethod, paymentmethod, authCtx.sessionid, authCtx.token)
-        console.log(response)
+        // console.log(response)
         schedulePushNotification()
         Alert.alert('Successful', `You've accepted the bid with id ${Id}`, [
           {
@@ -175,7 +200,7 @@ const BidScreen = ({navigation, route}) => {
         setisloading(false)
       } catch (error) {
         setisloading(true)
-        console.log(error.response)
+        // console.log(error.response)
         Alert.alert('Error Occured', error.response.data.message)
         setisloading(false)
         setPaymentMethod(null)
@@ -185,7 +210,7 @@ const BidScreen = ({navigation, route}) => {
       try {
         setisloading(true)
         const response = await BidAccept(Id, paymentmethod, paymentmethod, authCtx.sessionid, authCtx.token)
-        console.log(response)
+        // console.log(response)
         schedulePushNotification()
         Alert.alert('Successful', `You've accepted the bid with id ${Id}`, [
           {
@@ -198,7 +223,7 @@ const BidScreen = ({navigation, route}) => {
         setisloading(false)
       } catch (error) {
         setisloading(true)
-        console.log(error.response)
+        // console.log(error.response)
         Alert.alert('Error Occured', error.response.data.message)
         setisloading(false)
         setPaymentMethod(null)
@@ -208,6 +233,53 @@ const BidScreen = ({navigation, route}) => {
     }
     }
   }
+
+  
+  let ref = useRef(0);
+
+  function handleClick() {
+    ref.current = ref.current + 1;
+    // alert('You clicked ' + ref.current + ' times!');
+  }
+
+  const togglePinModal = (id, pricetag) => {
+    setisSetpinModalVisible(!isSetpinModalVisible)
+    
+  }
+  
+  const pinValidateCheck = async () => {
+    if(ref.current > 3){
+      Alert.alert("", "To many attempt, try again later", [
+        {
+          text: "Ok",
+          onPress: () => navigation.goBack()
+        }
+      ])
+    }else{
+      try {
+        setischecking(true)
+        const response = await ValidatePin(authCtx.Id, pin, authCtx.token)
+        // console.log(response)
+        setpin()
+        AcceptBidHandler()
+      } catch (error) {
+        setischecking(true)
+        setpin()
+        setPinerrorMessage(error.response.data.message + "\n" + (3 - ref.current + ` trial${3-ref.current > 1 ? 's' : ""} remaining`))
+        // console.log(error.response)
+        Alert.alert("Error", error.response.data.message+ " " + "Try again", [
+          {
+            text: "Ok",
+            onPress: () => {}
+          },
+        ])
+        setischecking(false)
+
+      }
+    }
+  }
+
+  // console.log(Id, amount)
 
   async function schedulePushNotification(response) {
     const askPermision = Notification.requestPermissionsAsync()
@@ -227,11 +299,36 @@ const BidScreen = ({navigation, route}) => {
   if(isloading){
     return <LoadingOverlay message={"..."}/>
   }
+//   useEffect(() => {
+// const unsubscribe = navigation.addListener('focus', async () => {
+//   try {
+//     setIsLoading(true)
+//     const response = await CustomerInfoCheck(authCtx.Id, authCtx.token)
+//     setpincheckifempty(response.transaction_pin_setup)
+//     setIsLoading(false)
+//   } catch (error) {
+//     setIsLoading(true)
+//     setIsLoading(false)
+//     return;
+//   }
+// })
+// return unsubscribe;
+// }, [])
+
   return (
     <SafeAreaView style={{marginTop:marginStyle.marginTp, marginHorizontal: 10, flex:1}}>
       <GoBack onPress={() => navigation.goBack()}>Back</GoBack>
       <Text style={styles.bidtxt}>BidScreen</Text>
 
+      {
+        pincheckifempty === "N" ? Alert.alert("Message", "No transaction pin, set a transaction pin to be able to accept bid", [
+          {
+            text: "Ok",
+            onPress: () => navigation.navigate('TransactionPin')
+          }
+        ]) 
+        : 
+        <>
       {bidRequest.length === 0 ? <NoRequestNote/> :
       <FlatList
         data={bidRequest}
@@ -370,7 +467,7 @@ const BidScreen = ({navigation, route}) => {
                 <Text style={styles.canceltext}>Cancel</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.viewbtn} onPress={() => [!paymentmethod ? setPaymentMethodInvalid(true)   : [toggleAcceptModal(), AcceptBidHandler()]]}>
+              <TouchableOpacity style={styles.viewbtn} onPress={() => [!paymentmethod ? setPaymentMethodInvalid(true)   : [toggleAcceptModal(Id, amount), togglePinModal(Id, amount)]]}>
                 <Text style={styles.viewtext}>Accept</Text>
               </TouchableOpacity>
             </View>
@@ -379,7 +476,63 @@ const BidScreen = ({navigation, route}) => {
         
         </SafeAreaView>
       </Modal>
-                 
+
+     
+      <Modal isVisible={isSetpinModalVisible} animationInTiming={500}
+      >
+        <SafeAreaView style={styles.centeredView}>
+        <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => [togglePinModal(), setpin()]}>
+          <MaterialIcons name="cancel" size={30} color="white" />
+        </TouchableOpacity>
+          <View style={[styles.modalView, {width: DIMENSION.WIDTH * 0.7}]}>
+          {
+              ischecking ? 
+              <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
+                <LoadingOverlay/>  
+              </View>
+
+              :
+              <>
+              
+            <View>
+            <Text style={[styles.modalText, {fontSize:14}]}>Enter Transaction Pin</Text>
+
+            <SafeAreaView style={{justifyContent:'center', alignItems:'center', marginHorizontal:40}}>
+              <TextInput
+                keyboardType={"numeric"}
+                maxLength={4}
+                style={{fontSize:25, textAlign:'center',width:150, margin:5, borderBottomWidth:1, padding:5}}
+                onChangeText={setpin}
+                value={pin}
+                isInvalid={pinvalid}
+                onFocus={() => [setpinvalid(false), setPinerrorMessage('')]}
+                secureTextEntry
+              />
+              {
+                pinvalid &&
+                <Text style={{fontSize:11, textAlign:'center', color:Color.tomato}}>Pin must be 4 characters</Text>
+              }
+              {
+                pinerrormessage.length !== 0 && <Text  style={{fontSize:11, textAlign:'center', color:Color.tomato}}>{pinerrormessage}</Text>
+              }
+            </SafeAreaView>
+            <View style={{marginBottom:'5%'}}/>
+            </View>
+            {/* <View style={styles.buttonView}> */}
+
+            <View style={{flexDirection:'row', justifyContent:'center'}}>
+              <TouchableOpacity style={styles.cancelbtn} onPress={() => pin === null || pin === undefined || pin === "" || pin.length !== 4  ? setpinvalid(true) : [handleClick(), pinValidateCheck()]}>
+                <Text style={styles.canceltext}>Continue</Text>
+              </TouchableOpacity>
+            </View>             
+              {/* </View> */}
+              </>
+            }
+          </View>
+          </SafeAreaView>
+      </Modal>
+      </>
+      }  
     </SafeAreaView>
   )
 }

@@ -14,6 +14,8 @@ export const AuthContext = createContext({
     balance: "",
     sessionid: "",
     showAmount: "",
+    lastLoginTimestamp: "",
+    points: "",
 
     authenticated: (token) => {},
     customerId: (Id) => {},
@@ -25,6 +27,8 @@ export const AuthContext = createContext({
     customerPicture: (picture) => {},
     customerSessionId: (sessionid) => {},
     customerShowAmount: (showAmount) => {},
+    customerlastLoginTimestamp : (lastLoginTimestamp) => {},
+    customerPoints: (points) => {},
     logout: () => {}
 
 })
@@ -41,6 +45,8 @@ function AuthContextProvider({children}){
     const [authphone, setauthphone] = useState()
     const [authSessionId, setauthSessionId] = useState()
     const [authpicture, setauthpicture] = useState()
+    const [authlogintime, setauthlogintime] = useState()
+    const [authpoint, setauthpoint] = useState()
 
 
     if(IsLogout){
@@ -80,6 +86,11 @@ function AuthContextProvider({children}){
         AsyncStorage.setItem('customerLastname', lastname)
     }
 
+    function customerlastLoginTimestamp(time){
+        setauthlogintime(time)
+        AsyncStorage.setItem('customerlastLoginTimestamp', time)
+    }
+
     
     
 
@@ -91,6 +102,18 @@ function AuthContextProvider({children}){
             const amountcheck = amount.toLocaleString()
             setauthBalance(amountcheck)
             AsyncStorage.setItem('customerBalance', amountcheck)
+        }
+    }
+
+    function customerPoints(point) {
+        if(point === null || point ===  '' || point === undefined){
+            const set = "0"
+            setauthpoint(set)
+            AsyncStorage.setItem('customerPoints', set)
+        }else{
+            const pointcheck = point.toLocaleString()
+            setauthpoint(pointcheck)
+            AsyncStorage.setItem('customerPoints', pointcheck)
         }
     }
 
@@ -139,6 +162,8 @@ function AuthContextProvider({children}){
         setauthpicture(null) 
         setauthSessionId(null)
         setauthShowAmount(null)
+        setauthlogintime(null)
+        setauthpoint(null)
         AsyncStorage.removeItem('customertoken')
         AsyncStorage.removeItem('customerId')
         AsyncStorage.removeItem('customerPhone')
@@ -149,6 +174,8 @@ function AuthContextProvider({children}){
         AsyncStorage.removeItem('customerPicture')
         AsyncStorage.removeItem('customerSessionId')
         AsyncStorage.removeItem('customerShowAmount')
+        AsyncStorage.removeItem('customerlastLoginTimestamp')
+        AsyncStorage.removeItem('customerPoints')
         setIsLogout(false)
     }
 
@@ -164,6 +191,9 @@ function AuthContextProvider({children}){
         picture: authpicture, 
         sessionid: authSessionId,
         showAmount: authShowAmount,
+        lastLoginTimestamp: authlogintime,
+        points: authpoint,
+
         authenticated:authenticated,
         customerId:customerId,
         customerEmail: customerEmail,
@@ -174,6 +204,8 @@ function AuthContextProvider({children}){
         customerPicture: customerPicture,
         customerSessionId: customerSessionId,
         customerShowAmount: customerShowAmount,
+        customerlastLoginTimestamp: customerlastLoginTimestamp,
+        customerPoints: customerPoints,
         logout: logout
     }
 

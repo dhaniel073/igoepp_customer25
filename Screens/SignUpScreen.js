@@ -10,6 +10,7 @@ import { AuthContext } from '../utils/AuthContext';
 import LoadingOverlay from '../Component/Ui/LoadingOverlay';
 import  Modal  from 'react-native-modal';
 import {MaterialIcons} from '@expo/vector-icons'
+import * as  Notification from 'expo-notifications'
 
 const data = [
   {
@@ -103,7 +104,7 @@ const SignUpScreen = ({navigation}) => {
       const idtypecheck = idtype === null || undefined || "" || idtype.length === 0
 
 
-      console.log(passcheck)
+      // console.log(passcheck)
     
       if(!emailIsValid || passwordIsInvalid || passcheck || phonecheck || gendercheck || idnumcheck || idtypecheck || !enteredfirstname || !enteredlastname){
 
@@ -130,7 +131,7 @@ const SignUpScreen = ({navigation}) => {
       try {
         setisloading(true)
         const response = await SignUp(enteredEmail, enteredPassword, enteredGender, enteredPhone, enteredfirstname, enteredlastname, idtype, idnum)
-        console.log(response)
+        // console.log(response)
         authCtx.authenticated(response.access_token)  
         authCtx.customerId(response.customer_id)
         authCtx.customerEmail(response.email)
@@ -140,15 +141,29 @@ const SignUpScreen = ({navigation}) => {
         authCtx.customerPhone(response.phone)
         authCtx.customerPicture(response.picture)
         authCtx.customerShowAmount('show')
+        authCtx.customerlastLoginTimestamp(new Date().toString())
+        schedulePushNotification()
         setisloading(false)
       } catch (error) {
         setisloading(true)
-        console.log(error.response)
+        // console.log(error.response)
         const myObj = error.response.data.email[0];
         Alert.alert('SignUp Failed', myObj)
         setisloading(false)
       }
       
+    }
+
+    async function schedulePushNotification(response) {
+      await Notification.scheduleNotificationAsync({
+        content: {
+      //   title: "You've got mail! 📬",
+          title: `Welcome`,
+          body: ` Welcome to igoepp kindly setup your transaction pin at the settings to enable you make transaction`,
+          data: { data: 'goes here' },
+        },
+        trigger: { seconds: 2 },
+      });
     }
 
     if(isloading){
@@ -326,7 +341,7 @@ const SignUpScreen = ({navigation}) => {
     </TouchableOpacity>
 
     <View style={styles.modalView}>
-    <Text style={styles.modalText}>Accept Bid</Text>
+    <Text style={styles.modalText}>Accept Terms and Condition</Text>
  
     <View style={{marginBottom:'2%'}}/>
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -524,7 +539,7 @@ const styles = StyleSheet.create({
   modalText: {
     // marginBottom: 15,
     textAlign: 'center',
-    fontSize:18, 
+    fontSize:16, 
     fontFamily:'poppinsRegular'
   },
 })

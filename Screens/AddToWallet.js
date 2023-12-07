@@ -51,7 +51,7 @@ function onAuthenticate (spec){
     })
   }
 
-  console.log(authCtx.showAmount)
+  // console.log(authCtx.showAmount)
   return (
     <View style={{marginTop: marginStyle.marginTp, marginHorizontal:10}}>
       <GoBack onPress={() => navigation.goBack()}>Back</GoBack>

@@ -23,7 +23,7 @@ const CustomerRating = ({navigation, route}) => {
   const [ratecomment, setRateComment] = useState()
   const [helpershowrating, setHelperShowRating] = useState()
 
-  console.log(date1)
+  // console.log(date1)
 
   useEffect(() => {
     // const unsubscribe = navigation.addListener('focus', async () => {
@@ -36,10 +36,10 @@ const CustomerRating = ({navigation, route}) => {
   const helperrating =async  () => {
     try {
       const response = await ViewHelperRatingonRequest(id, authCtx.token)
-      console.log(response.data)
+      // console.log(response.data)
       setHelperShowRating(response.data)
     } catch (error) {
-      console.log(error)
+      // console.log(error)
     }
   }
 
@@ -48,18 +48,18 @@ const CustomerRating = ({navigation, route}) => {
     try {
       setIsLoading(true)
       const response = await HelperGet(helperID, authCtx.token) 
-      console.log(response.data.data)
+      // console.log(response.data.data)
       setCustomerdetails(response.data.data)
       setIsLoading(false)
     } catch (error) {
       setIsLoading(true)
-      console.log(error.response.data.message)
+      // console.log(error.response.data.message)
       setIsLoading(false)
     }
   }
 
   const rateCustomer = async () => {
-    console.log(defaultRating, helperID, ratecomment)
+    // console.log(defaultRating, helperID, ratecomment)
     try {
       setIsLoading(true)
       const response = await RateHelper(id, defaultRating, ratecomment, authCtx.token)
@@ -69,11 +69,11 @@ const CustomerRating = ({navigation, route}) => {
           onPress: () => navigation.goBack()
         }
       ])
-      console.log(response.data)
+      // console.log(response.data)
       setIsLoading(false)
     } catch (error) {
       setIsLoading(true)
-      console.log(error.response.data)
+      // console.log(error.response.data)
       setIsLoading(false)
     }
   }

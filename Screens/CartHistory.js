@@ -22,10 +22,10 @@ const CartHistory = ({navigation}) => {
         const unsubscribe = navigation.addListener('focus', async () => {
         try {
         const response = await CartPurchase(authCtx.Id, authCtx.token)
-        console.log(response)
+        // console.log(response)
         setcarthistory(response)
         } catch (error) {
-        console.log(error.response.data)
+        // console.log(error.response.data)
         }
         })
     },[])
@@ -35,12 +35,12 @@ const CartHistory = ({navigation}) => {
         try {
             setisloading(true)
            const response = await CartHistoryPreview(purchase_id, authCtx.token)
-           console.log(response)
+          //  console.log(response)
            setisviewbyid(response)
            setisloading(false)
         } catch (error) {
             // setIsFetching(true)
-            console.log(error)
+            // console.log(error)
             // setIsFetching(false)
             return;
         }
@@ -51,7 +51,7 @@ const CartHistory = ({navigation}) => {
         setpurchaseid(id)
     }
 
-    console.log(purchaseid)
+    // console.log(purchaseid)
 
     const NoSubCategoryNote = () => {
         return (

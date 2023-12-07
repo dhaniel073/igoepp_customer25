@@ -12,112 +12,115 @@ import { AuthContext } from '../utils/AuthContext'
 import {Ionicons} from '@expo/vector-icons'
 import * as LocalAuthentication from 'expo-local-authentication'
 import * as Device from 'expo-device'
+import AsyncStorage from '@react-native-async-storage/async-storage'
   
 
 const Login = ({navigation}) => {
-    const [enteredEmail, setEnteredEmail] = useState('')
-    const [enteredPassword, setEnteredPassword] = useState('')
-    const [emailIsInvalid, setEmailIsInvalid] = useState(true)
-    const [passwordIsInvalid, setPasswordIsInvalid] = useState(true)
-    const [isloading, setIsloading] = useState(false)
-    const authCtx = useContext(AuthContext)
-    const [isAuthenticated, setIsAuthenticated] = useState(false)
-    const log = Device.osInternalBuildId
-
+  const [enteredEmail, setEnteredEmail] = useState('')
+  const [enteredPassword, setEnteredPassword] = useState('')
+  const [emailIsInvalid, setEmailIsInvalid] = useState(true)
+  const [passwordIsInvalid, setPasswordIsInvalid] = useState(true)
+  const [isloading, setIsloading] = useState(false)
+  const authCtx = useContext(AuthContext)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const log = Device.osInternalBuildId
    
-    const updateInputValueHandler = (inputType, enteredValue) => {
-      switch (inputType) {
-        case 'email':
-          setEnteredEmail(enteredValue)
-          break;
+  const updateInputValueHandler = (inputType, enteredValue) => {
+    switch (inputType) {
+      case 'email':
+        setEnteredEmail(enteredValue)
+        break;
 
-        case 'password':
-          setEnteredPassword(enteredValue)
-          break;
-      }
+      case 'password':
+        setEnteredPassword(enteredValue)
+        break;
     }
+  }
 
-    const loginhandler = async () => {
-      const emailcheck = enteredEmail.includes('@') && enteredEmail.includes(".com")
-      const passwordcheck = enteredPassword.length > 7
-      
-      // console.log(emailcheck, passwordcheck)
-      setEmailIsInvalid(emailcheck)
-      setPasswordIsInvalid(passwordcheck)
+  const loginhandler = async () => {
+    const emailcheck = enteredEmail.includes('@') && enteredEmail.includes(".com")
+    const passwordcheck = enteredPassword.length > 7
+    
+    // console.log(emailcheck, passwordcheck)
+    setEmailIsInvalid(emailcheck)
+    setPasswordIsInvalid(passwordcheck)
 
-      if(!emailcheck || !passwordcheck){
-        Alert.alert('Invalid details', 'Please check your entered credentials.')
-      }else{
-          try {
-            setIsloading(true)
-            const response = await LoginUrl(enteredEmail, enteredPassword)
-            // console.log(response)
-            authCtx.authenticated(response.access_token)  
-            authCtx.customerId(response.customer_id)
-            authCtx.customerEmail(response.email)
-            authCtx.customerFirstName(response.first_name)
-            authCtx.customerLastName(response.last_name)
-            authCtx.customerBalance(response.wallet_balance)
-            authCtx.customerPhone(response.phone)
-            authCtx.customerPicture(response.picture)
-            authCtx.customerShowAmount('show')
-            setIsloading(false)
-          } catch (error) {
-            setIsloading(true)
-            Alert.alert('Login Failed', error.response.data.message)
-            // console.log(error.response)
-            setIsloading(false)
-          }
-      }
-    }
-
-    function onAuthenticate (spec){
-      const auth = LocalAuthentication.authenticateAsync({
-        promptMessage: 'Authenticate with Touch ID',
-        fallbackLabel: 'Enter Password'
-      });
-      auth.then(result => {
-        setIsAuthenticated(result.success);
-        if(result.success === true){
-          BiometricSignUp()
-        }else if(result.error === 'not_enrolled'){
-          Alert.alert("", result.error)
-          console.log(result)
-        }else{
-          Alert.alert("Error", "Try again later")
-        }
-      })
-    }
-
-    const BiometricSignUp = async () => {
+    if(!emailcheck || !passwordcheck){
+      Alert.alert('Invalid details', 'Please check your entered credentials.')
+    }else{
       try {
         setIsloading(true)
-        const response = await LoginWithBiometric(log)
-        console.log(response.data)
-        authCtx.authenticated(response.data.access_token)  
-        authCtx.customerId(response.data.customer_id)
-        authCtx.customerEmail(response.data.email)
-        authCtx.customerFirstName(response.data.first_name)
-        authCtx.customerLastName(response.data.last_name)
-        authCtx.customerBalance(response.data.wallet_balance)
-        authCtx.customerPhone(response.data.phone)
-        authCtx.customerPicture(response.data.picture)
+        const response = await LoginUrl(enteredEmail, enteredPassword)
+        console.log(response.total_points + " response")
+        authCtx.authenticated(response.access_token)  
+        authCtx.customerId(response.customer_id)
+        authCtx.customerEmail(response.email)
+        authCtx.customerFirstName(response.first_name)
+        authCtx.customerLastName(response.last_name)
+        authCtx.customerBalance(response.wallet_balance)
+        authCtx.customerPhone(response.phone)
+        authCtx.customerPicture(response.picture)
         authCtx.customerShowAmount('show')
+        authCtx.customerlastLoginTimestamp(new Date().toString())
+        AsyncStorage.setItem("checktime",new Date().toString())
+        console.log(response.total_points + " total point")
         setIsloading(false)
       } catch (error) {
         setIsloading(true)
         Alert.alert('Login Failed', error.response.data.message)
-        setIsloading(false)   
-        // console.log(error.response)     
+        // console.log(error.response)
+        setIsloading(false)
       }
     }
+  }
 
+  function onAuthenticate (spec){
+    const auth = LocalAuthentication.authenticateAsync({
+      promptMessage: 'Authenticate with Touch ID',
+      fallbackLabel: 'Enter Password'
+    });
+    auth.then(result => {
+      setIsAuthenticated(result.success);
+      if(result.success === true){
+        BiometricSignUp()
+      }else if(result.error === 'not_enrolled'){
+        Alert.alert("", result.error)
+        console.log(result)
+      }else{
+        Alert.alert("Error", "Try again later")
+      }
+    })
+  }
 
-    if(isloading){
-      return <LoadingOverlay message={"Logging in"}/>
+  const BiometricSignUp = async () => {
+    try {
+      setIsloading(true)
+      const response = await LoginWithBiometric(log)
+      // console.log(response.data)
+      authCtx.authenticated(response.data.access_token)  
+      authCtx.customerId(response.data.customer_id)
+      authCtx.customerEmail(response.data.email)
+      authCtx.customerFirstName(response.data.first_name)
+      authCtx.customerLastName(response.data.last_name)
+      authCtx.customerBalance(response.data.wallet_balance)
+      authCtx.customerPhone(response.data.phone)
+      authCtx.customerPicture(response.data.picture)
+      authCtx.customerShowAmount('show')
+      authCtx.customerlastLoginTimestamp(new Date().toString())
+      authCtx.customerPoints(response.data.total_points)
+      setIsloading(false)
+    } catch (error) {
+      setIsloading(true)
+      Alert.alert('Login Failed', error.response.data.message)
+      setIsloading(false)   
+      console.log(error.response)     
     }
+  }
 
-    
+ 
+  if(isloading){
+    return <LoadingOverlay message={"Logging in"}/>
+  }
 
   return (
     <SafeAreaView>

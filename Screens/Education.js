@@ -1,4 +1,4 @@
-import { Alert, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle'
 import GoBack from '../Component/Ui/GoBack'
@@ -8,11 +8,12 @@ import Input from '../Component/Ui/Input'
 import SubmitButton from '../Component/Ui/SubmitButton'
 import { AuthContext } from '../utils/AuthContext'
 import axios from 'axios'
-import { WaecCard } from '../utils/AuthRoute'
+import { CustomerInfoCheck, ValidatePin, WaecCard } from '../utils/AuthRoute'
 import * as Notifications from 'expo-notifications'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
 import Modal from 'react-native-modal'
 import {MaterialIcons, MaterialCommunityIcons, Entypo} from '@expo/vector-icons'
+import { useRef } from 'react'
 
 
 
@@ -30,10 +31,33 @@ const Education = ({route, navigation}) => {
   const [isModalVisble, setIsModalVisible] = useState(false)
   const authId = route?.params?.id
   const authCtx = useContext(AuthContext)
+  const [pinT, setpinT] = useState()
+  const [pinvalid, setpinvalid] = useState(false)
+  const [pincheckifempty, setpincheckifempty] = useState([])
+  const [isSetpinModalVisible, setisSetpinModalVisible] = useState(false)
+  const [pinerrormessage, setPinerrorMessage] = useState('')
+  const [ischecking, setischecking] = useState(false)
+
 
   const maindate = new Date() 
   const date = maindate.toDateString()
   const time = maindate.toLocaleTimeString()
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      try {
+        setisLoading(true)
+        const response = await CustomerInfoCheck(authCtx.Id, authCtx.token)
+        setpincheckifempty(response.transaction_pin_setup)
+        setisLoading(false)
+      } catch (error) {
+        setisLoading(true)
+        setisLoading(false)
+        return;
+      }
+    })
+    return unsubscribe;
+  }, [])
 
   useEffect(() => {
     setisLoading(true)
@@ -95,7 +119,54 @@ const Education = ({route, navigation}) => {
       })
   }
 
+
+  let refT = useRef(0);
+
+  function handleClick() {
+    refT.current = refT.current + 1;
+    // alert('You clicked ' + ref.current + ' times!');
+  }
+
+  const togglePinModal = (id, pricetag) => {
+    setisSetpinModalVisible(!isSetpinModalVisible)
+    
+  }
+  
+  const pinValidateCheck = async () => {
+    if(refT.current > 3){
+      Alert.alert("", "To many attempt, try again later", [
+        {
+          text: "Ok",
+          onPress: () => navigation.goBack()
+        }
+      ])
+    }else{
+      try {
+        setischecking(true)
+        const response = await ValidatePin(authCtx.Id, pinT, authCtx.token)
+        // console.log(response)
+        setpinT()
+        validate()
+      } catch (error) {
+        setischecking(true)
+        setpinT()
+        setPinerrorMessage(error.response.data.message + "\n" + (3 - refT.current + ` trial${3-refT.current > 1 ? 's' : ""} remaining`))
+        // console.log(error.response)
+        Alert.alert("Error", error.response.data.message+ " " + "Try again", [
+          {
+            text: "Ok",
+            onPress: () => {}
+          },
+        ])
+        setischecking(false)
+
+      }
+    }
+  }
+
+
   const validate = async () => {
+    togglePinModal()
     try{
       setisLoading(true)
       const response = await WaecCard(authCtx.Id, id, edu, price, authCtx.token)
@@ -151,6 +222,17 @@ const Education = ({route, navigation}) => {
       <GoBack onPress={() => navigation.goBack()}>Back</GoBack>
       <Text style={styles.educationtxt}>Education</Text>
 
+     
+      {
+        pincheckifempty === "N" ? Alert.alert("Message", "No transaction pin, set a transaction pin to be able to make transactions", [
+          {
+            text: "Ok",
+            onPress: () =>  navigation.navigate('TransactionPin')
+          }
+        ]) 
+        :
+
+      <>
       <ImageBackground style={{flexDirection:'row', alignItems:'center', justifyContent:'space-evenly',}}>
           <Image contentFit='contain' source={require("../assets/waec.png")} style={[styles.image]}/>
       </ImageBackground>
@@ -232,10 +314,12 @@ const Education = ({route, navigation}) => {
 
               {edu && 
               <View style={{marginHorizontal:20, marginTop:20}}>
-              <SubmitButton message={"Submit"} onPress={validate}/>
+              <SubmitButton message={"Submit"} onPress={togglePinModal}/>
               </View>
               }
             </View>
+          </>
+        }
         
 
 
@@ -282,18 +366,72 @@ const Education = ({route, navigation}) => {
 
                        <View style={{flexDirection:'row', justifyContent:'space-evenly', alignItems:'center', marginTop: 20,}}>
                         
-                          <TouchableOpacity style={styles.cancelbtn} onPress={() => {}}>
+                          <TouchableOpacity style={{}} onPress={() => {}}>
                                 <Text><Entypo name="forward" size={24} color="black" /></Text>
                           </TouchableOpacity>
 
-                          <TouchableOpacity style={styles.viewbtn} onPress={() => [toggleModal(), navigation.goBack()]}>
-                              <Text style={styles.viewtext}>Close</Text>
+                          <TouchableOpacity style={{}} onPress={() => [toggleModal(), navigation.goBack()]}>
+                              <Text style={{}}>Close</Text>
                           </TouchableOpacity>
                         </View>
                     </View>              
             </View>
             </SafeAreaView>
           </Modal>
+
+          
+  <Modal isVisible={isSetpinModalVisible} animationInTiming={500}
+      >
+        <SafeAreaView style={styles.centeredView}>
+        <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => [togglePinModal(), setpinT()]}>
+          <MaterialIcons name="cancel" size={30} color="white" />
+        </TouchableOpacity>
+          <View style={[styles.modalView, {width: DIMENSION.WIDTH * 0.7}]}>
+            {
+              ischecking ? 
+              <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
+                <LoadingOverlay/>  
+              </View>
+
+              :
+              <>
+            <View>
+            <Text style={[styles.modalText, {fontSize:14}]}>Enter Transaction Pin</Text>
+
+            <SafeAreaView style={{justifyContent:'center', alignItems:'center', marginHorizontal:40}}>
+              <TextInput
+                keyboardType={"numeric"}
+                maxLength={4}
+                style={{fontSize:25, textAlign:'center',width:150, margin:5, borderBottomWidth:1, padding:5}}
+                onChangeText={setpinT}
+                value={pinT}
+                isInvalid={pinvalid}
+                onFocus={() => [setpinvalid(false), setPinerrorMessage('')]}
+                secureTextEntry
+              />
+              {
+                pinvalid &&
+                <Text style={{fontSize:11, textAlign:'center', color:Color.tomato}}>Pin must be 4 characters</Text>
+              }
+              {
+                pinerrormessage.length !== 0 && <Text  style={{fontSize:11, textAlign:'center', color:Color.tomato}}>{pinerrormessage}</Text>
+              }
+            </SafeAreaView>
+            <View style={{marginBottom:'5%'}}/>
+            </View>
+            {/* <View style={styles.buttonView}> */}
+
+            <View style={{flexDirection:'row', justifyContent:'center'}}>
+              <TouchableOpacity style={styles.cancelbtn} onPress={() => pinT === null || pinT === undefined || pinT === "" || pinT.length < 4  ? setpinvalid(true) : [handleClick(), pinValidateCheck()]}>
+                <Text style={styles.canceltxt}>Continue</Text>
+              </TouchableOpacity>
+            </View>             
+              {/* </View> */}
+            </>
+          }
+          </View>
+          </SafeAreaView>
+      </Modal>
     </ScrollView>
   )
 }
@@ -385,5 +523,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize:18, 
     fontFamily:'poppinsRegular'
+  },
+  cancelbtn:{
+    backgroundColor:Color.darkolivegreen_100,
+    borderColor: Color.darkolivegreen_100,
+    borderWidth: 1,
+    justifyContent:'center',
+    borderRadius: 3,
+    width: DIMENSION.WIDTH * 0.36,
+    padding: 5
+  },
+  canceltxt:{
+    textAlign:'center',
+    alignSelf:'center',
+    fontFamily: 'poppinsMedium',
+    fontSize: 12,
+    color: Color.white
   },
 })

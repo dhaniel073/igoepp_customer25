@@ -37,7 +37,7 @@ const NotificationSetup = ({navigation}) => {
       const response = await EnableAlert(authCtx.Id, eventy_type, alert_type, authCtx.token)
       // console.log(response)
     } catch (error) {
-      console.log(error.response)
+      // console.log(error.response)
       Alert.alert("Error", "An error occured try again later", [
         {
           text: "Ok",

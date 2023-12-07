@@ -73,6 +73,9 @@ const CheckOut = ({navigation, route}) => {
   const [pinvalid, setpinvalid] = useState(false)
   const [isSetpinModalVisible, setisSetpinModalVisible] = useState(false)
   const [pincheckifempty, setpincheckifempty] = useState([])
+  const [pinerrormessage, setPinerrorMessage] = useState('')
+  const [ischecking, setischecking] = useState(false)
+
 
   let ref = useRef(0);
 
@@ -229,7 +232,6 @@ const handleCity = (countryCode, stateCode) => {
   }
 
   const pinValidateCheck = async () => {
-    togglePinModal()
     if(ref.current > 3){
       Alert.alert("", "To many pin trials try again later", [
         {
@@ -239,14 +241,15 @@ const handleCity = (countryCode, stateCode) => {
       ])
     }else{
       try {
-        setIsLoading(true)
+        setischecking(true)
         const response = await ValidatePin(authCtx.Id, pin, authCtx.token)
         // console.log(response)
         setpin()
         MakePurchase()
       } catch (error) {
-        setIsLoading(true)
+        setischecking(true)
         setpin()
+        setPinerrorMessage(error.response.data.message + "\n" + (3 - ref.current + ` trial${3-ref.current > 1 ? 's' : ""} remaining`))
         // console.log(error.response)
         Alert.alert("Error", error.response.data.message+ " " + "Try again", [
           {
@@ -254,15 +257,14 @@ const handleCity = (countryCode, stateCode) => {
             onPress: () => {}
           },
         ])
-        setIsLoading(false)
+        setischecking(false)
 
       }
     }
   }
 
   const MakePurchase= async () => {
-    setIsLoading(true)
-
+    togglePinModal()
       try {
       setIsLoading(true)
         const response = await CartCheckout(first_name,last_name,address,landmark,phone,email,stateName,cityName,countryName,authCtx.Id,paymentmethod,authCtx.token)
@@ -285,8 +287,9 @@ const handleCity = (countryCode, stateCode) => {
               ])
             // }
           }
-        
+      setIsLoading(false)
       } catch (error) {
+        setIsLoading(true)
         // console.log(error)
         Alert.alert("", error.response.data.message, [
           {
@@ -294,8 +297,8 @@ const handleCity = (countryCode, stateCode) => {
             onPress: () => navigation.goBack()
           }
         ])
+        setIsLoading(false)
       }
-      setIsLoading(false)
   }
 
   async function schedulePushNotification() {
@@ -323,7 +326,7 @@ const handleCity = (countryCode, stateCode) => {
         pincheckifempty === "N" ? Alert.alert("Message", "No transaction pin, set a transaction pin to be able to make transactions", [
           {
             text: "Ok",
-            onPress: () => navigation.goBack()
+            onPress: () =>  navigation.navigate('TransactionPin')
           }
         ]) 
         :
@@ -525,13 +528,20 @@ const handleCity = (countryCode, stateCode) => {
       }
 
 
-        <Modal isVisible={isSetpinModalVisible} animationInTiming={500}
-      >
+  <Modal isVisible={isSetpinModalVisible} animationInTiming={500}>
         <SafeAreaView style={styles.centeredView}>
         <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => [togglePinModal(), setpin()]}>
           <MaterialIcons name="cancel" size={30} color="white" />
         </TouchableOpacity>
           <View style={styles.modalView}>
+            {
+              ischecking ? 
+              <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
+                <LoadingOverlay/>  
+              </View>
+
+              :
+              <>
             <View>
             <Text style={styles.modalText}>Enter Transaction Pin</Text>
 
@@ -543,12 +553,15 @@ const handleCity = (countryCode, stateCode) => {
                 onChangeText={setpin}
                 value={pin}
                 isInvalid={pinvalid}
-                onFocus={() => setpinvalid(false)}
+                onFocus={() => [setpinvalid(false), setPinerrorMessage('')]}
                 secureTextEntry
               />
               {
                 pinvalid &&
                 <Text style={{fontSize:11, textAlign:'center', color:Color.tomato}}>Pin must be 4 characters</Text>
+              }
+              {
+                pinerrormessage.length !== 0 && <Text  style={{fontSize:11, textAlign:'center', color:Color.tomato}}>{pinerrormessage}</Text>
               }
             </SafeAreaView>
             <View style={{marginBottom:'5%'}}/>
@@ -556,11 +569,13 @@ const handleCity = (countryCode, stateCode) => {
             {/* <View style={styles.buttonView}> */}
 
             <View style={{flexDirection:'row', justifyContent:'center'}}>
-              <TouchableOpacity style={styles.viewbtn} onPress={() => [ pin === null || pin === undefined || pin === "" || pin.length < 4  ? setpinvalid(true) : handleClick(), pinValidateCheck()]}>
+              <TouchableOpacity style={styles.viewbtn} onPress={() => pin === null || pin === undefined || pin === "" || pin.length < 4  ? setpinvalid(true) : [handleClick(), pinValidateCheck()]}>
                 <Text style={styles.viewtext}>Continue</Text>
               </TouchableOpacity>
             </View>             
               {/* </View> */}
+              </>
+            }
           </View>
           </SafeAreaView>
       </Modal>

@@ -19,11 +19,11 @@ const MarketPlaceItem = ({navigation, route}) => {
       try{
         setIsFetching(true)
         const response = await CartItem(categoryId, authCtx.token)
-        console.log(response)
+        // console.log(response)
         setFetchedCategory(response)
         setIsFetching(false)
       }catch(error){
-        console.log(error)
+        // console.log(error)
         setIsFetching(true)
         Alert.alert("Error", "Error fetching Market Items", [
           {

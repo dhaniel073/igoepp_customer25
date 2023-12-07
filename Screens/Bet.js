@@ -1,5 +1,5 @@
-import { Platform, SafeAreaView, ScrollView, StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import { Platform, SafeAreaView, ScrollView, StyleSheet, Text, View, TouchableOpacity, Alert, TextInput } from 'react-native'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import GoBack from '../Component/Ui/GoBack'
 import { Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle'
 import { AuthContext } from '../utils/AuthContext'
@@ -9,7 +9,7 @@ import Modal from 'react-native-modal'
 import Input from '../Component/Ui/Input'
 import {MaterialIcons, MaterialCommunityIcons, Entypo} from '@expo/vector-icons'
 import axios from 'axios'
-import { BetPay, ValidateBet } from '../utils/AuthRoute'
+import { BetPay, CustomerInfoCheck, ValidateBet, ValidatePin } from '../utils/AuthRoute'
 import * as Notification from 'expo-notifications'
 import SubmitButton from '../Component/Ui/SubmitButton'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
@@ -25,11 +25,36 @@ const Bet = ({route, navigation}) => {
   const [ismodalvisible, setismodalvisible] = useState(false)
   const authId = route?.params?.id
   const [ref, setRef] = useState()
+
+  const [pinT, setpinT] = useState()
+  const [pinvalid, setpinvalid] = useState(false)
+  const [pincheckifempty, setpincheckifempty] = useState([])
+  const [isSetpinModalVisible, setisSetpinModalVisible] = useState(false)
+  const [pinerrormessage, setPinerrorMessage] = useState('')
+  const [ischecking, setischecking] = useState(false)
+
+
   const maindate = new Date() 
   const date = maindate.toDateString()
   const time = maindate.toLocaleTimeString()
 
   const amountCheck = amount >= 100
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      try {
+        setisloading(true)
+        const response = await CustomerInfoCheck(authCtx.Id, authCtx.token)
+        setpincheckifempty(response.transaction_pin_setup)
+        setisloading(false)
+      } catch (error) {
+        setisloading(true)
+        setisloading(false)
+        return;
+      }
+    })
+    return unsubscribe;
+  }, [])
 
   useEffect(() => {
     const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
@@ -77,15 +102,16 @@ const Bet = ({route, navigation}) => {
       setisloading(true)
       const response = await ValidateBet(authCtx.Id, id, betId, authCtx.token)
       // console.log(response.data)
+      setRef(response.data.requestID)
       if(response.data.status === "Success"){
         Alert.alert(response.data.status, `Confirm funding to bet Id of ${betId}`, [
           {
-              text: "Cancel",
-              onPress: () => {}
+            text: "Cancel",
+            onPress: () => {}
           },
           {
-              text:'Confirm',
-              onPress: () => betPayment(response.data.requestID)
+            text:'Confirm',
+            onPress: () => togglePinModal()
           }
         ])
       }else{
@@ -111,10 +137,57 @@ const Bet = ({route, navigation}) => {
       }
     }
 
-    const betPayment = async (responseID) => {
+    
+    let refT = useRef(0);
+  
+    function handleClick() {
+      refT.current = refT.current + 1;
+      // alert('You clicked ' + ref.current + ' times!');
+    }
+  
+    const togglePinModal = () => {
+      setisSetpinModalVisible(!isSetpinModalVisible)
+    }
+    
+    const pinValidateCheck = async () => {
+      if(refT.current > 3){
+        Alert.alert("", "To many attempt, try again later", [
+          {
+            text: "Ok",
+            onPress: () => navigation.goBack()
+          }
+        ])
+      }else{
+        try {
+          setischecking(true)
+          const response = await ValidatePin(authCtx.Id, pinT, authCtx.token)
+          // console.log(response)
+          setpinT()
+          toggleModal()
+          betPayment(ref)
+        } catch (error) {
+          setischecking(true)
+          setpinT()
+          setPinerrorMessage(error.response.data.message + "\n" + (3 - refT.current + ` trial${3-refT.current > 1 ? 's' : ""} remaining`))
+          // console.log(error.response)
+          Alert.alert("Error", error.response.data.message+ " " + "Try again", [
+            {
+              text: "Ok",
+              onPress: () => {}
+            },
+          ])
+          setischecking(false)
+  
+        }
+      }
+    }
+  
+    // console.log(ref)
+    const betPayment = async () => {
+      togglePinModal()
       try {
         setisloading(true)
-        const response = await BetPay(responseID, amount, authCtx.token)
+        const response = await BetPay(ref, amount, authCtx.token)
         // console.log(response)
         if(response.data.message === "failed"){
           Alert.alert(response.data.message, response.data.description + ", fund wallet and try again", [
@@ -124,9 +197,8 @@ const Bet = ({route, navigation}) => {
             }
           ])
         }else{
-          setRef(responseID)
           // console.log(response.data)
-          schedulePushNotification(response)
+          schedulePushNotification()
           toggleModal()
         }
         setisloading(false)
@@ -148,17 +220,16 @@ const Bet = ({route, navigation}) => {
       return <LoadingOverlay message={"..."}/>
     }
 
-    async function schedulePushNotification(response) {
-      await Notification.scheduleNotificationAsync({
-        content: {
-      //   title: "You've got mail! 📬",
-          title: `Bet Funding 🔔`,
-          body: `You successfully funded your betting account\nBet Id: ${betId}\nAmount: NGN${amount}\nRef: ${response.data.requestID}\nDate: ${date} ${time}`,
-          data: { data: 'goes here' },
-        },
-        trigger: { seconds: 2 },
-      });
-    }
+  async function schedulePushNotification(response) {
+    await Notification.scheduleNotificationAsync({
+      content: {
+        title: `Bet Funding 🔔`,
+        body: `You successfully funded your betting account\nBet Id: ${betId}\nAmount: NGN${amount}\nRef: ${ref}\nDate: ${date} ${time}`,
+        data: { data: 'goes here' },
+      },
+      trigger: { seconds: 2 },
+    });
+  }
 
 
   return (
@@ -166,7 +237,15 @@ const Bet = ({route, navigation}) => {
       <GoBack onPress={() => navigation.goBack()}>Back</GoBack>
       <Text style={styles.bettxt}>{route.params.name === "Betting and/or Lottery" ? "Betting and Lottery" : null}</Text>
 
-
+      {
+        pincheckifempty === "N" ? Alert.alert("Message", "No transaction pin, set a transaction pin to be able to make transactions", [
+          {
+            text: "Ok",
+            onPress: () =>  navigation.navigate('TransactionPin')
+          }
+        ]) 
+        :
+        <>
       <ImageBackground>
         <View style={{flexDirection:'row', justifyContent:'space-evenly', alignItems:'center', }}>
         <Image contentFit='contain' source={require("../assets/1xbet-logo.png")} style={[styles.image]}/>
@@ -234,6 +313,8 @@ const Bet = ({route, navigation}) => {
               </>
             }
         </View>
+        </>
+      }
 
           <Modal isVisible={ismodalvisible}>
             <SafeAreaView style={styles.centeredView}>
@@ -275,18 +356,72 @@ const Bet = ({route, navigation}) => {
 
                       <View style={{flexDirection:'row', justifyContent:'space-evenly', alignItems:'center', marginTop: 20,}}>
                       
-                        <TouchableOpacity style={styles.cancelbtn} onPress={() => {}}>
-                              <Text><Entypo name="forward" size={24} color="black" /></Text>
+                        <TouchableOpacity style={{}} onPress={() => {}}>
+                          <Text><Entypo name="forward" size={24} color="black" /></Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.viewbtn} onPress={() => [toggleModal(), navigation.goBack()]}>
-                            <Text style={styles.viewtext}>Close</Text>
+                        <TouchableOpacity style={{}} onPress={() => [toggleModal(), navigation.goBack()]}>
+                          <Text style={{}}>Close</Text>
                         </TouchableOpacity>
                       </View>
                     </View>              
             </View>
             </SafeAreaView>
           </Modal>
+
+
+    <Modal isVisible={isSetpinModalVisible} animationInTiming={500}>
+        <SafeAreaView style={styles.centeredView}>
+        <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => [togglePinModal(), setpinT()]}>
+          <MaterialIcons name="cancel" size={30} color="white" />
+        </TouchableOpacity>
+          <View style={[styles.modalView, {width: DIMENSION.WIDTH * 0.7}]}>
+            {
+              ischecking ? 
+              <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
+                <LoadingOverlay/>  
+              </View>
+
+              :
+              <>
+              
+            <View>
+            <Text style={[styles.modalText, {fontSize:14}]}>Enter Transaction Pin</Text>
+
+            <SafeAreaView style={{justifyContent:'center', alignItems:'center', marginHorizontal:40}}>
+              <TextInput
+                keyboardType={"numeric"}
+                maxLength={4}
+                style={{fontSize:25, textAlign:'center',width:150, margin:5, borderBottomWidth:1, padding:5}}
+                onChangeText={setpinT}
+                value={pinT}
+                isInvalid={pinvalid}
+                onFocus={() => setpinvalid(false)}
+                secureTextEntry
+              />
+              {
+                pinvalid &&
+                <Text style={{fontSize:11, textAlign:'center', color:Color.tomato}}>Pin must be 4 characters</Text>
+              }
+              {
+                pinerrormessage.length !== 0 && <Text  style={{fontSize:11, textAlign:'center', color:Color.tomato}}>{pinerrormessage}</Text>
+              }
+            </SafeAreaView>
+            <View style={{marginBottom:'5%'}}/>
+            </View>
+            {/* <View style={styles.buttonView}> */}
+
+            <View style={{flexDirection:'row', justifyContent:'center'}}>
+              <TouchableOpacity style={styles.cancelbtn} onPress={() => pinT === null || pinT === undefined || pinT === "" || pinT.length < 4  ? setpinvalid(true) : [handleClick(), pinValidateCheck()]}>
+                <Text style={styles.canceltxt}>Continue</Text>
+              </TouchableOpacity>
+            </View>             
+              {/* </View> */}
+              </>
+            }
+          </View>
+          </SafeAreaView>
+      </Modal>
 
     </ScrollView>
   )
@@ -356,6 +491,21 @@ const styles = StyleSheet.create({
   },
   selectedTextStyle:{
     fontSize:12
-  }
-
+  },
+  cancelbtn:{
+    backgroundColor:Color.darkolivegreen_100,
+    borderColor: Color.darkolivegreen_100,
+    borderWidth: 1,
+    justifyContent:'center',
+    borderRadius: 3,
+    width: DIMENSION.WIDTH * 0.36,
+    padding: 5
+  },
+  canceltxt:{
+    textAlign:'center',
+    alignSelf:'center',
+    fontFamily: 'poppinsMedium',
+    fontSize: 12,
+    color: Color.white
+  },
 })

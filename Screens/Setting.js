@@ -2,8 +2,9 @@ import { Alert, Linking, SafeAreaView, StyleSheet, Text, TouchableOpacity, View 
 import React, { useContext } from 'react'
 import { Color, marginStyle } from '../Component/Ui/GlobalStyle'
 import GoBack from '../Component/Ui/GoBack'
-import {Ionicons, Feather} from "@expo/vector-icons"
+import {Ionicons, Feather, MaterialCommunityIcons} from "@expo/vector-icons"
 import { AuthContext } from '../utils/AuthContext'
+
 
 const Setting = ({navigation}) => {
   const authCtx = useContext(AuthContext)
@@ -11,10 +12,9 @@ const Setting = ({navigation}) => {
   const whatsapp = () => {
      const response =  Linking.openURL('whatsapp://send?text=hello&phone=+2348103902560')
     .then((res) => {
-      console.log(res)
+      // console.log(res)
     }).catch((error) => {
-      Alert.alert("WhatsApp not found ", "WhatsApp not found on device please install whatsApp and try again")
-      console.log(error)
+      return
     })
   }
 
@@ -67,6 +67,13 @@ const Setting = ({navigation}) => {
             <View style={{ flexDirection: 'row',   paddingBottom: 15, marginTop: 15 }}>
             <Ionicons name="finger-print" size={24} color="black" />
               <Text style={styles.textStyle}>Biometric Setup</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={{ alignItems: 'flex-start', borderBottomWidth:1,}} onPress={() => navigation.navigate("PasswordReset")}>
+            <View style={{ flexDirection: 'row',   paddingBottom: 15, marginTop: 15 }}>
+            <MaterialCommunityIcons name="account-lock-outline" size={24} color="black" />
+              <Text style={styles.textStyle}>Change Login Password</Text>
             </View>
           </TouchableOpacity>
 

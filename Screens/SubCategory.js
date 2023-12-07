@@ -207,6 +207,9 @@ const styles = StyleSheet.create({
     height: 40,
     fontSize: 14,
   },
+  selectedTextStyle:{
+    fontSize:13
+  },
   iconStyle: {
     width: 20,
     height: 20,
@@ -316,7 +319,7 @@ const styles = StyleSheet.create({
   modalText: {
     // marginBottom: 15,
     textAlign: 'center',
-    fontSize:18, 
+    fontSize:16, 
     fontFamily:'poppinsRegular'
   },
 })

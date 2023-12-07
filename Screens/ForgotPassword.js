@@ -25,11 +25,11 @@ const ForgotPassword = ({navigation}) => {
     const emailIsValid = emailEntered.includes('@')
     
     if(!emailIsValid){
-      console.log(emailIsValid)
+      // console.log(emailIsValid)
       setEmailEnteredInvalid(emailIsValid)   
       Alert.alert("Invalid Email", "Please enter a valid email")
     }else{
-      console.log(emailIsValid)
+      // console.log(emailIsValid)
       try {
         const responce = await ForgotCustomerPassword(emailEntered)
         Alert.alert("Successful", `A mail has been sent to ${emailEntered}`, [

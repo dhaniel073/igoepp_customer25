@@ -35,6 +35,17 @@ async function authenticateLogin(email, password){
     return data;
 }
 
+async function validateLogin(email, password){
+  const loginUrl = 'https://phixotech.com/igoepp/public/api/igoeppauth/validatelogincustomer'
+  
+  const response = await axios.post(loginUrl, {
+    'username': email,
+    'password': password,
+  })
+  const data = response.data
+  return data;
+}
+
 //session endpoint id
 async function sessionId(email, token){
     const sessionurl = 'https://phixotech.com/igoepp/public/api/auth/igoeppauth/sessioncheckcustomer'
@@ -1043,7 +1054,20 @@ async function biometricsetup(id, fingerprinttoken,  token){
     }
   })
 
-  const data = response.data
+  const data = response
+  return data;
+}
+
+async function disablebiometric(id, token){
+  const url = `https://phixotech.com/igoepp/public/api/auth/customer/${id}/disablebiometric`
+  const response = axios.get(url, {
+    headers:{
+      Accept: 'application/json',
+      Authorization: `Bearer ${token}`
+    }
+  })
+
+  const data = response
   return data;
 }
 
@@ -1058,7 +1082,7 @@ async function loginwithbiometric(fingerprinttoken){
 }
 
 async function setuppin(id, pin, token){
-  const url = `http://phixotech.com/igoepp/public/api/auth/customer/${id}/setuppin`
+  const url = `https://phixotech.com/igoepp/public/api/auth/customer/${id}/setuppin`
   const response = axios.put(url, {
     "pin": pin,
   }, {
@@ -1072,7 +1096,7 @@ async function setuppin(id, pin, token){
 }
 
 async function validatepin(id, pin, token){
-  const url = `http://phixotech.com/igoepp/public/api/auth/customer/${id}/validatepin`
+  const url = `https://phixotech.com/igoepp/public/api/auth/customer/${id}/validatepin`
   const response = axios.put(url, {
     "pin": pin,
   }, {
@@ -1085,11 +1109,34 @@ async function validatepin(id, pin, token){
   return data
 }
 
+async function updatepin(id, pin, token){
+  const url = `https://phixotech.com/igoepp/public/api/auth/customer/${id}/resetpin`
+  const response = axios.put(url, {
+    "pin": pin,
+  }, {
+    headers:{
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  }) 
+  const data = response
+  return data
+}
 
-
-
-
-
+async function customerresetpassword(email, password, token){
+  const url = `https://phixotech.com/igoepp/public/api/auth/customer/customerpasswordreset`
+  const response = axios.post(url, {
+    "password": password,
+    "email": email
+  }, {
+    headers:{
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  }) 
+  const data = response
+  return data
+}
 
 
 
@@ -1106,6 +1153,11 @@ export  function SignUp(email, password,gender, phone, firstname, lastname,ident
 //Login 
 export function LoginUrl(email, password){
   return authenticateLogin(email, password)
+}
+
+
+export const ValidateLogin = (email, password) => {
+  return validateLogin(email, password)
 }
 //Forgot Password
 export function ForgotCustomerPassword(email){
@@ -1390,6 +1442,10 @@ export const BiometricSetup = (id, fingerprinttoken, token) => {
   return biometricsetup(id, fingerprinttoken, token)
 }
 
+export const DisableBiometric = (id, token) => {
+  return disablebiometric(id, token)
+}
+
 export const LoginWithBiometric = (fingerprinttoken) => {
   return loginwithbiometric(fingerprinttoken)
 }
@@ -1400,4 +1456,13 @@ export const SetupPin = (id, pin, token) => {
 
 export const ValidatePin = (id, pin, token) => {
   return validatepin(id, pin, token)
+}
+
+
+export const UpdatePin = (id, pin, token) => {
+  return updatepin(id, pin, token)
+}
+
+export const CustomerResetPassword = (email, password, token) => {
+  return customerresetpassword(email, password, token)
 }

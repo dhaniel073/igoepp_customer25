@@ -322,7 +322,7 @@ const RequestSendInfo = ({navigation, route}) => {
         setIsLoading(true)
         const response = await RequestInfo(authCtx.Id,interest,addressfield,countryName,stateName,cityName,
           landmark,helpsize,vehiclerequest,description,catId,subcatId,helptime,maindate,frequency, preassessment, authCtx.token)
-        console.log(response)
+        // console.log(response)
         Alert.alert("Success", "Request Made Successfully", [
           {
             text:"Ok",
@@ -331,7 +331,7 @@ const RequestSendInfo = ({navigation, route}) => {
         ])
         setIsLoading(false)
       } catch (error) {
-          console.log(error.response)
+          // console.log(error.response)
           setIsLoading(true)
           Alert.alert("Error", "Error Making Request, Try Again Later", [
             {
@@ -352,7 +352,7 @@ const RequestSendInfo = ({navigation, route}) => {
       <GoBack onPress={() => navigation.goBack()}>Back</GoBack>
       <Text style={styles.requestsendinfotxt}>Make Request</Text>
 
-      <ScrollView showsVerticalScrollIndicator={false} style={{marginBottom:10}}>
+      <ScrollView showsVerticalScrollIndicator={false} style={{marginBottom:10, margin:10}}>
       <Text style={[styles.label, styles.labelInvalid]}>
           Address for Service :
         </Text>

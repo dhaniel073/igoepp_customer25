@@ -7,7 +7,7 @@ import LoadingOverlay from '../Component/Ui/LoadingOverlay'
 import GoBack from '../Component/Ui/GoBack'
 import * as Device from 'expo-device';
 import { AuthContext } from '../utils/AuthContext'
-import { BiometricSetup, CustomerInfoCheck } from '../utils/AuthRoute'
+import { BiometricSetup, CustomerInfoCheck, DisableBiometric } from '../utils/AuthRoute'
 
 const Biometric = ({navigation}) => {
     const [biometric, setBiometric] = useState(true)
@@ -25,22 +25,36 @@ const Biometric = ({navigation}) => {
         try {
           setisloading(true)
           const response = await CustomerInfoCheck(authCtx.Id, authCtx.token)
-          console.log(response)
+          // console.log(response)
           setCheck(response.biometric_setup)
           setisloading(false)
         } catch (error) {
           setisloading(true)
-          console.log(error)
+          // console.log(error)
           setisloading(false)
         }
       })
       return unsuscribe;
     }, [])
 
+    const refresh = async () => {
+      try {
+        setisloading(true)
+        const response = await CustomerInfoCheck(authCtx.Id, authCtx.token)
+        // console.log(response)
+        setCheck(response.biometric_setup)
+        setisloading(false)
+      } catch (error) {
+        setisloading(true)
+        // console.log(error)
+        setisloading(false)
+      }
+    }
+
     useEffect(() => {
       (async () => {
       const compatible = await LocalAuthentication.hasHardwareAsync();
-      console.log(compatible)
+      // console.log(compatible)
       setIsBiometricSupported(compatible)
     })
     }, [])
@@ -50,18 +64,40 @@ const Biometric = ({navigation}) => {
       onAuthenticate()
     }
 
+
+
     const Enabled = async () => {
       try {
         const response = await BiometricSetup(authCtx.Id, log, authCtx.token)
-        console.log(response)
+        // console.log(response)
       } catch (error) {
-        Alert.alert("Successful", "Biometric setup was successful",)  
+        Alert.alert("Error", "An error occured",[
+          {
+            text: 'Ok',
+            onPress: () => navigation.goBack()
+          }
+        ])  
       }
     }
     
     const DisEnabled = async () => {
+      try {
+        const response = await DisableBiometric(authCtx.Id, authCtx.token)
+        // console.log(response)
+        setBiometric(previousState => !previousState)
+      } catch (error) {
+        // console.log(error.response)
+        Alert.alert("Error", "An error occured",[
+          {
+            text: 'Ok',
+            onPress: () => navigation.goBack()
+          }
+        ]) 
+      }
     }
   
+    // console.log(biometric)
+
     function onAuthenticate (){
       const auth = LocalAuthentication.authenticateAsync({
         promptMessage: 'Authenticate with Touch ID',
@@ -70,14 +106,15 @@ const Biometric = ({navigation}) => {
       auth.then(result => {
         setIsAuthenticated(result.success);
         if(result.success === true){
-          if(IsBiometricSupported){
+          if(biometric){
             setBiometric(previousState => !previousState)
-            console.log('enable')
+            // console.log('enable')
             Enabled()
           }else{
             setBiometric(previousState => !previousState)
-            console.log('disable')
+            // console.log('disable')
             DisEnabled()
+
             // Enabled()
           }
         }else if (result.error === 'not_enrolled'){

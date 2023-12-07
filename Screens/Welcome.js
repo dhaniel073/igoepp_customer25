@@ -9,6 +9,8 @@ import { Border, Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalSty
 import LoadingOverlay from '../Component/Ui/LoadingOverlay';
 import { CustomerInfoCheck, SliderImage, TrendingService, WalletBalance } from '../utils/AuthRoute';
 import { AuthContext } from '../utils/AuthContext';
+import * as Notifications from 'expo-notifications'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const WIDTH = Dimensions.get('window').width
 const HEIGHT = Dimensions.get('window').height
@@ -32,38 +34,23 @@ const data = [
 
 
 const Welcome = ({navigation}) => {
-  const [deviceId, setdeviceId] = useState('Click below to get unique id')
   const [isLoading, setIsLoading] = useState(false)
-  const [isBiometricSupported, setIsBiometricSupported] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const appState = useRef(AppState.currentState)
-  const [appStateVisible, setAppStateVisible] = useState(appState.current)
   const [trend, setTrend] = useState([])
   const [photo, setPhoto] = useState()
   const [sliimage, setsliimage] = useState([])
   const authCtx = useContext(AuthContext)
+  const [appState, setAppState] = useState(AppState.currentState)
   
 
+  useEffect(() => {
+    const unsuscribe = async () => {
+      const token = (await Notifications.getExpoPushTokenAsync({ projectId: 'e8a1e2a3-7c71-4a4e-9e7b-60ca9cecf323' })).data;
+      // console.log(token)
+    }
+    unsuscribe()
+  }, [])
 
-  // useEffect(() => {
-  //   async function authenticate(){
-  //   const compatible = await LocalAuthentication.authenticateAsync();
-  //   setIsBiometricSupported(compatible)
-  //   console.log(compatible)
-  //   if(compatible.success === true){
-  //     return;
-  //   }
-  // }
-  // authenticate()
-  // }, [])
-
-  const Visible = () => {
-    console.log("visible")
-  }
-  
-  const NotVisible = () => {
-    console.log("not-visible")
-  }
 
   const ShowAmount = () => {
     authCtx.customerShowAmount('show')
@@ -72,6 +59,44 @@ const Welcome = ({navigation}) => {
   const HideAmount = () => {
     authCtx.customerShowAmount('hide')
   }
+
+  useEffect(() => {
+    // Function to handle app state changes
+    const handleAppStateChange = async (nextAppState) => {
+      // If the app goes into the background or inactive state, log out the user
+      if (appState.match(/active/) && nextAppState === 'background') {
+        // Call your logout function here
+        // checkLastLoginTimestamp()
+        const storedTimestamp = await AsyncStorage.getItem('checktime')
+        const lastLoginTimestamp = new Date(storedTimestamp);
+        const currentTimestamp = new Date();
+        // console.log(storedTimestamp + " " + new Date())
+        if(authCtx.lastLoginTimestamp === null || undefined || ""){
+          return 
+        }else{
+          const timeDifferenceInMinutes = Math.floor(
+            (currentTimestamp - lastLoginTimestamp) / (1000 * 60)
+          );
+
+          const authenticationThresholdInMinutes = 5;
+
+          if (timeDifferenceInMinutes > authenticationThresholdInMinutes) {
+            AsyncStorage.removeItem('customerlastLoginTimestamp')
+            authCtx.logout()
+          }
+
+        }
+      }
+
+      setAppState(nextAppState);
+    };
+
+    // Subscribe to app state changes
+    AppState.addEventListener('change', handleAppStateChange);
+
+    // Cleanup: Remove the event listener when the component unmounts
+      return;
+  }, [appState]);
 
   function onAuthenticate (spec){
     const auth = LocalAuthentication.authenticateAsync({
@@ -256,7 +281,7 @@ const Welcome = ({navigation}) => {
                         >
                         <AntDesign name="pluscircle" size={36} color="white" />
                       </TouchableOpacity>
-                      <Text style={{fontSize: 15, right:15, fontFamily: 'interRegular', color: Color.white}}>Add Money</Text>  
+                      <Text style={{fontSize: 13, marginTop:3, right:15, fontFamily: 'interRegular', color: Color.white}}>Add Money</Text>  
                       </View>
                       :
                       <View style={{justifyContent:'center', alignItems: 'center',}}>
@@ -274,6 +299,19 @@ const Welcome = ({navigation}) => {
                 </View>  
               </View>
               }
+
+              <View style={styles.slide1}>
+              <Text style={styles.text}>
+                {authCtx.points === null || undefined || "0" ? 0 : authCtx.points}
+               </Text> 
+
+                {
+                  Platform.OS === "android" ?
+                  <Text style={{fontSize: 15, fontFamily: 'interBold', color: Color.white}}>Loyalty {authCtx.points === null || undefined || "0" ? 'Point' : "Points"}</Text>
+                  :
+                  <Text style={{fontSize: 15, fontFamily: 'interBold', color: Color.white, marginTop:10}}>Loyalty Points</Text>
+                }
+              </View>
              
               </Swiper>          
             </ScrollView>
