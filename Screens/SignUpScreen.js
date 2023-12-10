@@ -142,6 +142,7 @@ const SignUpScreen = ({navigation}) => {
         authCtx.customerPicture(response.picture)
         authCtx.customerShowAmount('show')
         authCtx.customerlastLoginTimestamp(new Date().toString())
+        authCtx.customeruserid(response.user_id)
         schedulePushNotification()
         setisloading(false)
       } catch (error) {

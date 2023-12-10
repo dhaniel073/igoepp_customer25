@@ -7,7 +7,7 @@ import Swiper from 'react-native-swiper'
 import * as LocalAuthentication from 'expo-local-authentication'
 import { Border, Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle';
 import LoadingOverlay from '../Component/Ui/LoadingOverlay';
-import { CustomerInfoCheck, SliderImage, TrendingService, WalletBalance } from '../utils/AuthRoute';
+import { CustomerInfoCheck, NotificationUnread, SliderImage, TrendingService, WalletBalance } from '../utils/AuthRoute';
 import { AuthContext } from '../utils/AuthContext';
 import * as Notifications from 'expo-notifications'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -41,6 +41,8 @@ const Welcome = ({navigation}) => {
   const [sliimage, setsliimage] = useState([])
   const authCtx = useContext(AuthContext)
   const [appState, setAppState] = useState(AppState.currentState)
+  const [notificationnumber, setnotificationnumber] = useState('')
+
   
 
   useEffect(() => {
@@ -50,6 +52,22 @@ const Welcome = ({navigation}) => {
     }
     unsuscribe()
   }, [])
+
+  useEffect(() => {
+    navigation.addListener('focus', async () => {
+      NotifiationNumber()
+    })
+  }, [notificationnumber])
+
+  const NotifiationNumber = async () => {
+    try {
+      const response  = await NotificationUnread(authCtx.userid, authCtx.token)
+      // console.log(response)
+      setnotificationnumber(response)
+    } catch (error) {
+      return
+    }
+  }
 
 
   const ShowAmount = () => {
@@ -157,7 +175,7 @@ const Welcome = ({navigation}) => {
         setIsLoading(false)
       } catch (error) {
         setIsLoading(true)
-        console.log(error.response)
+        // console.log(error.response)
         setIsLoading(false)
         return;
       }
@@ -203,18 +221,20 @@ const Welcome = ({navigation}) => {
           
 
 
-          <TouchableOpacity style={{flexDirection:'row', marginRight:3, justifyContent:'space-around'}} onPress={() => {}}>
+          <TouchableOpacity style={{flexDirection:'row', marginRight:3, justifyContent:'space-around'}} onPress={() => navigation.navigate('NotificationScreen')}>
             <View style={{}}>
               <FontAwesome name="bell" size={22} color={Color.darkolivegreen_100} />
             </View>
            <View>
-
+           {
+              notificationnumber === 0 ? null :
             <ImageBackground transition={1000} style={{padding:5, position:'absolute', marginTop:-10, left:-10}}
                 contentFit='contain'
                 source={require("../assets/ellipse-127.png")}>
-            <Text style={[styles.text2, styles.text2Typo]}>0</Text>
+            <Text style={[styles.text2, styles.text2Typo]}>{notificationnumber}</Text>
 
             </ImageBackground>
+            }
            </View>
 
 

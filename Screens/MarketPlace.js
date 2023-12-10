@@ -6,7 +6,7 @@ import { Image, ImageBackground } from 'expo-image'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
 import { Cart, Category, WalletBalance } from '../utils/AuthRoute'
 import { AuthContext } from '../utils/AuthContext'
-import {AntDesign} from '@expo/vector-icons'
+import {AntDesign, MaterialIcons} from '@expo/vector-icons'
 
 const MarketPlace = ({navigation}) => {
   const [fetchedcategory, setFetchedCategory] = useState([])
@@ -72,6 +72,10 @@ const MarketPlace = ({navigation}) => {
         <Text style={styles.mrkplacetxt}>MarketPlace</Text>
         <Text style={styles.name}>Hi {authCtx.firstname}</Text>
       </View>
+      <TouchableOpacity style={{ justifyContent:'center', position:'absolute', alignSelf:'flex-end', alignItems:'center', right:50 }} onPress={() => navigation.navigate('CartHistory')}>
+        <MaterialIcons name="history-toggle-off" size={24} color="black" />
+        {/* <Text style={{fontSize:10}}>History</Text> */}
+      </TouchableOpacity>
       <TouchableOpacity style={{ justifyContent:'center', position:'absolute', alignSelf:'flex-end', right:13 }} onPress={() => navigation.navigate('CartView')}>
         <View style={{ flexDirection:'row' }}>
           <AntDesign name="shoppingcart" size={24} color={Color.darkolivegreen_100} />

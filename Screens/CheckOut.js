@@ -1,4 +1,4 @@
-import { Alert, Platform, SafeAreaView, ScrollView, StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native'
+import { Alert, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View, TouchableOpacity, TextInput, Keyboard } from 'react-native'
 import React, { useContext, useState, useEffect, useRef } from 'react'
 import { Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle'
 import GoBack from '../Component/Ui/GoBack'
@@ -12,6 +12,26 @@ import axios from 'axios'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
 import * as Notification from 'expo-notifications'
 import Modal from 'react-native-modal'
+import OTPFieldInput from '../Component/Ui/OTPFieldInput'
+
+import styled from 'styled-components'
+
+const StyledButton = styled.TouchableOpacity`
+  padding: 15px;
+  background-color: ${Color.darkolivegreen_100};
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  margin-vertical: 5px;
+  height: 50px;
+  width: 60%
+`;
+
+export const ButtonText = styled.Text`
+  font-size: 15px;
+  color: ${Color.white};
+  font-family: poppinsRegular
+`;
 
 const data = [
   // { label: 'Cash ', value: 'C' },
@@ -75,6 +95,10 @@ const CheckOut = ({navigation, route}) => {
   const [pincheckifempty, setpincheckifempty] = useState([])
   const [pinerrormessage, setPinerrorMessage] = useState('')
   const [ischecking, setischecking] = useState(false)
+
+  const [code, setCode] = useState('')
+  const [pinReady, setPinReady] = useState(false)
+  const MAX_CODE_LENGTH = 4;
 
 
   let ref = useRef(0);
@@ -193,7 +217,7 @@ const handleCity = (countryCode, stateCode) => {
     })
   }
 
-  const togglePinModal = () => {
+  const toggleModal1 = () => {
     setisSetpinModalVisible(!isSetpinModalVisible)
   }
 
@@ -227,7 +251,7 @@ const handleCity = (countryCode, stateCode) => {
       setcityinvalid(citycheck)
       setpaymentinvalid(paymentcheck)
     }else{
-      togglePinModal()
+      toggleModal1()
     }
   }
 
@@ -242,13 +266,13 @@ const handleCity = (countryCode, stateCode) => {
     }else{
       try {
         setischecking(true)
-        const response = await ValidatePin(authCtx.Id, pin, authCtx.token)
+        const response = await ValidatePin(authCtx.Id, code, authCtx.token)
         // console.log(response)
-        setpin()
+        setCode('')
         MakePurchase()
       } catch (error) {
         setischecking(true)
-        setpin()
+        setCode('')
         setPinerrorMessage(error.response.data.message + "\n" + (3 - ref.current + ` trial${3-ref.current > 1 ? 's' : ""} remaining`))
         // console.log(error.response)
         Alert.alert("Error", error.response.data.message+ " " + "Try again", [
@@ -264,7 +288,7 @@ const handleCity = (countryCode, stateCode) => {
   }
 
   const MakePurchase= async () => {
-    togglePinModal()
+    toggleModal1()
       try {
       setIsLoading(true)
         const response = await CartCheckout(first_name,last_name,address,landmark,phone,email,stateName,cityName,countryName,authCtx.Id,paymentmethod,authCtx.token)
@@ -528,57 +552,49 @@ const handleCity = (countryCode, stateCode) => {
       }
 
 
-  <Modal isVisible={isSetpinModalVisible} animationInTiming={500}>
-        <SafeAreaView style={styles.centeredView}>
-        <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => [togglePinModal(), setpin()]}>
-          <MaterialIcons name="cancel" size={30} color="white" />
-        </TouchableOpacity>
-          <View style={styles.modalView}>
-            {
-              ischecking ? 
-              <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
-                <LoadingOverlay/>  
-              </View>
+        <Modal isVisible={isSetpinModalVisible}>
+            <Pressable  onPress={Keyboard.dismiss} style={styles.centeredView}>
+            <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => [toggleModal1(), setCode('')]}>
+                <MaterialIcons name="cancel" size={30} color="white" />
+            </TouchableOpacity>
 
-              :
+            <View style={styles.modalView1}>
+              {
+                ischecking ? 
+                <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
+                    <LoadingOverlay/>  
+                </View>
+
+                :
               <>
-            <View>
-            <Text style={styles.modalText}>Enter Transaction Pin</Text>
+            <View style={{marginTop: '13%'}}/>
+                <Text style={{fontFamily:'poppinsRegular'}}>Enter Transaction Pin</Text>
 
-            <SafeAreaView style={{justifyContent:'center', alignItems:'center', marginHorizontal:40}}>
-              <TextInput
-                keyboardType={"numeric"}
-                maxLength={4}
-                style={{fontSize:25, textAlign:'center',width:150, margin:5, borderBottomWidth:1, padding:5}}
-                onChangeText={setpin}
-                value={pin}
-                isInvalid={pinvalid}
-                onFocus={() => [setpinvalid(false), setPinerrorMessage('')]}
-                secureTextEntry
-              />
-              {
-                pinvalid &&
-                <Text style={{fontSize:11, textAlign:'center', color:Color.tomato}}>Pin must be 4 characters</Text>
-              }
-              {
-                pinerrormessage.length !== 0 && <Text  style={{fontSize:11, textAlign:'center', color:Color.tomato}}>{pinerrormessage}</Text>
-              }
-            </SafeAreaView>
-            <View style={{marginBottom:'5%'}}/>
-            </View>
-            {/* <View style={styles.buttonView}> */}
-
-            <View style={{flexDirection:'row', justifyContent:'center'}}>
-              <TouchableOpacity style={styles.viewbtn} onPress={() => pin === null || pin === undefined || pin === "" || pin.length < 4  ? setpinvalid(true) : [handleClick(), pinValidateCheck()]}>
-                <Text style={styles.viewtext}>Continue</Text>
-              </TouchableOpacity>
-            </View>             
-              {/* </View> */}
-              </>
+                <OTPFieldInput
+                  setPinReady={setPinReady}
+                  code={code}
+                  setCode={setCode}
+                  maxLength={MAX_CODE_LENGTH}
+                />
+                {
+                  pinerrormessage.length !== 0 && <Text  style={{fontSize:11, textAlign:'center', color:Color.tomato}}>{pinerrormessage}</Text>
+                }
+            <StyledButton disabled={!pinReady} 
+            onPress={() => [handleClick(), pinValidateCheck()]}
+            style={{
+                backgroundColor: !pinReady ? Color.grey : Color.darkolivegreen_100
+            }}>
+                <ButtonText
+                style={{
+                    color: !pinReady ? Color.black : Color.white
+                }}
+                >Submit</ButtonText>
+            </StyledButton>
+            </>
             }
-          </View>
-          </SafeAreaView>
-      </Modal>
+            </View>
+            </Pressable>
+        </Modal>
 
     </ScrollView>
   )
@@ -589,6 +605,14 @@ export default CheckOut
 const styles = StyleSheet.create({
   invalid:{
     backgroundColor: Color.error100
+  },
+  modalView1: {
+    backgroundColor: 'white',
+    width: DIMENSION.WIDTH  * 0.9,
+    borderRadius: 20,
+    // flex:1,
+    alignItems:'center',
+    height: DIMENSION.HEIGHT * 0.4
   },
   checkouttxt:{
     fontSize: 18,

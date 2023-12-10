@@ -39,19 +39,19 @@ const Login = ({navigation}) => {
 
   const loginhandler = async () => {
     const emailcheck = enteredEmail.includes('@') && enteredEmail.includes(".com")
-    const passwordcheck = enteredPassword.length > 7
+    const passwordcheck = enteredPassword.length < 7
     
     // console.log(emailcheck, passwordcheck)
     setEmailIsInvalid(emailcheck)
     setPasswordIsInvalid(passwordcheck)
 
-    if(!emailcheck || !passwordcheck){
+    if(!emailcheck || passwordcheck){
       Alert.alert('Invalid details', 'Please check your entered credentials.')
     }else{
       try {
         setIsloading(true)
         const response = await LoginUrl(enteredEmail, enteredPassword)
-        console.log(response.total_points + " response")
+        // console.log(response)
         authCtx.authenticated(response.access_token)  
         authCtx.customerId(response.customer_id)
         authCtx.customerEmail(response.email)
@@ -61,9 +61,10 @@ const Login = ({navigation}) => {
         authCtx.customerPhone(response.phone)
         authCtx.customerPicture(response.picture)
         authCtx.customerShowAmount('show')
+        authCtx.customeruserid(response.user_id)
         authCtx.customerlastLoginTimestamp(new Date().toString())
         AsyncStorage.setItem("checktime",new Date().toString())
-        console.log(response.total_points + " total point")
+        // console.log(response.total_points + " total point")
         setIsloading(false)
       } catch (error) {
         setIsloading(true)
@@ -85,7 +86,7 @@ const Login = ({navigation}) => {
         BiometricSignUp()
       }else if(result.error === 'not_enrolled'){
         Alert.alert("", result.error)
-        console.log(result)
+        // console.log(result)
       }else{
         Alert.alert("Error", "Try again later")
       }
@@ -106,14 +107,16 @@ const Login = ({navigation}) => {
       authCtx.customerPhone(response.data.phone)
       authCtx.customerPicture(response.data.picture)
       authCtx.customerShowAmount('show')
+      authCtx.customeruserid(response.data.user_id)
       authCtx.customerlastLoginTimestamp(new Date().toString())
       authCtx.customerPoints(response.data.total_points)
+      AsyncStorage.setItem("checktime",new Date().toString())
       setIsloading(false)
     } catch (error) {
       setIsloading(true)
       Alert.alert('Login Failed', error.response.data.message)
       setIsloading(false)   
-      console.log(error.response)     
+      // console.log(error.response)     
     }
   }
 

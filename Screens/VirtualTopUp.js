@@ -1,4 +1,4 @@
-import { Platform, SafeAreaView, ScrollView, StyleSheet, Text, Alert, TouchableOpacity, View, TextInput } from 'react-native'
+import { Platform, SafeAreaView, ScrollView, StyleSheet, Text, Alert, TouchableOpacity, View, TextInput, Pressable, Keyboard } from 'react-native'
 import React, {useEffect, useState, useContext} from 'react'
 import { Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle'
 import GoBack from '../Component/Ui/GoBack'
@@ -14,6 +14,26 @@ import { AuthContext } from '../utils/AuthContext'
 import axios from 'axios'
 import { CustomerInfoCheck, CustomerSelf, CustomerThirdParty, CustomerVtuAirtime, CustomerVtuData, ValidatePin } from '../utils/AuthRoute'
 import { useRef } from 'react'
+import styled from 'styled-components'
+import OTPFieldInput from '../Component/Ui/OTPFieldInput'
+
+const StyledButton = styled.TouchableOpacity`
+  padding: 15px;
+  background-color: ${Color.darkolivegreen_100};
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  margin-vertical: 5px;
+  height: 50px;
+  width: 60%
+`;
+
+export const ButtonText = styled.Text`
+  font-size: 15px;
+  color: ${Color.white};
+  font-family: poppinsRegular
+`;
+
 
 const data = [
   { label: 'Self', value: 'self' },
@@ -43,8 +63,10 @@ const VirtualTopUp = ({navigation, route}) => {
     const [isModalVisble, setModalVisible] = useState(false)
     const [ischecking, setischecking] = useState(false)
     const [pinerrormessage, setPinerrorMessage] = useState('')
-
-
+    
+    const [code, setCode] = useState('')
+    const [pinReady, setPinReady] = useState(false)
+    const MAX_CODE_LENGTH = 4;
 
 
     const maindate = new Date() 
@@ -204,7 +226,7 @@ const getBouquets = (value) => {
                       },
                       {
                           text:'Confirm',
-                          onPress: () => togglePinModal()
+                          onPress: () => toggleModal1()
                       }
                   ])
               }else{
@@ -216,7 +238,7 @@ const getBouquets = (value) => {
                     },
                     {
                       text:'Confirm',
-                      onPress: () => togglePinModal()
+                      onPress: () => toggleModal1()
                     }
                   ])
                 }
@@ -261,7 +283,7 @@ const getBouquets = (value) => {
                     },
                     {
                       text:'Confirm',
-                      onPress: () => togglePinModal()
+                      onPress: () => toggleModal1()
                     }
                   ])
               }else{
@@ -273,7 +295,7 @@ const getBouquets = (value) => {
                       },
                       {
                         text:'Confirm',
-                        onPress: () => togglePinModal()
+                        onPress: () => toggleModal1()
                       }
                     ])
                   }
@@ -309,7 +331,7 @@ const getBouquets = (value) => {
      // alert('You clicked ' + ref.current + ' times!');
    }
  
-   const togglePinModal = () => {
+   const toggleModal1 = () => {
      setisSetpinModalVisible(!isSetpinModalVisible)
    }
    
@@ -325,8 +347,9 @@ const getBouquets = (value) => {
     }else{
       try {
         setischecking(true)
-        const response = await ValidatePin(authCtx.Id, pinT, authCtx.token)
+        const response = await ValidatePin(authCtx.Id, code, authCtx.token)
         // console.log(response)
+        setCode('')
         if(DATACHECK){
           datatoptup() 
         }else{
@@ -334,7 +357,7 @@ const getBouquets = (value) => {
         }
       } catch (error) {
         setischecking(true)
-        setpinT()
+        setCode('')
         setPinerrorMessage(error.response.data.message + "\n" + (3 - refT.current + " trials remaining"))
         // console.log(error.response)
         Alert.alert("Error", error.response.data.message+ " " + "Try again", [
@@ -352,7 +375,7 @@ const getBouquets = (value) => {
 
   
   const airtimetopup = async () => {
-    togglePinModal()
+    toggleModal1()
     try {
       setisloading(true)
         const response = await CustomerVtuAirtime(requestId, id, amount, authCtx.token)
@@ -384,7 +407,7 @@ const getBouquets = (value) => {
   }
 
 const datatoptup = async() => {
-    togglePinModal()
+    toggleModal1()
     // console.log(requestID, id, bosquetPrice, bosquetData, authCtx.token)
     try {
       setisloading(true)
@@ -572,57 +595,49 @@ const datatoptup = async() => {
 
         }
 
-      <Modal isVisible={isSetpinModalVisible} animationInTiming={500}>
-        <SafeAreaView style={styles.centeredView}>
-        <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => [togglePinModal(), setpinT()]}>
-          <MaterialIcons name="cancel" size={30} color="white" />
-        </TouchableOpacity>
-          <View style={[styles.modalView, {width: DIMENSION.WIDTH * 0.7}]}>
-            {
-              ischecking ? 
-              <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
-                <LoadingOverlay/>  
-              </View>
+          <Modal isVisible={isSetpinModalVisible}>
+            <Pressable  onPress={Keyboard.dismiss} style={styles.centeredView}>
+            <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => [toggleModal1(), setCode('')]}>
+                <MaterialIcons name="cancel" size={30} color="white" />
+            </TouchableOpacity>
 
-              :
+            <View style={styles.modalView1}>
+              {
+                ischecking ? 
+                <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
+                    <LoadingOverlay/>  
+                </View>
+
+                :
               <>
-            <View>
-            <Text style={[styles.modalText, {fontSize:14}]}>Enter Transaction Pin</Text>
+            <View style={{marginTop: '13%'}}/>
+                <Text style={{fontFamily:'poppinsRegular'}}>Enter Transaction Pin</Text>
 
-            <SafeAreaView style={{justifyContent:'center', alignItems:'center', marginHorizontal:40}}>
-              <TextInput
-                keyboardType={"numeric"}
-                maxLength={4}
-                style={{fontSize:25, textAlign:'center',width:150, margin:5, borderBottomWidth:1, padding:5}}
-                onChangeText={setpinT}
-                value={pinT}
-                isInvalid={pinvalid}
-                onFocus={() => [setpinvalid(false), setPhoneValidation('')]}
-                secureTextEntry
-              />
-              {
-                pinvalid &&
-                <Text style={{fontSize:11, textAlign:'center', color:Color.tomato}}>Pin must be 4 characters</Text>
-              }
-              {
-                pinerrormessage.length !== 0 && <Text  style={{fontSize:11, textAlign:'center', color:Color.tomato}}>{pinerrormessage}</Text>
-              }
-            </SafeAreaView>
-            <View style={{marginBottom:'5%'}}/>
-            </View>
-            {/* <View style={styles.buttonView}> */}
-
-            <View style={{flexDirection:'row', justifyContent:'center'}}>
-              <TouchableOpacity style={styles.cancel} onPress={() => pinT === null || pinT === undefined || pinT === "" || pinT.length < 4  ? setpinvalid(true) : [handleClick(), pinValidateCheck()]}>
-                <Text style={{textAlign:'center', color:Color.white, fontFamily: 'poppinsRegular'}}>Continue</Text>
-              </TouchableOpacity>
-            </View>             
-              {/* </View> */}
+                <OTPFieldInput
+                  setPinReady={setPinReady}
+                  code={code}
+                  setCode={setCode}
+                  maxLength={MAX_CODE_LENGTH}
+                />
+                {
+                  pinerrormessage.length !== 0 && <Text  style={{fontSize:11, textAlign:'center', color:Color.tomato}}>{pinerrormessage}</Text>
+                }
+            <StyledButton disabled={!pinReady} 
+            onPress={() => [handleClick(), pinValidateCheck()]}
+            style={{
+                backgroundColor: !pinReady ? Color.grey : Color.darkolivegreen_100
+            }}>
+                <ButtonText
+                style={{
+                    color: !pinReady ? Color.black : Color.white
+                }}
+                >Submit</ButtonText>
+            </StyledButton>
             </>
-          }
-          </View>
-          </SafeAreaView>
-      </Modal>
+            }
+            </View>
+            </Pressable>
+        </Modal>
 
 
 
@@ -703,7 +718,14 @@ const styles = StyleSheet.create({
     width: DIMENSION.WIDTH * 0.36,
     padding: 5
   },
-
+  modalView1: {
+    backgroundColor: 'white',
+    width: DIMENSION.WIDTH  * 0.9,
+    borderRadius: 20,
+    // flex:1,
+    alignItems:'center',
+    height: DIMENSION.HEIGHT * 0.4
+  },
   centeredView: {
     flex: 1,
     // backgroundColor: Color.light_black,

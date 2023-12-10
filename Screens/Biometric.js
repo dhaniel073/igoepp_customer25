@@ -69,7 +69,13 @@ const Biometric = ({navigation}) => {
     const Enabled = async () => {
       try {
         const response = await BiometricSetup(authCtx.Id, log, authCtx.token)
-        // console.log(response)
+        setBiometric(previousState => !previousState)
+        Alert.alert("Successful", "Bimoetric enabled sucessfully",[
+          {
+            text: 'Ok',
+            onPress: () => navigation.goBack()
+          }
+        ]) 
       } catch (error) {
         Alert.alert("Error", "An error occured",[
           {
@@ -83,8 +89,13 @@ const Biometric = ({navigation}) => {
     const DisEnabled = async () => {
       try {
         const response = await DisableBiometric(authCtx.Id, authCtx.token)
-        // console.log(response)
         setBiometric(previousState => !previousState)
+        Alert.alert("Successful", "Bimoetric disabled sucessfully",[
+          {
+            text: 'Ok',
+            onPress: () => navigation.goBack()
+          }
+        ]) 
       } catch (error) {
         // console.log(error.response)
         Alert.alert("Error", "An error occured",[
@@ -98,7 +109,7 @@ const Biometric = ({navigation}) => {
   
     // console.log(biometric)
 
-    function onAuthenticate (){
+    function onAuthenticate1 (){
       const auth = LocalAuthentication.authenticateAsync({
         promptMessage: 'Authenticate with Touch ID',
         fallbackLabel: 'Enter Password'
@@ -106,17 +117,24 @@ const Biometric = ({navigation}) => {
       auth.then(result => {
         setIsAuthenticated(result.success);
         if(result.success === true){
-          if(biometric){
-            setBiometric(previousState => !previousState)
-            // console.log('enable')
             Enabled()
-          }else{
-            setBiometric(previousState => !previousState)
-            // console.log('disable')
-            DisEnabled()
-
             // Enabled()
-          }
+        }else if (result.error === 'not_enrolled'){
+          Alert.alert("", "Device not enrolled, setup up a screen lock to use this feature")
+        }
+      })
+    }
+
+    function onAuthenticate2 (){
+      const auth = LocalAuthentication.authenticateAsync({
+        promptMessage: 'Authenticate with Touch ID',
+        fallbackLabel: 'Enter Password'
+      });
+      auth.then(result => {
+        setIsAuthenticated(result.success);
+        if(result.success === true){
+            DisEnabled()
+            // Enabled()
         }else if (result.error === 'not_enrolled'){
           Alert.alert("", "Device not enrolled, setup up a screen lock to use this feature")
         }
@@ -142,7 +160,7 @@ const Biometric = ({navigation}) => {
           trackColor={{ false: 'grey', true: Color.darkolivegreen_100 }}
           thumbColor={'white'}
           ios_backgroundColor={'white'}
-          onValueChange={toggleBiometric}
+          onValueChange={check === "N" ? onAuthenticate1 : onAuthenticate2}
           value={check === "N" ? !biometric : biometric}
         />
       </View>

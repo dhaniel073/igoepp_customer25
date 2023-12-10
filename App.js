@@ -56,6 +56,7 @@ import Biometric from './Screens/Biometric';
 import * as LocalAuthentication from 'expo-local-authentication'
 import * as Device from 'expo-device'
 import PasswordReset from './Screens/PasswordReset';
+import NotificationScreen from './Screens/NotificationScreen';
 
 
 
@@ -606,6 +607,13 @@ export default function App() {
             headerShown: false
           }} 
         />
+        <Stack.Screen
+          name='NotificationScreen'
+          component={NotificationScreen}
+          options={{
+            headerShown: false
+          }} 
+        />
       </Stack.Navigator>
     )
   }
@@ -687,6 +695,9 @@ export default function App() {
       const storedbalance = await AsyncStorage.getItem('customerBalance')
       const storedlastlogintime = await AsyncStorage.getItem('customerlastLoginTimestamp')
       const storedpoint = await AsyncStorage.getItem('customerPoints')
+      const storeduserid = await AsyncStorage.getItem('customeruserid')
+
+      
       
       
       
@@ -702,6 +713,7 @@ export default function App() {
         authCtx.customerShowAmount(storedshowamount)
         authCtx.customerlastLoginTimestamp(storedlastlogintime)
         authCtx.customerPoints(storedpoint)
+        authCtx.customeruserid(storeduserid)
       }
       setisTrying(false)
     }

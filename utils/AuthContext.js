@@ -16,6 +16,7 @@ export const AuthContext = createContext({
     showAmount: "",
     lastLoginTimestamp: "",
     points: "",
+    userid: "",
 
     authenticated: (token) => {},
     customerId: (Id) => {},
@@ -29,6 +30,7 @@ export const AuthContext = createContext({
     customerShowAmount: (showAmount) => {},
     customerlastLoginTimestamp : (lastLoginTimestamp) => {},
     customerPoints: (points) => {},
+    customeruserid: (userid) => {},
     logout: () => {}
 
 })
@@ -47,6 +49,7 @@ function AuthContextProvider({children}){
     const [authpicture, setauthpicture] = useState()
     const [authlogintime, setauthlogintime] = useState()
     const [authpoint, setauthpoint] = useState()
+    const [authuserid, setauthuserid] = useState()
 
 
     if(IsLogout){
@@ -74,6 +77,11 @@ function AuthContextProvider({children}){
     function customerEmail (email){
         setauthEmail(email)
         AsyncStorage.setItem('customerEmail', email)
+    }
+
+    function customeruserid(userid){
+        setauthuserid(userid)
+        AsyncStorage.setItem('customeruserid', userid)
     }
 
     function customerFirstName (firstname){
@@ -164,6 +172,7 @@ function AuthContextProvider({children}){
         setauthShowAmount(null)
         setauthlogintime(null)
         setauthpoint(null)
+        setauthuserid(null)
         AsyncStorage.removeItem('customertoken')
         AsyncStorage.removeItem('customerId')
         AsyncStorage.removeItem('customerPhone')
@@ -176,6 +185,7 @@ function AuthContextProvider({children}){
         AsyncStorage.removeItem('customerShowAmount')
         AsyncStorage.removeItem('customerlastLoginTimestamp')
         AsyncStorage.removeItem('customerPoints')
+        AsyncStorage.removeItem('customeruserid')
         setIsLogout(false)
     }
 
@@ -193,6 +203,8 @@ function AuthContextProvider({children}){
         showAmount: authShowAmount,
         lastLoginTimestamp: authlogintime,
         points: authpoint,
+        userid: authuserid,
+    
 
         authenticated:authenticated,
         customerId:customerId,
@@ -206,6 +218,7 @@ function AuthContextProvider({children}){
         customerShowAmount: customerShowAmount,
         customerlastLoginTimestamp: customerlastLoginTimestamp,
         customerPoints: customerPoints,
+        customeruserid:customeruserid,
         logout: logout
     }
 

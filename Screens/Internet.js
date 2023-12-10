@@ -1,5 +1,5 @@
-import { Alert, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useContext, useState, useEffect } from 'react'
+import { Alert, Keyboard, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React, { useContext, useState, useEffect, useRef } from 'react'
 import { Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle'
 import GoBack from '../Component/Ui/GoBack'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
@@ -13,7 +13,26 @@ import { Image, ImageBackground } from 'expo-image'
 import axios from 'axios'
 import SubmitButton from '../Component/Ui/SubmitButton'
 import * as Notifications from 'expo-notifications'
-import { useRef } from 'react'
+import styled from 'styled-components'
+import OTPFieldInput from '../Component/Ui/OTPFieldInput'
+
+const StyledButton = styled.TouchableOpacity`
+  padding: 15px;
+  background-color: ${Color.darkolivegreen_100};
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  margin-vertical: 5px;
+  height: 50px;
+  width: 60%
+`;
+
+export const ButtonText = styled.Text`
+  font-size: 15px;
+  color: ${Color.white};
+  font-family: poppinsRegular
+`;
+
 
 
 const Internet = ({route, navigation}) => {
@@ -39,6 +58,9 @@ const Internet = ({route, navigation}) => {
   const [pinerrormessage, setPinerrorMessage] = useState('')
   const [ischecking, setischecking] = useState(false)
 
+  const [code, setCode] = useState('')
+  const [pinReady, setPinReady] = useState(false)
+  const MAX_CODE_LENGTH = 4;
 
 
   const authId = route?.params?.id
@@ -191,13 +213,13 @@ const Internet = ({route, navigation}) => {
       }else{
         try {
           setischecking(true)
-          const response = await ValidatePin(authCtx.Id, pinT, authCtx.token)
+          const response = await ValidatePin(authCtx.Id, code, authCtx.token)
           // console.log(response)
-          setpinT()
+          setCode('')
           makePayment(ref)
         } catch (error) {
           setischecking(true)
-          setpinT()
+          setCode('')
           setPinerrorMessage(error.response.data.message + "\n" + (3 - refT.current + ` trial${3-refT.current > 1 ? 's' : ""} remaining`))
           // console.log(error.response)
           Alert.alert("Error", error.response.data.message+ " " + "Try again", [
@@ -423,57 +445,49 @@ const Internet = ({route, navigation}) => {
         </SafeAreaView>
       </Modal>
 
-      <Modal isVisible={isSetpinModalVisible} animationInTiming={500}>
-        <SafeAreaView style={styles.centeredView}>
-        <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => [togglePinModal(), setpinT()]}>
-          <MaterialIcons name="cancel" size={30} color="white" />
-        </TouchableOpacity>
-          <View style={[styles.modalView, {width: DIMENSION.WIDTH * 0.7}]}>
-          {
-              ischecking ? 
-              <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
-                <LoadingOverlay/>  
-              </View>
+      <Modal isVisible={isSetpinModalVisible}>
+            <Pressable  onPress={Keyboard.dismiss} style={styles.centeredView}>
+            <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => [toggleModal1(), setCode('')]}>
+                <MaterialIcons name="cancel" size={30} color="white" />
+            </TouchableOpacity>
 
-              :
+            <View style={styles.modalView1}>
+              {
+                ischecking ? 
+                <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
+                    <LoadingOverlay/>  
+                </View>
+
+                :
               <>
-            <View>
-            <Text style={[styles.modalText, {fontSize:14}]}>Enter Transaction Pin</Text>
+            <View style={{marginTop: '13%'}}/>
+                <Text style={{fontFamily:'poppinsRegular'}}>Enter Transaction Pin</Text>
 
-            <SafeAreaView style={{justifyContent:'center', alignItems:'center', marginHorizontal:40}}>
-              <TextInput
-                keyboardType={"numeric"}
-                maxLength={4}
-                style={{fontSize:25, textAlign:'center',width:150, margin:5, borderBottomWidth:1, padding:5}}
-                onChangeText={setpinT}
-                value={pinT}
-                isInvalid={pinvalid}
-                onFocus={() => [setpinvalid(false), setPinerrorMessage('')]}
-                secureTextEntry
-              />
-              {
-                pinvalid &&
-                <Text style={{fontSize:11, textAlign:'center', color:Color.tomato}}>Pin must be 4 characters</Text>
-              }
-              {
-                pinerrormessage.length !== 0 && <Text  style={{fontSize:11, textAlign:'center', color:Color.tomato}}>{pinerrormessage}</Text>
-              }
-            </SafeAreaView>
-            <View style={{marginBottom:'5%'}}/>
-            </View>
-            {/* <View style={styles.buttonView}> */}
-
-            <View style={{flexDirection:'row', justifyContent:'center'}}>
-              <TouchableOpacity style={styles.cancelbtn} onPress={() => pinT === null || pinT === undefined || pinT === "" || pinT.length < 4  ? setpinvalid(true) : [handleClick(), pinValidateCheck()]}>
-                <Text style={styles.canceltxt}>Continue</Text>
-              </TouchableOpacity>
-            </View>             
-              {/* </View> */}
+                <OTPFieldInput
+                  setPinReady={setPinReady}
+                  code={code}
+                  setCode={setCode}
+                  maxLength={MAX_CODE_LENGTH}
+                />
+                {
+                  pinerrormessage.length !== 0 && <Text  style={{fontSize:11, textAlign:'center', color:Color.tomato}}>{pinerrormessage}</Text>
+                }
+            <StyledButton disabled={!pinReady} 
+            onPress={() => [handleClick(), pinValidateCheck()]}
+            style={{
+                backgroundColor: !pinReady ? Color.grey : Color.darkolivegreen_100
+            }}>
+                <ButtonText
+                style={{
+                    color: !pinReady ? Color.black : Color.white
+                }}
+                >Submit</ButtonText>
+            </StyledButton>
             </>
             }
-          </View>
-          </SafeAreaView>
-      </Modal>
+            </View>
+            </Pressable>
+        </Modal>
 
     </ScrollView>
   )
@@ -490,6 +504,14 @@ const styles = StyleSheet.create({
     marginTop:10,
     marginBottom:15,
   }, 
+  modalView1: {
+    backgroundColor: 'white',
+    width: DIMENSION.WIDTH  * 0.9,
+    borderRadius: 20,
+    // flex:1,
+    alignItems:'center',
+    height: DIMENSION.HEIGHT * 0.4
+  },
   selectedTextStyle:{
     fontSize:12,
   },

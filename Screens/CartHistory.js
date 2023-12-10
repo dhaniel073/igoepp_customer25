@@ -11,6 +11,7 @@ import { Image } from 'expo-image'
 
 const CartHistory = ({navigation}) => {
     const [isloading, setisloading] = useState(false)
+    const [ischecking, setischecking] = useState(false)
     const [carthistory, setcarthistory] = useState([])
     const authCtx = useContext(AuthContext)
     const [isviewbyid, setisviewbyid] = useState(false);
@@ -21,10 +22,15 @@ const CartHistory = ({navigation}) => {
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', async () => {
         try {
+        setisloading(true)
         const response = await CartPurchase(authCtx.Id, authCtx.token)
         // console.log(response)
         setcarthistory(response)
+        setisloading(false)
         } catch (error) {
+          setisloading(true)
+          setisloading(false)
+          return
         // console.log(error.response.data)
         }
         })
@@ -33,15 +39,15 @@ const CartHistory = ({navigation}) => {
     const viewdetails = async (purchase_id) => {
         // do something
         try {
-            setisloading(true)
+            setischecking(true)
            const response = await CartHistoryPreview(purchase_id, authCtx.token)
           //  console.log(response)
            setisviewbyid(response)
-           setisloading(false)
+           setischecking(false)
         } catch (error) {
-            // setIsFetching(true)
+            setischecking(true)
             // console.log(error)
-            // setIsFetching(false)
+            setischecking(false)
             return;
         }
     };
@@ -61,6 +67,10 @@ const CartHistory = ({navigation}) => {
         )
       }
     
+    if(isloading){
+      return <LoadingOverlay message={"..."}/>
+    }
+
   return (
     <SafeAreaView style={{marginTop:marginStyle.marginTp, marginHorizontal:10, flex:1}}>
         <GoBack onPress={() => navigation.goBack()}>Back</GoBack>
@@ -102,7 +112,7 @@ const CartHistory = ({navigation}) => {
             <View style={styles.modalView}>
               <Text style={styles.modalText}>Details</Text>
 
-                {isloading ? <LoadingOverlay/> : 
+                {ischecking ? <LoadingOverlay/> : 
                 <FlatList
                   data={isviewbyid}
                   keyExtractor={(item) => item.id}

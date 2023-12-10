@@ -127,7 +127,7 @@ const PasswordReset = ({navigation}) => {
       />
 
       {
-        passwordvalid && <Text style={{color: Color.tomato, fontSize: 11}}>Password must be more than 7 characters</Text>
+        passwordvalid && <Text style={{color: Color.tomato, fontSize: 11}}>Password must be at least 7 characters</Text>
       }
       <SubmitButton message={"Reset"} style={{marginTop:20, marginHorizontal:20}} onPress={() => oldpasswordcheck || passwordcheck ? [setoldpasswordvalid(true),  setpasswordvalid(true)] : [handleClick(), ValidateOldPassword()]}/>
       </View>
