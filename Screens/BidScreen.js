@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, FlatList, TextInput, Alert, Button } from 'react-native'
+import { StyleSheet, Pressable, Keyboard, Text, View, SafeAreaView, TouchableOpacity, FlatList, TextInput, Alert, Button } from 'react-native'
 import React, { useContext, useState, useEffect } from 'react'
 import { Border, Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle'
 import GoBack from '../Component/Ui/GoBack'
@@ -12,6 +12,26 @@ import Input from '../Component/Ui/Input';
 import { Dropdown } from 'react-native-element-dropdown';
 import * as Notification from 'expo-notifications'
 import { useRef } from 'react';
+import styled from 'styled-components';
+import OTPFieldInput from '../Component/Ui/OTPFieldInput';
+
+
+const StyledButton = styled.TouchableOpacity`
+    padding: 15px;
+    background-color: ${Color.darkolivegreen_100};
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    margin-vertical: 5px;
+    height: 50px;
+    width: 60%
+`;
+
+export const ButtonText = styled.Text`
+    font-size: 15px;
+    color: ${Color.white};
+    font-family: poppinsRegular
+`;
 
 
 const data = [
@@ -46,6 +66,10 @@ const BidScreen = ({navigation, route}) => {
   const [isSetpinModalVisible, setisSetpinModalVisible] = useState(false)
   const [pinerrormessage, setPinerrorMessage] = useState('')
   const [ischecking, setischecking] = useState(false)
+
+  const [code, setCode] = useState('')
+  const [pinReady, setPinReady] = useState(false)
+  const MAX_CODE_LENGTH = 4;
 
 
 
@@ -178,7 +202,7 @@ const BidScreen = ({navigation, route}) => {
   }
 
   const AcceptBidHandler = async() => {
-    togglePinModal()
+    toggleModal1()
     if(!paymentmethod){
         Alert.alert('Payment Method', 'Select payment method to continue')
     }else{
@@ -242,7 +266,7 @@ const BidScreen = ({navigation, route}) => {
     // alert('You clicked ' + ref.current + ' times!');
   }
 
-  const togglePinModal = (id, pricetag) => {
+  const toggleModal1 = () => {
     setisSetpinModalVisible(!isSetpinModalVisible)
     
   }
@@ -258,13 +282,13 @@ const BidScreen = ({navigation, route}) => {
     }else{
       try {
         setischecking(true)
-        const response = await ValidatePin(authCtx.Id, pin, authCtx.token)
+        const response = await ValidatePin(authCtx.Id, code, authCtx.token)
         // console.log(response)
-        setpin()
+        setCode('')
         AcceptBidHandler()
       } catch (error) {
         setischecking(true)
-        setpin()
+        setCode('')
         setPinerrorMessage(error.response.data.message + "\n" + (3 - ref.current + ` trial${3-ref.current > 1 ? 's' : ""} remaining`))
         // console.log(error.response)
         Alert.alert("Error", error.response.data.message+ " " + "Try again", [
@@ -281,7 +305,7 @@ const BidScreen = ({navigation, route}) => {
 
   // console.log(Id, amount)
 
-  async function schedulePushNotification(response) {
+  async function schedulePushNotification() {
     const askPermision = Notification.requestPermissionsAsync()
     await Notification.scheduleNotificationAsync({
       content: {
@@ -467,7 +491,7 @@ const BidScreen = ({navigation, route}) => {
                 <Text style={styles.canceltext}>Cancel</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.viewbtn} onPress={() => [!paymentmethod ? setPaymentMethodInvalid(true)   : [toggleAcceptModal(Id, amount), togglePinModal(Id, amount)]]}>
+              <TouchableOpacity style={styles.viewbtn} onPress={() => [!paymentmethod ? setPaymentMethodInvalid(true)   : [toggleAcceptModal(Id, amount), toggleModal1(Id, amount)]]}>
                 <Text style={styles.viewtext}>Accept</Text>
               </TouchableOpacity>
             </View>
@@ -478,59 +502,49 @@ const BidScreen = ({navigation, route}) => {
       </Modal>
 
      
-      <Modal isVisible={isSetpinModalVisible} animationInTiming={500}
-      >
-        <SafeAreaView style={styles.centeredView}>
-        <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => [togglePinModal(), setpin()]}>
-          <MaterialIcons name="cancel" size={30} color="white" />
-        </TouchableOpacity>
-          <View style={[styles.modalView, {width: DIMENSION.WIDTH * 0.7}]}>
-          {
-              ischecking ? 
-              <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
-                <LoadingOverlay/>  
-              </View>
+      <Modal isVisible={isSetpinModalVisible}>
+            <Pressable  onPress={Keyboard.dismiss} style={styles.centeredView}>
+            <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => [toggleModal1(), setCode('')]}>
+                <MaterialIcons name="cancel" size={30} color="white" />
+            </TouchableOpacity>
 
-              :
+            <View style={styles.modalView1}>
+              {
+                ischecking ? 
+                <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
+                    <LoadingOverlay/>  
+                </View>
+
+                :
               <>
-              
-            <View>
-            <Text style={[styles.modalText, {fontSize:14}]}>Enter Transaction Pin</Text>
+            <View style={{marginTop: '13%'}}/>
+                <Text style={{fontFamily:'poppinsRegular'}}>Enter Transaction Pin</Text>
 
-            <SafeAreaView style={{justifyContent:'center', alignItems:'center', marginHorizontal:40}}>
-              <TextInput
-                keyboardType={"numeric"}
-                maxLength={4}
-                style={{fontSize:25, textAlign:'center',width:150, margin:5, borderBottomWidth:1, padding:5}}
-                onChangeText={setpin}
-                value={pin}
-                isInvalid={pinvalid}
-                onFocus={() => [setpinvalid(false), setPinerrorMessage('')]}
-                secureTextEntry
-              />
-              {
-                pinvalid &&
-                <Text style={{fontSize:11, textAlign:'center', color:Color.tomato}}>Pin must be 4 characters</Text>
-              }
-              {
-                pinerrormessage.length !== 0 && <Text  style={{fontSize:11, textAlign:'center', color:Color.tomato}}>{pinerrormessage}</Text>
-              }
-            </SafeAreaView>
-            <View style={{marginBottom:'5%'}}/>
-            </View>
-            {/* <View style={styles.buttonView}> */}
-
-            <View style={{flexDirection:'row', justifyContent:'center'}}>
-              <TouchableOpacity style={styles.cancelbtn} onPress={() => pin === null || pin === undefined || pin === "" || pin.length !== 4  ? setpinvalid(true) : [handleClick(), pinValidateCheck()]}>
-                <Text style={styles.canceltext}>Continue</Text>
-              </TouchableOpacity>
-            </View>             
-              {/* </View> */}
-              </>
+                <OTPFieldInput
+                  setPinReady={setPinReady}
+                  code={code}
+                  setCode={setCode}
+                  maxLength={MAX_CODE_LENGTH}
+                />
+                {
+                  pinerrormessage.length !== 0 && <Text  style={{fontSize:11, textAlign:'center', color:Color.tomato}}>{pinerrormessage}</Text>
+                }
+            <StyledButton disabled={!pinReady} 
+            onPress={() => [handleClick(), pinValidateCheck()]}
+            style={{
+                backgroundColor: !pinReady ? Color.grey : Color.darkolivegreen_100
+            }}>
+                <ButtonText
+                style={{
+                    color: !pinReady ? Color.black : Color.white
+                }}
+                >Submit</ButtonText>
+            </StyledButton>
+            </>
             }
-          </View>
-          </SafeAreaView>
-      </Modal>
+            </View>
+            </Pressable>
+        </Modal>
       </>
       }  
     </SafeAreaView>
@@ -542,6 +556,14 @@ export default BidScreen
 const styles = StyleSheet.create({
   inputInvaliid:{
     backgroundColor: Color.error100
+  },
+  modalView1: {
+    backgroundColor: 'white',
+    width: DIMENSION.WIDTH  * 0.9,
+    borderRadius: 20,
+    // flex:1,
+    alignItems:'center',
+    height: DIMENSION.HEIGHT * 0.4
   },
   label: {
     color: 'black',

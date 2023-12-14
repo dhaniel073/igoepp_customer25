@@ -97,21 +97,21 @@ const SignUpScreen = ({navigation}) => {
     const signupValaidate = () => {
       const emailIsValid = enteredEmail.includes('@') && enteredEmail.includes('.com');
       const passwordIsValid = enteredPassword.length < 7;
-      const passcheck =  enteredPassword !== enteredConfirmPassword && enteredConfirmPassword === null || undefined || "" || enteredConfirmPassword.length === 0
+      const passcheck =  enteredConfirmPassword === enteredPassword 
       const phonecheck = enteredPhone === null || undefined || "" || enteredPhone.length === 0
       const gendercheck = enteredGender === null || undefined || "" || enteredGender.length === 0
       const idnumcheck = idnum === null || undefined || "" || idnum.length === 0
       const idtypecheck = idtype === null || undefined || "" || idtype.length === 0
 
 
-      // console.log(passcheck)
+      console.log(passcheck)
     
-      if(!emailIsValid || passwordIsInvalid || passcheck || phonecheck || gendercheck || idnumcheck || idtypecheck || !enteredfirstname || !enteredlastname){
+      if(!emailIsValid || passwordIsInvalid || !passcheck || phonecheck || gendercheck || idnumcheck || idtypecheck || !enteredfirstname || !enteredlastname){
 
         const InvalidPhone = phonecheck
         setEmailIsInvalid(!emailIsValid)
         setPasswordIsInvalid(passwordIsValid)
-        setConfirmPasswordIsInvalid(passcheck)
+        setConfirmPasswordIsInvalid(!passcheck)
         setPhoneIsInvalid(InvalidPhone)
         setGenderIsInvalid(gendercheck)
         setFirstNameIsInvalid(!enteredfirstname)

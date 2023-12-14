@@ -77,7 +77,9 @@ const Biometric = ({navigation}) => {
           }
         ]) 
       } catch (error) {
-        Alert.alert("Error", "An error occured",[
+        console.log(error.response.data)
+        if(error.response.data.finger_print[0] === "The finger print has already been taken.")
+        Alert.alert("Error", "The device finger print has already been taken.",[
           {
             text: 'Ok',
             onPress: () => navigation.goBack()
@@ -98,7 +100,7 @@ const Biometric = ({navigation}) => {
         ]) 
       } catch (error) {
         // console.log(error.response)
-        Alert.alert("Error", "An error occured",[
+        Alert.alert("Error", "An error occured. Try again later",[
           {
             text: 'Ok',
             onPress: () => navigation.goBack()
@@ -118,7 +120,7 @@ const Biometric = ({navigation}) => {
         setIsAuthenticated(result.success);
         if(result.success === true){
             Enabled()
-            // Enabled()
+            console.log('enabled')
         }else if (result.error === 'not_enrolled'){
           Alert.alert("", "Device not enrolled, setup up a screen lock to use this feature")
         }
@@ -134,7 +136,7 @@ const Biometric = ({navigation}) => {
         setIsAuthenticated(result.success);
         if(result.success === true){
             DisEnabled()
-            // Enabled()
+            console.log('disenabled')
         }else if (result.error === 'not_enrolled'){
           Alert.alert("", "Device not enrolled, setup up a screen lock to use this feature")
         }

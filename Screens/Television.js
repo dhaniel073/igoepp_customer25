@@ -354,31 +354,30 @@ const Television = ({route, navigation}) => {
 
       <View style={{marginTop:10}}/>
       <View style={{marginHorizontal:10}}>
+        {/* <Text style={styles.label}>Select Distribution Company</Text> */}
 
-            {/* <Text style={styles.label}>Select Distribution Company</Text> */}
-
-            <Dropdown
-            style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            inputSearchStyle={styles.inputSearchStyle}
-            iconStyle={styles.iconStyle}
-            data={category}
-            search
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder={!isFocus ? 'Select Satellite Network' : '...'}
-            searchPlaceholder="Search..."
-            value={id}
-            onFocus={() => setisFocus(true)}
-            onBlur={() => setisFocus(false)}
-            onChange={item => {
-                setid(item.value);
-                setisFocus(false);
-                getBouquets(item.value)
-            }}
-            />
+      <Dropdown
+        style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+        placeholderStyle={styles.placeholderStyle}
+        selectedTextStyle={styles.selectedTextStyle}
+        inputSearchStyle={styles.inputSearchStyle}
+        iconStyle={styles.iconStyle}
+        data={category}
+        search
+        maxHeight={300}
+        labelField="label"
+        valueField="value"
+        placeholder={!isFocus ? 'Select Satellite Network' : '...'}
+        searchPlaceholder="Search..."
+        value={id}
+        onFocus={() => setisFocus(true)}
+        onBlur={() => setisFocus(false)}
+        onChange={item => {
+          setid(item.value);
+          setisFocus(false);
+          getBouquets(item.value)
+        }}
+      />
 
             {id === "DSTVR" || id === "GOTVR" ? "" : 
               <>
@@ -446,53 +445,50 @@ const Television = ({route, navigation}) => {
 
           <Modal isVisible={isCompleteModalVisble}>
             <SafeAreaView style={styles.centeredView}>
-
             <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => [toggleConfirmModal(), navigation.goBack()]}>
               <MaterialIcons name="cancel" size={30} color="white" />
             </TouchableOpacity>
             <View style={styles.modalView}>
-              <Text style={styles.modalText}>Confirm Payment</Text>
-               
-                
+              <Text style={styles.modalText}>Confirm Payment</Text>  
                   <View style={{marginBottom:10, marginTop:25}}>
-                      
-                      <View style={{justifyContent:'space-between', flexDirection:'row'}}>
-                        <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>SmartCard Pin :</Text>
-                        <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}>{smartcard}</Text>
-                      </View>
 
-                      <View style={{justifyContent:'space-between', flexDirection:'row'}}>
-                        <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Customer Name:</Text>
-                        <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}>{username}</Text>
-                      </View>
+                  <View style={{justifyContent:'space-between', flexDirection:'row'}}>
+                    <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>SmartCard Pin :</Text>
+                    <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}>{smartcard}</Text>
+                  </View>
+
+                  <View style={{justifyContent:'space-between', flexDirection:'row'}}>
+                    <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Customer Name:</Text>
+                    <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}>{username}</Text>
+                  </View>
 
 
-                       <View style={{justifyContent:'space-between', flexDirection:'row'}}>
-                        <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Amount :</Text>
-                        <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}>{id === "DSTVR" || id === "GOTVR" ? rprice : price}</Text>
-                      </View>
+                    <View style={{justifyContent:'space-between', flexDirection:'row'}}>
+                    <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Amount :</Text>
+                    <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}>{id === "DSTVR" || id === "GOTVR" ? rprice : price}</Text>
+                  </View>
 
-                      <View style={{justifyContent:'space-between', flexDirection:'row'}}>
-                        <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Ref :</Text>
-                        <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}>{ref}</Text>
-                      </View> 
+                  <View style={{justifyContent:'space-between', flexDirection:'row'}}>
+                    <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Ref :</Text>
+                    <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}>{ref}</Text>
+                  </View> 
 
-                      <View style={{justifyContent:'space-between', flexDirection:'row'}}>
-                        <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Date :</Text>
-                        <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}>{date} {time}</Text>
-                      </View>
+                  <View style={{justifyContent:'space-between', flexDirection:'row'}}>
+                    <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Date :</Text>
+                    <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}>{date} {time}</Text>
+                  </View>
 
-                       <View style={{flexDirection:'row', justifyContent:'space-evenly', alignItems:'center', marginTop: 20,}}>
-                        
-                          <TouchableOpacity style={styles.viewbtn} onPress={() => toggleConfirmModal()}>
-                                <Text style={styles.viewtext}>Back</Text>
-                          </TouchableOpacity>
+                    <View style={{flexDirection:'row', justifyContent:'space-evenly', alignItems:'center', marginTop: 20,}}>
+                    
+                      <TouchableOpacity style={styles.viewbtn} onPress={() => toggleConfirmModal()}>
+                            <Text style={styles.viewtext}>Back</Text>
+                      </TouchableOpacity>
 
-                          <TouchableOpacity style={styles.cancelbtn} onPress={() => [toggleConfirmModal(), toggleModal1()]}>
-                              <Text style={styles.canceltext}>Cofirm</Text>
-                          </TouchableOpacity>
-                        </View>
-                    </View>              
+                      <TouchableOpacity style={styles.cancelbtn} onPress={() => [toggleConfirmModal(), toggleModal1()]}>
+                          <Text style={styles.canceltext}>Cofirm</Text>
+                      </TouchableOpacity>
+                    </View>
+                </View>              
             </View>
             </SafeAreaView>
           </Modal>

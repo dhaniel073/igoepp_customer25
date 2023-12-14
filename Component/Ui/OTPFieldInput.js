@@ -31,7 +31,7 @@ export const  OTPInputContainer = styled.Pressable`
 `;
 
 export const OTPInput = styled.View`
-    border-color: ${Color.darkolivegreen_100};
+    border-color: ${Color.new_color};
     min-width: 15%;
     border-width: 2px;
     border-radius: 5px;
@@ -45,7 +45,7 @@ export const OTPInputText = styled.Text`
 `;
 
 export const OTPInputFocused = styled(OTPInput)`
-    border-Color: ${Color.darkolivegreen_100};
+    border-Color: ${Color.new_color};
     background-color: ${Color.mintcream}
 `;
 

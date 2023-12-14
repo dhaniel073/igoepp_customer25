@@ -58,6 +58,7 @@ export const Color = {
     tomato: "#ff5d2c",
     silver: "#bdbdbd",
     firebrick_100: "#bb2222",
-    grey: "#d5dde0",
+    // grey: "#d5dde0",
+    grey: '#828282',
     darkolivegreen_200: "#013220"
 }

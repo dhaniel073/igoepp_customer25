@@ -8,7 +8,7 @@ import {MaterialIcons} from '@expo/vector-icons'
 
 import OTPFieldInput from '../Component/Ui/OTPFieldInput'
 import styled from 'styled-components'
-import { CustomerInfoCheck, UpdatePin, ValidatePin } from '../utils/AuthRoute'
+import { CustomerInfoCheck, SetupPin, UpdatePin, ValidatePin } from '../utils/AuthRoute'
 import { AuthContext } from '../utils/AuthContext'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
 
@@ -88,11 +88,11 @@ const TransactionPin = ({navigation}) => {
     const pinhandler = async () => {
       try {
         setischecking(true)
-        const response = await SetupPin(authCtx.Id, pin, authCtx.token )
+        const response = await SetupPin(authCtx.Id, code, authCtx.token )
         // console.log(response)
         toggleTransactionpin()
-        setpin()
-         if(check === "N"){
+        setCode('')
+        if(check === "N"){
           setPinSet(previous => !previous)
         }else{
           return;
@@ -100,8 +100,8 @@ const TransactionPin = ({navigation}) => {
         setischecking(false) 
       } catch (error) {
         setischecking(true)
-        // console.log(error)
-        setpin()
+        console.log(error)
+        setCode('')
         toggleTransactionpin()
         Alert.alert("Error", "An error occured while setting up your transaction pin", [
           {
@@ -153,6 +153,7 @@ const TransactionPin = ({navigation}) => {
           const response = await UpdatePin(authCtx.Id, code, authCtx.token)
           // console.log(response)
           toggleModal2()
+          setCode('')
           Alert.alert("Success", "Pin reset successfully", [
             {
               text: "Ok",
@@ -162,7 +163,13 @@ const TransactionPin = ({navigation}) => {
           setischecking(false)
         } catch (error) {
           setischecking(true)
-          setpinupdate()
+          setCode('')
+          Alert.alert("Error", + "An error occured please try again later", [
+            {
+              text: "Ok",
+              onPress: () => navigation.goBack()
+            },
+          ])
           setischecking(false)
         }
       }
@@ -216,30 +223,39 @@ const TransactionPin = ({navigation}) => {
             </TouchableOpacity>
 
             <View style={styles.modalView}>
+              {
+                ischecking ? 
+                <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
+                  <LoadingOverlay/>  
+                </View>
+
+                :
+              <>
             <View style={{marginTop: '13%'}}/>
-                <Text style={{fontFamily:'poppinsRegular'}}>Enter Pin</Text>
+              <Text style={{fontFamily:'poppinsRegular'}}>Enter Pin</Text>
 
-                <OTPFieldInput
-                    setPinReady={setPinReady}
-                    code={code}
-                    setCode={setCode}
-                    maxLength={MAX_CODE_LENGTH}
-                    secureTextEntry={true}
-                />
-
+              <OTPFieldInput
+                setPinReady={setPinReady}
+                code={code}
+                setCode={setCode}
+                maxLength={MAX_CODE_LENGTH}
+                secureTextEntry={true}
+              />
             <StyledButton disabled={!pinReady} 
             onPress={() => pinhandler()}
             style={{
                 backgroundColor: !pinReady ? Color.grey : Color.darkolivegreen_100
             }}>
-                <ButtonText
-                style={{
-                    color: !pinReady ? Color.black : Color.white
-                }}
-                >Submit</ButtonText>
+              <ButtonText
+              style={{
+                  color: !pinReady ? Color.black : Color.white
+              }}
+              >Submit</ButtonText>
             </StyledButton>
+                </>
+              }
             </View>
-            </Pressable>
+          </Pressable>
         </Modal>
 
 
@@ -251,28 +267,28 @@ const TransactionPin = ({navigation}) => {
             </TouchableOpacity>
                 
             <View style={styles.modalView}>
-                {
-                    ischecking ? 
-                    <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
-                        <LoadingOverlay/>  
-                    </View>
+              {
+                ischecking ? 
+                <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
+                  <LoadingOverlay/>  
+                </View>
 
-                    :
-                <>
-                <View style={{marginTop: '13%'}}/>
-                <Text style={{fontFamily:'poppinsRegular'}}>Enter Old Pin</Text>
+                :
+              <>
+              <View style={{marginTop: '13%'}}/>
+              <Text style={{fontFamily:'poppinsRegular'}}>Enter Old Pin</Text>
 
-                <OTPFieldInput
-                    setPinReady={setPinReady}
-                    code={code}
-                    setCode={setCode}
-                    maxLength={MAX_CODE_LENGTH}
-                    secureTextEntry={true}
-                />
-               
-                {
-                    pinerrormessage.length !== 0 && <Text  style={{fontSize:11, textAlign:'center', color:Color.tomato}}>{pinerrormessage}</Text>
-                }
+              <OTPFieldInput
+                setPinReady={setPinReady}
+                code={code}
+                setCode={setCode}
+                maxLength={MAX_CODE_LENGTH}
+                secureTextEntry={true}
+              />
+              
+              {
+                pinerrormessage.length !== 0 && <Text  style={{fontSize:11, textAlign:'center', color:Color.tomato}}>{pinerrormessage}</Text>
+              }
 
             <StyledButton disabled={!pinReady} 
             onPress={() => [handleClick(), pinvalidate()]}
@@ -281,7 +297,7 @@ const TransactionPin = ({navigation}) => {
             }}>
                 <ButtonText
                 style={{
-                    color: !pinReady ? Color.black : Color.white
+                  color: !pinReady ? Color.black : Color.white
                 }}
                 >Submit</ButtonText>
             </StyledButton>
@@ -299,40 +315,39 @@ const TransactionPin = ({navigation}) => {
             </TouchableOpacity>
 
             <View style={styles.modalView}>
-                {
-                  ischecking ? 
-                  <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
-                      <LoadingOverlay/>  
-                  </View>
+              {
+                ischecking ? 
+                <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
+                  <LoadingOverlay/>  
+                </View>
 
-                  :
+                :
               <>
             <View style={{marginTop: '13%'}}/>
-                <Text style={{fontFamily:'poppinsRegular'}}>Enter New Pin</Text>
+              <Text style={{fontFamily:'poppinsRegular'}}>Enter New Pin</Text>
 
-                <OTPFieldInput
-                    setPinReady={setPinReady}
-                    code={code}
-                    setCode={setCode}
-                    maxLength={MAX_CODE_LENGTH}
-                    secureTextEntry={true}
-                />
-
+              <OTPFieldInput
+                setPinReady={setPinReady}
+                code={code}
+                setCode={setCode}
+                maxLength={MAX_CODE_LENGTH}
+                secureTextEntry={true}
+              />
             <StyledButton disabled={!pinReady} 
             onPress={() => updatepinhandler()}
             style={{
                 backgroundColor: !pinReady ? Color.grey : Color.darkolivegreen_100
             }}>
-                <ButtonText
-                style={{
-                    color: !pinReady ? Color.black : Color.white
-                }}
-                >Submit</ButtonText>
+              <ButtonText
+              style={{
+                color: !pinReady ? Color.black : Color.white
+              }}
+              >Submit</ButtonText>
             </StyledButton>
-                </>
-              }
+              </>
+            }
             </View>
-            </Pressable>
+          </Pressable>
         </Modal>
         
     </Pressable>

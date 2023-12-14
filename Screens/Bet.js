@@ -407,7 +407,6 @@ const Bet = ({route, navigation}) => {
                 <View style={{flex:1, marginTop: 30, marginBottom: 70}}>
                     <LoadingOverlay/>  
                 </View>
-
                 :
               <>
             <View style={{marginTop: '13%'}}/>
@@ -425,13 +424,13 @@ const Bet = ({route, navigation}) => {
             <StyledButton disabled={!pinReady} 
             onPress={() => [handleClick(), pinValidateCheck()]}
             style={{
-                backgroundColor: !pinReady ? Color.grey : Color.darkolivegreen_100
+              backgroundColor: !pinReady ? Color.grey : Color.darkolivegreen_100
             }}>
-                <ButtonText
-                style={{
-                    color: !pinReady ? Color.black : Color.white
-                }}
-                >Submit</ButtonText>
+              <ButtonText
+              style={{
+                color: !pinReady ? Color.black : Color.white
+              }}
+              >Submit</ButtonText>
             </StyledButton>
             </>
             }

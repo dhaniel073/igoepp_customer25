@@ -42,10 +42,10 @@ const Login = ({navigation}) => {
     const passwordcheck = enteredPassword.length < 7
     
     // console.log(emailcheck, passwordcheck)
-    setEmailIsInvalid(emailcheck)
-    setPasswordIsInvalid(passwordcheck)
-
+    
     if(!emailcheck || passwordcheck){
+      setEmailIsInvalid(emailcheck)
+      setPasswordIsInvalid(passwordcheck)
       Alert.alert('Invalid details', 'Please check your entered credentials.')
     }else{
       try {

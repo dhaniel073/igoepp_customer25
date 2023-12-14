@@ -310,12 +310,8 @@ export default function App() {
 
     useEffect(() => {
       try {
-        setisLoading(true)
         checkLastLoginTimestamp()
-        setisLoading(false)
       } catch (error) {
-        setisLoading(true)
-        setisLoading(false)
         return;
       }
     },[])
@@ -341,7 +337,7 @@ export default function App() {
           console.log(timeDifferenceInMinutes + " difference")
       
           // Adjust the threshold based on your requirements (e.g., 30 minutes)
-          const authenticationThresholdInMinutes = 5;
+          const authenticationThresholdInMinutes = 10;
       
           if (timeDifferenceInMinutes > authenticationThresholdInMinutes) {
             // Prompt the user to reauthenticate

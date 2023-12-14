@@ -356,7 +356,7 @@ const Requests = ({navigation}) => {
                         {item.help_lga} {item.help_state} { item.help_country} </Text>
                     </View>
                                     
-                    <View style={{position:'absolute', padding:5, left:'83%', top:'17%', flexDirection:'row'}}>
+                    <View style={{position:'absolute', padding:5, left:'80%', top:'17%', flexDirection:'row'}}>
 
                       {/* phone */}
                       <TouchableOpacity style={{top:5}}  onPress={()=> {HelperDetails(item.assigned_helper)}}>
@@ -370,7 +370,7 @@ const Requests = ({navigation}) => {
                         })}>
                         <Ionicons name="chatbubbles" size={24} color={Color.limegreen} />
                           { item.chat_unread_customer === 0  ? null :
-                            <ImageBackground  source={require("../assets/ellipse-127.png")} contentFit="contain" style={{height:15, width:15, justifyContent:'center', position: 'absolute', marginLeft:15, marginTop:-4}}>
+                            <ImageBackground  source={require("../assets/ellipse-127.png")} contentFit="contain" style={{height:15, width:15, justifyContent:'center', position: 'absolute', marginLeft:23, marginTop:-4}}>
                               <Text style={{ fontSize: 8,  color: Color.white, fontFamily:'poppinsBold', textAlign:'center'}}>{item.chat_unread_customer}</Text>
                             </ImageBackground>
                           }
@@ -429,7 +429,7 @@ const Requests = ({navigation}) => {
                           })}>
                           <Ionicons name="chatbubbles" size={24} color={Color.limegreen} />
                             { item.chat_unread_customer === 0  ? null :
-                              <ImageBackground  source={require("../assets/ellipse-127.png")} contentFit="contain" style={{height:15, width:15, justifyContent:'center', position: 'absolute', marginLeft:15, marginTop:-4}}>
+                              <ImageBackground  source={require("../assets/ellipse-127.png")} contentFit="contain" style={{height:15, width:15, justifyContent:'center', position: 'absolute', marginLeft:20, marginTop:-4}}>
                                 <Text style={{ fontSize: 8,  color: Color.white, fontFamily:'poppinsBold', textAlign:'center'}}>{item.chat_unread_customer}</Text>
                               </ImageBackground>
                             }

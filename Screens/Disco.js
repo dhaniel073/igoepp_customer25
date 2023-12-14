@@ -217,7 +217,7 @@ const Disco = ({route, navigation}) => {
     try {
         setisLoading(true)
         const response = await DiscoPayment(ref, amount, authCtx.token)
-        // console.log(response)
+        console.log(response)
         if(response.message === "failed"){
           Alert.alert(response.message, response.description + ", fund wallet and try again", [
             {
@@ -518,6 +518,47 @@ const Disco = ({route, navigation}) => {
                       <View style={{justifyContent:'space-between', flexDirection:'row'}}>
                         <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Token :</Text>
                         <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}>{token}</Text>
+                      </View> 
+
+                      <View style={{justifyContent:'space-between', flexDirection:'row'}}>
+                        <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Bonus Token:</Text>
+                        <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}></Text>
+                      </View> 
+
+                      <View style={{justifyContent:'space-between', flexDirection:'row'}}>
+                        <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Bonus Unit :</Text>
+                        <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}></Text>
+                      </View> 
+
+                      <View style={{justifyContent:'space-between', flexDirection:'row'}}>
+                        <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Units Purchased :</Text>
+                        <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}></Text>
+                      </View> 
+
+                      <View style={{justifyContent:'space-between', flexDirection:'row'}}>
+                        <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Vat :</Text>
+                        <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}></Text>
+                      </View> 
+
+                      <View style={{justifyContent:'space-between', flexDirection:'row'}}>
+                        <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Units Purchased :</Text>
+                        <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}></Text>
+                      </View> 
+
+
+                      <View style={{justifyContent:'space-between', flexDirection:'row'}}>
+                        <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Kct1:</Text>
+                        <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}></Text>
+                      </View> 
+
+                      <View style={{justifyContent:'space-between', flexDirection:'row'}}>
+                        <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Kct2:</Text>
+                        <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}></Text>
+                      </View> 
+
+                      <View style={{justifyContent:'space-between', flexDirection:'row'}}>
+                        <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Arrears Remaining :</Text>
+                        <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}></Text>
                       </View> 
 
                       <View style={{justifyContent:'space-between', flexDirection:'row'}}>

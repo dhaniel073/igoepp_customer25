@@ -78,43 +78,43 @@ const Welcome = ({navigation}) => {
     authCtx.customerShowAmount('hide')
   }
 
-  useEffect(() => {
-    // Function to handle app state changes
-    const handleAppStateChange = async (nextAppState) => {
-      // If the app goes into the background or inactive state, log out the user
-      if (appState.match(/active/) && nextAppState === 'background') {
-        // Call your logout function here
-        // checkLastLoginTimestamp()
-        const storedTimestamp = await AsyncStorage.getItem('checktime')
-        const lastLoginTimestamp = new Date(storedTimestamp);
-        const currentTimestamp = new Date();
-        // console.log(storedTimestamp + " " + new Date())
-        if(authCtx.lastLoginTimestamp === null || undefined || ""){
-          return 
-        }else{
-          const timeDifferenceInMinutes = Math.floor(
-            (currentTimestamp - lastLoginTimestamp) / (1000 * 60)
-          );
+  // useEffect(() => {
+  //   // Function to handle app state changes
+  //   const handleAppStateChange = async (nextAppState) => {
+  //     // If the app goes into the background or inactive state, log out the user
+  //     if (appState.match(/active/) && nextAppState === 'background') {
+  //       // Call your logout function here
+  //       // checkLastLoginTimestamp()
+  //       const storedTimestamp = await AsyncStorage.getItem('checktime')
+  //       const lastLoginTimestamp = new Date(storedTimestamp);
+  //       const currentTimestamp = new Date();
+  //       // console.log(storedTimestamp + " " + new Date())
+  //       if(authCtx.lastLoginTimestamp === null || undefined || ""){
+  //         return 
+  //       }else{
+  //         const timeDifferenceInMinutes = Math.floor(
+  //           (currentTimestamp - lastLoginTimestamp) / (1000 * 60)
+  //         );
 
-          const authenticationThresholdInMinutes = 5;
+  //         const authenticationThresholdInMinutes = 5;
 
-          if (timeDifferenceInMinutes > authenticationThresholdInMinutes) {
-            AsyncStorage.removeItem('customerlastLoginTimestamp')
-            authCtx.logout()
-          }
+  //         if (timeDifferenceInMinutes > authenticationThresholdInMinutes) {
+  //           AsyncStorage.removeItem('customerlastLoginTimestamp')
+  //           authCtx.logout()
+  //         }
 
-        }
-      }
+  //       }
+  //     }
 
-      setAppState(nextAppState);
-    };
+  //     setAppState(nextAppState);
+  //   };
 
-    // Subscribe to app state changes
-    AppState.addEventListener('change', handleAppStateChange);
+  //   // Subscribe to app state changes
+  //   AppState.addEventListener('change', handleAppStateChange);
 
-    // Cleanup: Remove the event listener when the component unmounts
-      return;
-  }, [appState]);
+  //   // Cleanup: Remove the event listener when the component unmounts
+  //     return;
+  // }, [appState]);
 
   function onAuthenticate (spec){
     const auth = LocalAuthentication.authenticateAsync({
