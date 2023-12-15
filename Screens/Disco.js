@@ -9,7 +9,7 @@ import SubmitButton from '../Component/Ui/SubmitButton'
 import Input from '../Component/Ui/Input'
 import {MaterialIcons, MaterialCommunityIcons, Entypo} from '@expo/vector-icons' 
 import * as Notifications from 'expo-notifications'
-import { CustomerInfoCheck, DiscoPayment, ValidateDisco, ValidatePin } from '../utils/AuthRoute'
+import { CustomerBillerCommission, CustomerInfoCheck, DiscoPayment, ValidateDisco, ValidatePin } from '../utils/AuthRoute'
 import { AuthContext } from '../utils/AuthContext'
 import Modal from 'react-native-modal'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
@@ -50,6 +50,7 @@ const Disco = ({route, navigation}) => {
   const [ref, setRef] = useState()
   const [meterno, setMeterNo] = useState()
   const authId = route?.params?.id
+  const [commissonvalue, setcommissonvalue] = useState()
 
   const [pinT, setpinT] = useState()
   const [pinvalid, setpinvalid] = useState(false)
@@ -122,7 +123,16 @@ const Disco = ({route, navigation}) => {
       case 'amount':
         setAmount(enteredValue)
         break;
-    
+    }
+  }
+
+  const commissionget = async (id) => {
+    try {
+      const response = await CustomerBillerCommission(id, authCtx.token)
+      console.log(response)
+      setcommissonvalue(response)
+    } catch (error) {
+      return;
     }
   }
 
@@ -216,7 +226,7 @@ const Disco = ({route, navigation}) => {
     toggleModal1()
     try {
         setisLoading(true)
-        const response = await DiscoPayment(ref, amount, authCtx.token)
+        const response = await DiscoPayment(ref, amount, authCtx.token, commissonvalue)
         console.log(response)
         if(response.message === "failed"){
           Alert.alert(response.message, response.description + ", fund wallet and try again", [
@@ -235,7 +245,7 @@ const Disco = ({route, navigation}) => {
        
         setisLoading(false)
     } catch (error) {
-      // console.log(error.response.data)
+      console.log(error.response.data)
       setisLoading(true)
       Alert.alert("Sorry", "An error occured try again later", [
         {
@@ -313,6 +323,7 @@ const Disco = ({route, navigation}) => {
             onChange={item => {
                 setid(item.value);
                 setisFocus(false);
+                commissionget(item.value)
             }}
             />
             <View style={{ marginBottom:20}}/>

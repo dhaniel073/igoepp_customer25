@@ -45,7 +45,7 @@ export const OTPInputText = styled.Text`
 `;
 
 export const OTPInputFocused = styled(OTPInput)`
-    border-Color: ${Color.new_color};
+    border-Color: ${Color.darkolivegreen_100};
     background-color: ${Color.mintcream}
 `;
 

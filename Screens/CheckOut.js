@@ -5,7 +5,7 @@ import GoBack from '../Component/Ui/GoBack'
 import Input from '../Component/Ui/Input'
 import { Dropdown } from 'react-native-element-dropdown'
 import SubmitButton from '../Component/Ui/SubmitButton'
-import { CartCheckout, CustomerInfoCheck, ValidatePin } from '../utils/AuthRoute'
+import { CartCheckout, CartCheckoutCash, CustomerInfoCheck, ValidatePin } from '../utils/AuthRoute'
 import { AuthContext } from '../utils/AuthContext'
 import {Ionicons, Entypo, MaterialCommunityIcons, MaterialIcons, FontAwesome5} from '@expo/vector-icons'
 import axios from 'axios'
@@ -34,7 +34,7 @@ export const ButtonText = styled.Text`
 `;
 
 const data = [
-  // { label: 'Cash ', value: 'C' },
+  { label: 'Cash ', value: 'C' },
   { label: 'Wallet ', value: 'W' },
 
 ];
@@ -289,8 +289,9 @@ const handleCity = (countryCode, stateCode) => {
 
   const MakePurchase= async () => {
     toggleModal1()
-      try {
+    try {
       setIsLoading(true)
+      if(paymentmethod === "W"){
         const response = await CartCheckout(first_name,last_name,address,landmark,phone,email,stateName,cityName,countryName,authCtx.Id,paymentmethod,authCtx.token)
         // console.log(response)
           if(response.message !== 'success'){
@@ -311,6 +312,28 @@ const handleCity = (countryCode, stateCode) => {
               ])
             // }
           }
+      }else{
+        const response = await CartCheckoutCash(first_name,last_name,address,landmark,phone,email,stateName,cityName,countryName,authCtx.Id,paymentmethod,authCtx.token)
+        // console.log(response)
+          if(response.message !== 'success'){
+            Alert.alert('Purchase Failed', response.message,[
+              {
+                text: 'OK',
+                onPress: () => navigation.goBack()
+              }
+            ])
+          }else{
+            // if(response.message !== 'success'){
+              schedulePushNotification()
+              Alert.alert('Successful', 'item purchased successfully',[
+                {
+                  text: 'OK',
+                  onPress: () => navigation.goBack()
+                }
+              ])
+            //}
+          }
+      }
       setIsLoading(false)
       } catch (error) {
         setIsLoading(true)

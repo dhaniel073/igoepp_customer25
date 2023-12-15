@@ -12,7 +12,7 @@ import * as Notifications from 'expo-notifications'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
 import { AuthContext } from '../utils/AuthContext'
 import axios from 'axios'
-import { CustomerInfoCheck, CustomerSelf, CustomerThirdParty, CustomerVtuAirtime, CustomerVtuData, ValidatePin } from '../utils/AuthRoute'
+import { CustomerBillerCommission, CustomerInfoCheck, CustomerSelf, CustomerThirdParty, CustomerVtuAirtime, CustomerVtuData, ValidatePin } from '../utils/AuthRoute'
 import { useRef } from 'react'
 import styled from 'styled-components'
 import OTPFieldInput from '../Component/Ui/OTPFieldInput'
@@ -63,6 +63,7 @@ const VirtualTopUp = ({navigation, route}) => {
     const [isModalVisble, setModalVisible] = useState(false)
     const [ischecking, setischecking] = useState(false)
     const [pinerrormessage, setPinerrorMessage] = useState('')
+    const [commissonvalue, setcommissonvalue] = useState()
     
     const [code, setCode] = useState('')
     const [pinReady, setPinReady] = useState(false)
@@ -372,13 +373,23 @@ const getBouquets = (value) => {
     }
   }
 
+  const commissionget = async (id) => {
+     try {
+       const response = await CustomerBillerCommission(id, authCtx.token)
+       console.log(response)
+       setcommissonvalue(response)
+     } catch (error) {
+       return;
+     }
+   }
+
 
   
   const airtimetopup = async () => {
     toggleModal1()
     try {
       setisloading(true)
-        const response = await CustomerVtuAirtime(requestId, id, amount, authCtx.token)
+        const response = await CustomerVtuAirtime(requestId, id, amount, authCtx.token, commissonvalue)
         // console.log(response)
 
         if(response.message === "failed"){
@@ -411,7 +422,7 @@ const datatoptup = async() => {
     // console.log(requestID, id, bosquetPrice, bosquetData, authCtx.token)
     try {
       setisloading(true)
-        const response = await CustomerVtuData(requestId, id, bosquetPrice, bosquetData, authCtx.token)
+        const response = await CustomerVtuData(requestId, id, bosquetPrice, bosquetData, authCtx.token, commissonvalue)
         // console.log(response)
 
         if(response.message === "failed"){
@@ -503,6 +514,7 @@ const datatoptup = async() => {
                 setid(item.value);
                 setisFocus(false);
                 getBouquets(item.value)
+                commissionget(item.value)
             }}
             />
             <View style={{ marginBottom:20}}/>

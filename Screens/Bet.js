@@ -9,7 +9,7 @@ import Modal from 'react-native-modal'
 import Input from '../Component/Ui/Input'
 import {MaterialIcons, MaterialCommunityIcons, Entypo} from '@expo/vector-icons'
 import axios from 'axios'
-import { BetPay, CustomerInfoCheck, ValidateBet, ValidatePin } from '../utils/AuthRoute'
+import { BetPay, CustomerBillerCommission, CustomerInfoCheck, ValidateBet, ValidatePin } from '../utils/AuthRoute'
 import * as Notification from 'expo-notifications'
 import SubmitButton from '../Component/Ui/SubmitButton'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
@@ -44,6 +44,7 @@ const Bet = ({route, navigation}) => {
   const [ismodalvisible, setismodalvisible] = useState(false)
   const authId = route?.params?.id
   const [ref, setRef] = useState()
+  const [commissonvalue, setcommissonvalue] = useState()
 
   const [pinT, setpinT] = useState()
   const [pinvalid, setpinvalid] = useState(false)
@@ -78,6 +79,17 @@ const Bet = ({route, navigation}) => {
     })
     return unsubscribe;
   }, [])
+
+    const commissionget = async (id) => {
+      try {
+        const response = await CustomerBillerCommission(id, authCtx.token)
+        console.log(response)
+        setcommissonvalue(response)
+      } catch (error) {
+        return;
+      }
+    }
+    
 
   useEffect(() => {
     const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
@@ -124,7 +136,7 @@ const Bet = ({route, navigation}) => {
     try {
       setisloading(true)
       const response = await ValidateBet(authCtx.Id, id, betId, authCtx.token)
-      // console.log(response.data)
+      console.log(response.data)
       setRef(response.data.requestID)
       if(response.data.status === "Success"){
         Alert.alert(response.data.status, `Confirm funding to bet Id of ${betId}`, [
@@ -187,12 +199,12 @@ const Bet = ({route, navigation}) => {
           setischecking(true)
           const response = await ValidatePin(authCtx.Id, code, authCtx.token)
           // console.log(response)
-          setpinT()
+          setCode('')
           toggleModal()
           betPayment(ref)
         } catch (error) {
           setischecking(true)
-          setpinT()
+          setCode('')
           setPinerrorMessage(error.response.data.message + "\n" + (3 - refT.current + ` trial${3-refT.current > 1 ? 's' : ""} remaining`))
           // console.log(error.response)
           Alert.alert("Error", error.response.data.message+ " " + "Try again", [
@@ -208,12 +220,45 @@ const Bet = ({route, navigation}) => {
     }
   
     // console.log(ref)
+    // const betPayment = async () => {
+    //   toggleModal1()
+    //   try {
+    //     setisloading(true)
+    //     const response = await BetPay(ref, amount, authCtx.token, commissonvalue)
+    //     // console.log(response)
+    //     if(response.data.message === "failed"){
+    //       Alert.alert(response.data.message, response.data.description + ", fund wallet and try again", [
+    //         {
+    //           text:"Ok",
+    //           onPress:() => navigation.goBack()
+    //         }
+    //       ])
+    //     }else{
+    //       // console.log(response.data)
+    //       schedulePushNotification()
+    //       toggleModal()
+    //     }
+    //     setisloading(false)
+    // } catch (error) {
+    //   setisloading(true)
+    //     console.log(error.response.data)
+    //     Alert.alert("Sorry", "An error occured try again later", [
+    //       {  
+    //         text:"Ok",
+    //         onPress: () => [navigation.goBack()]
+    //       }
+    //   ])
+    //   setisloading(false)
+    //   return;
+    // }
+    // }
+
     const betPayment = async () => {
       toggleModal1()
       try {
         setisloading(true)
-        const response = await BetPay(ref, amount, authCtx.token)
-        // console.log(response)
+        const response = await BetPay(ref, amount, authCtx.token, commissonvalue)
+        console.log(response)
         if(response.data.message === "failed"){
           Alert.alert(response.data.message, response.data.description + ", fund wallet and try again", [
             {
@@ -229,7 +274,7 @@ const Bet = ({route, navigation}) => {
         setisloading(false)
     } catch (error) {
       setisloading(true)
-        // console.log(error)
+        console.log(error.response.data)
         Alert.alert("Sorry", "An error occured try again later", [
           {  
             text:"Ok",
@@ -305,6 +350,7 @@ const Bet = ({route, navigation}) => {
               onChange={item => {
                   setid(item.value);
                   setisFocus(false);
+                  commissionget(item.value)
               }}
             />
             <View style={{ marginBottom:20}}/>

@@ -8,7 +8,7 @@ import Input from '../Component/Ui/Input'
 import SubmitButton from '../Component/Ui/SubmitButton'
 import { AuthContext } from '../utils/AuthContext'
 import axios from 'axios'
-import { CustomerInfoCheck, ValidatePin, WaecCard } from '../utils/AuthRoute'
+import { CustomerBillerCommission, CustomerInfoCheck, ValidatePin, WaecCard } from '../utils/AuthRoute'
 import * as Notifications from 'expo-notifications'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
 import Modal from 'react-native-modal'
@@ -56,6 +56,8 @@ const Education = ({route, navigation}) => {
   const [isSetpinModalVisible, setisSetpinModalVisible] = useState(false)
   const [pinerrormessage, setPinerrorMessage] = useState('')
   const [ischecking, setischecking] = useState(false)
+  const [commissonvalue, setcommissonvalue] = useState()
+
 
   const [code, setCode] = useState('')
   const [pinReady, setPinReady] = useState(false)
@@ -112,6 +114,16 @@ const Education = ({route, navigation}) => {
     setIsModalVisible(!isModalVisble)
     reqId = value
   }
+
+  const commissionget = async (id) => {
+      try {
+        const response = await CustomerBillerCommission(id, authCtx.token)
+        console.log(response)
+        setcommissonvalue(response)
+      } catch (error) {
+        return;
+      }
+    }
 
   const getBouquets = (value) => {
       // console.log(authId, id)
@@ -190,7 +202,7 @@ const Education = ({route, navigation}) => {
     toggleModal1()
     try{
       setisLoading(true)
-      const response = await WaecCard(authCtx.Id, id, edu, price, authCtx.token)
+      const response = await WaecCard(authCtx.Id, id, edu, price, authCtx.token, commissonvalue)
       // console.log(response)
       if(response.data.message === "failed"){
         Alert.alert(response.data.message, response.data.description + ", fund wallet and try again", [
@@ -286,6 +298,7 @@ const Education = ({route, navigation}) => {
               setid(item.value);
               setisFocus(false);
               getBouquets(item.value)
+              commissionget(item.value)
             }}
             />
             <View style={{ marginBottom:20}}/>

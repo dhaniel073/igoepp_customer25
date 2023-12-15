@@ -3,7 +3,7 @@ import React, { useContext, useState, useEffect, useRef } from 'react'
 import { Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle'
 import GoBack from '../Component/Ui/GoBack'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
-import { CustomerInfoCheck, InternetPayment, ValidateInternet, ValidatePin } from '../utils/AuthRoute'
+import { CustomerBillerCommission, CustomerInfoCheck, InternetPayment, ValidateInternet, ValidatePin } from '../utils/AuthRoute'
 import { AuthContext } from '../utils/AuthContext'
 import Input from '../Component/Ui/Input'
 import { Dropdown } from 'react-native-element-dropdown'
@@ -57,6 +57,7 @@ const Internet = ({route, navigation}) => {
   const [isSetpinModalVisible, setisSetpinModalVisible] = useState(false)
   const [pinerrormessage, setPinerrorMessage] = useState('')
   const [ischecking, setischecking] = useState(false)
+  const [commissonvalue, setcommissonvalue] = useState()
 
   const [code, setCode] = useState('')
   const [pinReady, setPinReady] = useState(false)
@@ -201,6 +202,16 @@ const Internet = ({route, navigation}) => {
     const togglePinModal = () => {
       setisSetpinModalVisible(!isSetpinModalVisible)
     }
+
+    const commissionget = async (id) => {
+          try {
+            const response = await CustomerBillerCommission(id, authCtx.token)
+            console.log(response)
+            setcommissonvalue(response)
+          } catch (error) {
+            return;
+          }
+        }
     
     const pinValidateCheck = async () => {
       if(refT.current > 3){
@@ -246,7 +257,7 @@ const Internet = ({route, navigation}) => {
     togglePinModal()
     try {
       setisLoading(true)
-      const response = await InternetPayment(ref, price, bouquestData, authCtx.token)
+      const response = await InternetPayment(ref, price, bouquestData, authCtx.token, commissonvalue)
       // console.log(response)
       if(response.data.message === "failed"){
         Alert.alert(response.data.message, response.data.description + ", fund wallet and try again", [
@@ -333,6 +344,7 @@ const Internet = ({route, navigation}) => {
           setid(item.value);
           setisFocus(false);
           getBouquets(item.value)
+          commissionget(item.value)
         }}
         />
 

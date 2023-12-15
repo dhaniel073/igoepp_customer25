@@ -36,7 +36,7 @@ const CartView = ({navigation}) => {
         }
       })
       return unsuscribe;
-  }, [])
+    }, [])
 
 
   const check = () => {
@@ -104,7 +104,8 @@ const NoCartItemNote = () => {
         renderItem={({item}) => 
         <View style={[styles.container, {marginTop:3}]}>
           <Text style={styles.requestDate}>{item.created_at}</Text>
-          <TouchableOpacity style={{alignSelf:'flex-end', position:'absolute',  right:13}} onPress={() => Alert.alert('Remove Item', 'Are you sure you want to remove this item from cart', [
+          <Pressable style={[styles.pressable, {marginBottom:20}]}>
+          <TouchableOpacity style={{alignSelf:'flex-end', position:'absolute', right:15, top:10}} onPress={() => Alert.alert('Remove Item', 'Are you sure you want to remove this item from cart', [
           {
             text: "No",
             onPress: () => {}
@@ -115,7 +116,6 @@ const NoCartItemNote = () => {
           ])}>
               <MaterialIcons style={{bottom:5}} name="cancel" size={22} color={Color.tomato} />
             </TouchableOpacity>
-          <Pressable style={[styles.pressable, {marginBottom:20}]}>
             <View>
             <View style={{flexDirection:'row', justifyContent:'space-between'}}>
               <Text style={styles.requestName}>NGN {item.price.toLocaleString()}</Text>
@@ -133,9 +133,11 @@ const NoCartItemNote = () => {
             }
             />
 
-            <TouchableOpacity onPress={() => navigation.navigate('CheckOut', {price: priceArray})} style={{marginTop:DIMENSION.HEIGHT * 0.5, alignSelf:'flex-end', position:'absolute', right:10,  shadowColor: 'black', shadowOpacity: 0.25,shadowOffset: {width: 0, height: 2}, shadowRadius: 20,overflow: Platform.OS === 'andriod' ? 'hidden' : 'visible', padding:10, elevation:3, borderRadius:30 }}>
+            
+            <TouchableOpacity onPress={() => navigation.navigate('CheckOut', {price: priceArray})} style={{marginTop:DIMENSION.HEIGHT * 0.5,alignItems:'center', justifyContent:'center', position:'absolute', right:5,  shadowColor: 'black', shadowOpacity: 0.25,shadowOffset: {width: 0, height: 2}, shadowRadius: 20, padding:10, borderRadius:30 }}>
               {/* <Image source={require("../assets/payment1.jpeg")} style={{height:50, width:50, borderRadius: 50, alignItems:'baseline', justifyContent:'center'}}/> */}
-              <Fontisto name="wallet" size={35} color="black" />
+              <Fontisto name="wallet" size={28} color={Color.darkolivegreen_100} />
+              <Text style={{fontFamily:'poppinsRegular', fontSize:11}}>CheckOut</Text>
             </TouchableOpacity>
           </>
         }
@@ -166,7 +168,7 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     margin:2,
     borderRadius: Border.br_3xs,
-    padding:15,
+    padding:20,
   },
   
 })

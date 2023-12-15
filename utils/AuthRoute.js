@@ -470,6 +470,35 @@ async function cartcheckout(first_name,last_name, address,landmark,phone,email,s
   const data = response.data
   return data;
 }
+
+async function cartcheckoutcash(first_name,last_name, address,landmark,phone,email,stateName, cityName, countryName,  customerId,  paymentmethod, token){
+
+  const url = 'https://phixotech.com/igoepp/public/api/auth/checkout/storecash'
+  
+  const response = await axios.post(url, {
+    'firstname': first_name,
+    'lastname': last_name,
+    "delivery_address": address,
+    'delivery_landmark': landmark,
+    'delivery_phone': phone,
+    'delivery_email': email,
+    'delivery_state': stateName,
+    'delivery_lga':cityName,
+    "payment_mode": paymentmethod,
+    'delivery_country': countryName,
+    'customer_id': customerId,
+    "charge_payment_mode": "W"
+  }, {
+    headers:{
+      Accept: 'application/json',
+      Authorization : `Bearer ${token}`
+    }
+  })
+
+  const data = response.data
+  return data;
+}
+
 //forgot customer password 
 async function forgotpass(email){
     const url = "https://phixotech.com/igoepp/public/api/customer/forgetpassword"
@@ -566,6 +595,22 @@ async function customerbiller(token){
   return data;
 }
 
+
+async function customerbillercommission(id, token){
+  const url = `http://phixotech.com/igoepp/public/api/auth/billpayment/getMyBillersByBillerID/${id}`
+  const response = await axios.get(url, {
+    headers:{
+      Accept: 'application/json',
+      Authorization: `Bearer ${token}`
+    }
+  })
+  const data = response.data
+  return data;
+}
+
+
+
+
 async function customerbillerbyid(id, token){
   const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${id}`
   const response = axios.get(url, {
@@ -583,16 +628,16 @@ async function customerbillerbyid(id, token){
 async function customerthirdparty(id, phone, token){
   const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/validateCustomerPhoneThirdParty`
   const response = await axios.post(url, {
-      "customerID": id,
-      "phoneNumber": phone,
-      "type": "C"
+    "customerID": id,
+    "phoneNumber": phone,
+    "type": "C"
   }, {
       headers:{
-          Accept:'application/json',
-          Authorization:`Bearer ${token}`
+        Accept:'application/json',
+        Authorization:`Bearer ${token}`
       }
   })
-
+  ``
   const data = response.data
   return data
 }
@@ -614,12 +659,13 @@ async function helperSelf(id, token){
 }
 
 // buy airtime endpoint 
-async function customervtuairtime( requestid, billerId, amount, token){
+async function customervtuairtime( requestid, billerId, amount, token, commission){
   const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/vtuPaymentAirtime`
   const response = await axios.post(url, {
-          "requestID": requestid,
-          "billerId": billerId,
-          "amount": amount
+    "requestID": requestid,
+    "billerId": billerId,
+    "amount": amount,
+    "commission": commission
   }, {
       headers:{
           Accept:'application/json',
@@ -631,14 +677,15 @@ async function customervtuairtime( requestid, billerId, amount, token){
   return data
 }
 
-//buy data endpoint
-async function customervtudata(requestid, billerId, amount, bouquetCode, token){
+//buy data endpoint, 
+async function customervtudata(requestid, billerId, amount, bouquetCode, token, commission){
   const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/vtuPaymentData`
   const response = await axios.post(url, {
-          "requestID":  requestid,
-          "billerId": billerId,
-          "amount": amount,
-          "bouquetCode": bouquetCode
+    "requestID":  requestid,
+    "billerId": billerId,
+    "amount": amount,
+    "bouquetCode": bouquetCode,
+    "commission": commission
   }, {
       headers:{
           Accept:'application/json',
@@ -653,10 +700,10 @@ async function customervtudata(requestid, billerId, amount, bouquetCode, token){
 async function validateinternet(id, billerId, smartCardID, token){
   const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/validateCustomerInternet`
   const response = axios.post(url, {
-          "customerID": id,
-          "billerID": billerId,
-          "type": "C",
-          "smartCardID": smartCardID.toString()
+    "customerID": id,
+    "billerID": billerId,
+    "type": "C",
+    "smartCardID": smartCardID.toString()
   }, {
       headers:{
           Accept:'application/json',
@@ -668,12 +715,13 @@ async function validateinternet(id, billerId, smartCardID, token){
 }
 
 //pay for internet endpoint
-async function internetPayment(requestID, amount, bouquetCode, token){
+async function internetPayment(requestID, amount, bouquetCode, token, commission){
   const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/internetPayment`
   const response = axios.post(url, {
-          "requestID": requestID,
-          "amount": amount,
-          "bouquetCode": bouquetCode
+    "requestID": requestID,
+    "amount": amount,
+    "bouquetCode": bouquetCode,
+    "commission": commission
   }, {
       headers:{
           Accept:'application/json',
@@ -689,10 +737,10 @@ async function internetPayment(requestID, amount, bouquetCode, token){
 async function validatebet(id, billerID, betnijaID, token){
   const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/validateCustomerBet`
   const response = axios.post(url, {
-          "customerID": id,
-          "billerID": billerID,
-          "type": "C",
-          "betnijaID": betnijaID
+    "customerID": id,
+    "billerID": billerID,
+    "type": "C",
+    "betnijaID": betnijaID
   }, {
       headers:{
           Accept:'application/json',
@@ -704,11 +752,12 @@ async function validatebet(id, billerID, betnijaID, token){
 }
 
 // make payment for bet account endpoint
-async function betpay(requestID,amount,token){
+async function betpay(requestID,amount,token, commission){
   const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/betBillPayment`
   const response = axios.post(url, {
-      "requestID": requestID,
-      "amount": amount
+    "requestID": requestID,
+    "amount": amount,
+    "commission": commission
   }, {
       headers:{
           Accept:'application/json',
@@ -720,14 +769,15 @@ async function betpay(requestID,amount,token){
 }
 
 //purchase waec card endpoint
-async function waeccard(id,billerID,bouquetCode,amount,token) {
+async function waeccard(id,billerID,bouquetCode,amount,token, commission) {
   const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/purchaseWaecPin`
   const response = axios.post(url, {
-      "customerID": id,
-      "billerID": billerID,
-      "type": "C",
-      "bouquetCode": bouquetCode,
-      "amount": amount,
+    "customerID": id,
+    "billerID": billerID,
+    "type": "C",
+    "bouquetCode": bouquetCode,
+    "amount": amount,
+    "commission": commission
   }, {
       headers:{
           Accept:'application/json',
@@ -743,10 +793,10 @@ async function waeccard(id,billerID,bouquetCode,amount,token) {
 async function validatedisco(id, billerID, meterID, token){
   const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/validateCustomerDisco`
   const response = axios.post(url, {
-      "customerID": id,
-      "billerID": billerID,
-      "type": "C",
-      "meterID": meterID
+    "customerID": id,
+    "billerID": billerID,
+    "type": "C",
+    "meterID": meterID,
   }, {
       headers:{
           Accept:'application/json',
@@ -759,11 +809,12 @@ async function validatedisco(id, billerID, meterID, token){
 }
 
 // customer electricity payment
-async function discopayment(requestID, amount, token){
+async function discopayment(requestID, amount, token, commission){
   const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/discoPayment`
   const response = await axios.post(url, {
-          "requestID": requestID,
-          "amount": amount        
+    "requestID": requestID,
+    "amount": amount,
+    "commission": commission        
   }, {
       headers:{
           Accept:'application/json',
@@ -796,12 +847,13 @@ async function validatetv(id, billerID, smartCardID, token){
 
 //multichoice payment endpoint
 
-async function tvpay(requestID, amount, bouquetCode, token){
+async function tvpay(requestID, amount, bouquetCode, token, commission){
   const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/tvPayment`
   const response = axios.post(url, {
       "requestID": requestID,
       "amount": amount,
-      "bouquetCode": bouquetCode
+      "bouquetCode": bouquetCode,
+      "commission": commission
   }, {
       headers:{
           Accept:'application/json',
@@ -814,11 +866,12 @@ async function tvpay(requestID, amount, bouquetCode, token){
 }
 
 //multichoice payment for renewal endpoint
-async function tvrenewalpay(requestID, amount, token){
+async function tvrenewalpay(requestID, amount, token, commission){
   const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/tvPaymentRenewal`
   const response = axios.post(url, {
       "requestID": requestID,
       "amount": amount,
+      "commission": commission
   }, {
       headers:{
           Accept:'application/json',
@@ -1325,6 +1378,12 @@ export function CartCheckout(first_name,last_name, address,landmark,phone,email,
   return cartcheckout(first_name,last_name, address,landmark,phone,email,stateName,cityName,countryName,  customerId,  paymentmethod, token)
 }
 
+export function CartCheckoutCash(first_name,last_name, address,landmark,phone,email,stateName, cityName, countryName,  customerId,  paymentmethod, token){
+  return cartcheckoutcash(first_name,last_name, address,landmark,phone,email,stateName,cityName,countryName,  customerId,  paymentmethod, token)
+}
+
+
+
 export function ProfileUpdate(last_name, first_name, sex, phone, customerId, token, countryName, stateName, cityName){
   return profileupdate(last_name, first_name, sex, phone, customerId, token, countryName, stateName, cityName)
 }
@@ -1343,6 +1402,12 @@ export function WalletUpdate(Id, token, InputAmount){
 export const CustomerBiller = async (token) => {
   return customerbiller(token)
 }
+
+
+export const CustomerBillerCommission = (id, token) => {
+  return customerbillercommission(id, token)
+}
+
 
 //get helper biller  by id
 export const CustomerBillerById = (id, token) => {
@@ -1370,40 +1435,40 @@ export const ValidateInternet = (id, billerId, smartCardID, token) => {
   return validateinternet(id, billerId, smartCardID, token)
 }
 
-export const InternetPayment = (requestID, amount, bouquetCode, token) => {
-  return internetPayment(requestID, amount, bouquetCode, token)
+export const InternetPayment = (requestID, amount, bouquetCode, token, commission) => {
+  return internetPayment(requestID, amount, bouquetCode, token, commission)
 }
 
 export const ValidateBet = (id, billerID, betnijaID, token) => {
   return validatebet(id, billerID, betnijaID, token)
 }
 
-export const BetPay = (requestID, amount, token) => {
-  return betpay(requestID, amount, token)
+export const BetPay = (requestID, amount, token, commission) => {
+  return betpay(requestID, amount, token, commission)
 }
 
-export const WaecCard = (id,billerID,bouquetCode,amount,token) => {
-  return waeccard(id,billerID,bouquetCode,amount,token)
+export const WaecCard = (id,billerID,bouquetCode,amount,token, commission) => {
+  return waeccard(id,billerID,bouquetCode,amount,token, commission)
 }
 
 export const ValidateDisco = (id, billerID, meterID, token) => {
   return validatedisco(id, billerID, meterID, token)
 }
 
-export const DiscoPayment = (requestID, amount, token) => {
-  return discopayment(requestID, amount, token)
+export const DiscoPayment = (requestID, amount, token, commission) => {
+  return discopayment(requestID, amount, token, commission)
 }
 
 export const ValidateTv = (id, billerID, smartCardID, token) => {
   return validatetv(id, billerID, smartCardID, token)
 }
 
-export const TvPayment = (requestID, amount, bouquetCode, token) => {
-  return tvpay(requestID, amount, bouquetCode, token)
+export const TvPayment = (requestID, amount, bouquetCode, token, commission) => {
+  return tvpay(requestID, amount, bouquetCode, token, commission)
 }
 
-export const TvRenewalPay = (requestID, amount, token) => {
-  return tvrenewalpay(requestID, amount, token)
+export const TvRenewalPay = (requestID, amount, token, commisson) => {
+  return tvrenewalpay(requestID, amount, token, commisson)
 }
 
 export const HelperGet = (id, token) => {
@@ -1502,3 +1567,4 @@ export const NotificationUnread = (id, token) => {
 export const NotificationById = (id, token) => {
   return notificationbyid(id, token)
 }
+

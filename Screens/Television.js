@@ -9,7 +9,7 @@ import { Image, ImageBackground } from 'expo-image'
 import {MaterialIcons, MaterialCommunityIcons, Entypo} from '@expo/vector-icons'
 import Modal from 'react-native-modal'
 import { AuthContext } from '../utils/AuthContext'
-import { CustomerInfoCheck, TvPayment, TvRenewalPay, ValidatePin, ValidateTv } from '../utils/AuthRoute'
+import { CustomerBillerCommission, CustomerInfoCheck, TvPayment, TvRenewalPay, ValidatePin, ValidateTv } from '../utils/AuthRoute'
 import axios from 'axios'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
 import * as Notifications from 'expo-notifications'
@@ -65,6 +65,7 @@ const Television = ({route, navigation}) => {
   const [isSetpinModalVisible, setisSetpinModalVisible] = useState(false)
   const [pinerrormessage, setPinerrorMessage] = useState('')
   const [ischecking, setischecking] = useState(false)
+  const [commissonvalue, setcommissonvalue] = useState()
 
 
   const authCtx = useContext(AuthContext)
@@ -201,7 +202,7 @@ const Television = ({route, navigation}) => {
     toggleModal1()
     try {
       setisLoading(true)
-      const response = await TvRenewalPay(ref, rprice, authCtx.token)
+      const response = await TvRenewalPay(ref, rprice, authCtx.token, commissonvalue)
       // console.log(response.data)  
       // if(response.data.status){
         if(response.data.message === "failed"){
@@ -232,11 +233,20 @@ const Television = ({route, navigation}) => {
     }
   }
 
+  const commissionget = async (id) => {
+    try {
+      const response = await CustomerBillerCommission(id, authCtx.token)
+      console.log(response)
+      setcommissonvalue(response)
+    } catch (error) {
+      return;
+    }
+  }
   const tvPayment = async () => {
     toggleModal1()
     try {
         setisLoading(true)
-        const response = await TvPayment(ref, price, bouquetData, authCtx.token)
+        const response = await TvPayment(ref, price, bouquetData, authCtx.token, commissonvalue)
         // console.log(response.data)
         
         if(response.data.message === "failed"){
@@ -376,6 +386,7 @@ const Television = ({route, navigation}) => {
           setid(item.value);
           setisFocus(false);
           getBouquets(item.value)
+          commissionget(item.value)
         }}
       />
 
