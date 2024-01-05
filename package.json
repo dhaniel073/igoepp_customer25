@@ -30,7 +30,9 @@
     "expo-notifications": "~0.20.1",
     "expo-status-bar": "~1.6.0",
     "firebase": "^10.7.0",
+    "js-base64": "^3.7.5",
     "lodash.filter": "^4.6.0",
+    "md5": "^2.3.0",
     "npx": "^10.2.2",
     "react": "18.2.0",
     "react-native": "0.72.6",
@@ -46,7 +48,8 @@
     "react-native-screens": "~3.22.0",
     "react-native-swiper": "^1.6.0",
     "react-native-webview": "13.2.2",
-    "styled-components": "^6.1.1"
+    "styled-components": "^6.1.1",
+    "expo-updates": "~0.18.19"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

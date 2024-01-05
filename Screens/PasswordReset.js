@@ -7,6 +7,8 @@ import GoBack from '../Component/Ui/GoBack'
 import SubmitButton from '../Component/Ui/SubmitButton'
 import { CustomerResetPassword, ValidateLogin } from '../utils/AuthRoute'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
+import { Base64 } from 'js-base64'
+
 
 const PasswordReset = ({navigation}) => {
     const authCtx = useContext(AuthContext)
@@ -42,9 +44,10 @@ const PasswordReset = ({navigation}) => {
         }
       ])
     }else{
+      const passwordMd5Old = Base64.encode(oldpassword)
       try {
         setisloading(true)
-        const response = await ValidateLogin(authCtx.email, oldpassword)
+        const response = await ValidateLogin(authCtx.email, passwordMd5Old)
         // console.log(response.message)
         if(response.message === "Invalid passoword"){
           setoldpassworderrormessage(response.message)
@@ -70,9 +73,10 @@ const PasswordReset = ({navigation}) => {
     
 
     const ResetHandler = async () => {
+      const passwordMd5New = Base64.encode(password)
       try {
         setisloading(true)
-        const response = await CustomerResetPassword(authCtx.email, password, authCtx.token)
+        const response = await CustomerResetPassword(authCtx.email, passwordMd5New, authCtx.token)
         // console.log(response)
         Alert.alert("Successful", "Password reset successful", [
           {

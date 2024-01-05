@@ -4,7 +4,7 @@ import { Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle'
 import GoBack from "../Component/Ui/GoBack"
 import { Image, ImageBackground } from 'expo-image'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
-import { Cart, Category, WalletBalance } from '../utils/AuthRoute'
+import { Cart, Category, MarketPlaceItemsGet, WalletBalance } from '../utils/AuthRoute'
 import { AuthContext } from '../utils/AuthContext'
 import {AntDesign, MaterialIcons} from '@expo/vector-icons'
 
@@ -18,9 +18,9 @@ const MarketPlace = ({navigation}) => {
     const unsuscribe = navigation.addListener('focus', async() => {
       try {
         setIsFetching(true)
-        const response = await Category()
+        const response = await MarketPlaceItemsGet(authCtx.token)
+        console.log(response)
         setFetchedCategory(response)
-        setIsFetching(false)
         setIsFetching(false)
       } catch (error) {
         setIsFetching(true)
@@ -64,6 +64,17 @@ const MarketPlace = ({navigation}) => {
     return <LoadingOverlay message={"..."}/>
   }
 
+  const NoSubCategoryNote = () => {
+    return (
+      <View style={{ justifyContent:'center', alignItems:'center', marginTop: DIMENSION.HEIGHT * 0.33 }}>
+        <Text style={{ fontSize: 14, color: 'grey', fontFamily: 'poppinsSemiBold' }}>No Item Available</Text>
+        <TouchableOpacity onPress={()=> navigation.navigate('RequestHelp')}>
+        {/* <Text style={{  fontSize: 14, color:Color.limegreen, fontFamily: 'poppinsSemiBold'  }}>Make Request</Text> */}
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
 
   return (
     <SafeAreaView style={{marginTop: marginStyle.marginTp, marginHorizontal:10, flex:1}}>
@@ -72,6 +83,7 @@ const MarketPlace = ({navigation}) => {
         <Text style={styles.mrkplacetxt}>MarketPlace</Text>
         <Text style={styles.name}>Hi {authCtx.firstname}</Text>
       </View>
+
       <TouchableOpacity style={{ justifyContent:'center', position:'absolute', alignSelf:'flex-end', alignItems:'center', right:50 }} onPress={() => navigation.navigate('CartHistory')}>
         <MaterialIcons name="history-toggle-off" size={24} color="black" />
         {/* <Text style={{fontSize:10}}>History</Text> */}
@@ -82,13 +94,14 @@ const MarketPlace = ({navigation}) => {
 
           {
             cartlength === 0 ? null :
-            <ImageBackground  source={require("../assets/ellipse-127.png")} style={{height:18, width:18, justifyContent:'center', marginLeft:-6, marginTop:-4}}>
+            <ImageBackground  source={require("../assets/ellipse-127.png")} style={{height:13, width:13, justifyContent:'center', marginLeft:-6, marginTop:-4}}>
               <Text style={{ fontSize: 8,  color: Color.white, fontFamily:'poppinsBold', textAlign:'center'}}>{cartlength}</Text>
             </ImageBackground>
           }
         </View>
       </TouchableOpacity>
 
+      {fetchedcategory.length === 0 ? <NoSubCategoryNote/> : 
       <FlatList
         showsVerticalScrollIndicator={false}
         data={fetchedcategory}
@@ -97,17 +110,18 @@ const MarketPlace = ({navigation}) => {
           <View style={styles.container}  >
             <TouchableOpacity style={[styles.pressables]} onPress={() => navigation.navigate("MarketPlaceItem", {
               categoryId: item.id,
-              categoryName: item.cat_name,
-              categoryDesc: item.cat_desc,
+              categoryName: item.name,
+              categoryDesc: item.description,
               first_name: authCtx.firstname
             })}>
-              <Image style={styles.image2} source={{ uri:`https://phixotech.com/igoepp/public/category/${item.image}`  }}/>
-              <Text style={styles.item}>{item.cat_name}</Text>
+              <Image style={styles.image2} source={{ uri:`https://igoeppms.com/igoepp/public/product/${item.picture}`  }}/>
+              <Text style={styles.item}>{item.name}</Text>
             </TouchableOpacity>
           </View>
             }
         numColumns={2}
         /> 
+      }
     </SafeAreaView>
   )
 }

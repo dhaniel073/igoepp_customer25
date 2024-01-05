@@ -13,6 +13,8 @@ import {Ionicons} from '@expo/vector-icons'
 import * as LocalAuthentication from 'expo-local-authentication'
 import * as Device from 'expo-device'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import md5 from 'md5'
+import { Base64 } from 'js-base64'
   
 
 const Login = ({navigation}) => {
@@ -24,6 +26,11 @@ const Login = ({navigation}) => {
   const authCtx = useContext(AuthContext)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const log = Device.osInternalBuildId
+
+  const cleardata = () => {
+    setEnteredEmail('')
+    setEnteredPassword('')
+  }
    
   const updateInputValueHandler = (inputType, enteredValue) => {
     switch (inputType) {
@@ -48,9 +55,12 @@ const Login = ({navigation}) => {
       setPasswordIsInvalid(passwordcheck)
       Alert.alert('Invalid details', 'Please check your entered credentials.')
     }else{
+      const passwordMd5 = Base64.encode(enteredPassword)
+      console.log(passwordMd5)
+      // Alert.alert("", passwordMd5)
       try {
         setIsloading(true)
-        const response = await LoginUrl(enteredEmail, enteredPassword)
+        const response = await LoginUrl(enteredEmail, passwordMd5) 
         // console.log(response)
         authCtx.authenticated(response.access_token)  
         authCtx.customerId(response.customer_id)
@@ -62,9 +72,10 @@ const Login = ({navigation}) => {
         authCtx.customerPicture(response.picture)
         authCtx.customerShowAmount('show')
         authCtx.customeruserid(response.user_id)
+        authCtx.customerPoints(response.total_points)
         authCtx.customerlastLoginTimestamp(new Date().toString())
         AsyncStorage.setItem("checktime",new Date().toString())
-        // console.log(response.total_points + " total point")
+        // console.log(response)
         setIsloading(false)
       } catch (error) {
         setIsloading(true)
@@ -179,13 +190,13 @@ const Login = ({navigation}) => {
         </TouchableOpacity> */}
 
         <View style={styles.button}>
-          <Flat onPress={() => navigation.navigate("ForgotPassword")}>
+          <Flat onPress={() =>[ navigation.navigate("ForgotPassword"), cleardata()]}>
             Forgot Password
           </Flat>
         </View>
       <View style={{flexDirection:'row', alignItem:'center', justifyContent:'center', }}>
-        <Text style={styles.newuser}>Dont have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+        <Text style={styles.newuser}>Don't have an account? </Text>
+        <TouchableOpacity onPress={() => [navigation.navigate('SignUp'), cleardata()]}>
           <Text style={styles.backtext}> SignUp</Text>
         </TouchableOpacity>
       </View>

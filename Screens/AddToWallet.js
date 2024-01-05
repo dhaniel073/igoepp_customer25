@@ -65,7 +65,7 @@ function onAuthenticate (spec){
               
               <Text style={styles.amount}>
               <MaterialCommunityIcons name="currency-ngn" size={25} color="white" />
-                  {authCtx.showAmount === 'show'  ? authCtx.balance :  'XXXXX.XX'} 
+                  {authCtx.showAmount === 'show'  ? authCtx.balance :  <Text>******</Text>} 
               </Text>
 
               {/* <TouchableOpacity style={{alignSelf:'center', marginLeft:10}} onPress={() => onAuthenticate('Yes')}>
@@ -202,3 +202,5 @@ const styles = StyleSheet.create({
     fontSize: 15
   },
 })
+
+// Pat@123/$%

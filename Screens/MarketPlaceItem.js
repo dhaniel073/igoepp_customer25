@@ -19,7 +19,7 @@ const MarketPlaceItem = ({navigation, route}) => {
       try{
         setIsFetching(true)
         const response = await CartItem(categoryId, authCtx.token)
-        // console.log(response)
+        console.log(response)
         setFetchedCategory(response)
         setIsFetching(false)
       }catch(error){
@@ -79,7 +79,7 @@ const MarketPlaceItem = ({navigation, route}) => {
           })}>
           <Image
           style={styles.image2}
-          source={{ uri:`https://phixotech.com/igoepp/public/products/${item.picture}`}}/>
+          source={{ uri:`https://igoeppms.com/igoepp/public/products/${item.picture}`}}/>
             <Text style={styles.item}>{item.name}</Text>
             
           </TouchableOpacity>

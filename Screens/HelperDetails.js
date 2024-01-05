@@ -95,7 +95,7 @@ const HelperDetails = ({navigation, route}) => {
         {category.photo === null ?
           <Image style={[styles.image, ]} source={require("../assets/person-4.png")}/>
           :
-          <Image style={[styles.image, ]} source={{ uri: `https://phixotech.com/igoepp/public/handyman/${category.photo}` }} 
+          <Image style={[styles.image, ]} source={{ uri: `https://igoeppms.com/igoepp/public/handyman/${category.photo}` }} 
           placeholder={'blurhash'}
           // contentFit="contain"
           transition={1000}/>

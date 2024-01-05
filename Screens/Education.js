@@ -76,8 +76,14 @@ const Education = ({route, navigation}) => {
         setisLoading(false)
       } catch (error) {
         setisLoading(true)
+        Alert.alert('Error', "An error occured try again later", [
+          {
+            text:"Ok",
+            onPress: () => navigation.goBack()
+          }
+        ])
         setisLoading(false)
-        return;
+        // return;
       }
     })
     return unsubscribe;
@@ -85,7 +91,7 @@ const Education = ({route, navigation}) => {
 
   useEffect(() => {
     setisLoading(true)
-    const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
+    const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
     const response = axios.get(url, {
         headers:{
             Accept:'application/json',
@@ -128,7 +134,7 @@ const Education = ({route, navigation}) => {
   const getBouquets = (value) => {
       // console.log(authId, id)
       
-      const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getAllBouquetByBillerID/${authId}/${value}`
+      const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getAllBouquetByBillerID/${authId}/${value}`
       const response = axios.get(url, {
           headers:{
               Accept:'application/json',
@@ -204,8 +210,8 @@ const Education = ({route, navigation}) => {
       setisLoading(true)
       const response = await WaecCard(authCtx.Id, id, edu, price, authCtx.token, commissonvalue)
       // console.log(response)
-      if(response.data.message === "failed"){
-        Alert.alert(response.data.message, response.data.description + ", fund wallet and try again", [
+      if(response.data.message === "failed" || "Failed" && response.data.description === "Insufficient wallet balance"){
+        Alert.alert("Failed", response.data.description, [
           {
             text:"Ok",
             onPress:() => navigation.goBack()
@@ -245,7 +251,7 @@ const Education = ({route, navigation}) => {
         body: `${response.data.status}\nWaec Pin: ${response.data.PIN}\nAmount: ${price}\nRef: ${response.data.requestID}\nDate: ${date} ${time}`,
         data: { data: 'goes here' },
       },
-      trigger: { seconds: 2 },
+      trigger: { seconds: 10 },
     });
   }
 
@@ -257,10 +263,14 @@ const Education = ({route, navigation}) => {
 
      
       {
-        pincheckifempty === "N" ? Alert.alert("Message", "No transaction pin, set a transaction pin to be able to make transactions", [
+        pincheckifempty === "N" ?  Alert.alert("Message", "No transaction pin, set a transaction pin to be able to make transactions", [
           {
             text: "Ok",
-            onPress: () =>  navigation.navigate('TransactionPin')
+            onPress: () => navigation.navigate('TransactionPin')
+          },
+          {
+            text: "Cancel",
+            onPress: () => navigation.goBack()
           }
         ]) 
         :

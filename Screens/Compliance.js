@@ -256,7 +256,7 @@ const Compliance = ({navigation}) => {
            
 
       <View style={{marginTop: 10, marginHorizontal:5}}>
-      <TouchableOpacity style={[styles.shadow, {borderBottomColor: Color.new_color,  padding:20, marginBottom:20, flexDirection:'row', justifyContent:'space-between'}]} onPress={() => [idCard ? null : fetchedInfo.identification_path === null ? toggleIdCardModal() : null]}>
+      <TouchableOpacity style={[styles.shadow, {borderBottomColor: Color.darkolivegreen_100,  padding:20, marginBottom:20, flexDirection:'row', justifyContent:'space-between'}]} onPress={() => [idCard ? null : fetchedInfo.identification_path === null ? toggleIdCardModal() : null]}>
         <Text style={{fontSize:15}}>Id Card</Text>
 
         {idCard ? 
@@ -271,7 +271,7 @@ const Compliance = ({navigation}) => {
 
         : fetchedInfo.identification_path !== null && fetchedInfo.verify_identification_date === null  && fetchedInfo.verify_identification === "N" ?
             
-            <Text style={{color:Color.new_color, fontSize:11, top:4}}>Pending...</Text>
+            <Text style={{color:Color.darkolivegreen_100, fontSize:11, top:4}}>Pending...</Text>
 
         : fetchedInfo.identification_path !== null && fetchedInfo.verify_identification_date === null  && fetchedInfo.verify_identification === "I" ?
             
@@ -286,7 +286,7 @@ const Compliance = ({navigation}) => {
         }
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.shadow, {borderBottomColor: Color.new_color,  padding:20, marginBottom:20, flexDirection:'row', justifyContent:'space-between'}]} onPress={() => [addressProof ? null : fetchedInfo.address_verification_path === null ? toggleAddressModal() : null]}>
+      <TouchableOpacity style={[styles.shadow, {borderBottomColor: Color.darkolivegreen_100,  padding:20, marginBottom:20, flexDirection:'row', justifyContent:'space-between'}]} onPress={() => [addressProof ? null : fetchedInfo.address_verification_path === null ? toggleAddressModal() : null]}>
         <Text style={{fontSize:15}}>Proof of Address</Text>
 
         <> 
@@ -302,7 +302,7 @@ const Compliance = ({navigation}) => {
 
         : fetchedInfo.address_verification_path !== null && fetchedInfo.verify_address_date === null  && fetchedInfo.verify_address === "N" ?
             
-            <Text style={{color:Color.new_color, fontSize:11, top:4}}>Pending...</Text>
+            <Text style={{color:Color.darkolivegreen_100, fontSize:11, top:4}}>Pending...</Text>
 
         : fetchedInfo.address_verification_path !== null && fetchedInfo.verify_address_date === null  && fetchedInfo.verify_address === "I" ?
             

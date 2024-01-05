@@ -123,7 +123,7 @@ const CustomerRating = ({navigation, route}) => {
       {/* <Text style={styles.cusratingtxt}>CustomerRating</Text> */}
 
       <SafeAreaView style={styles.container}>
-        <Image style={styles.profile} source={customerdetails.picture === null ? require("../assets/person-4.png")  : {uri: `https://phixotech.com/igoepp/public/handyman/${customerdetails.photo}`}}/>
+        <Image style={styles.profile} source={customerdetails.picture === null ? require("../assets/person-4.png")  : {uri: `https://igoeppms.com/igoepp/public/handyman/${customerdetails.photo}`}}/>
           <View style={{flexDirection:'row', alignContent:'center', alignSelf:'center'}}>
             <Text style={[styles.title , {marginTop: 15, marginBottom: 5, textAlign:'center'}]}>{customerdetails.first_name}</Text>
             <Text style={[styles.title , {marginTop: 15, marginBottom: 5, textAlign:'center'}]}> {customerdetails.last_name}</Text>

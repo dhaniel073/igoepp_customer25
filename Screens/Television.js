@@ -80,8 +80,14 @@ const Television = ({route, navigation}) => {
         setisLoading(false)
       } catch (error) {
         setisLoading(true)
+        Alert.alert('Error', "An error occured try again later", [
+          {
+            text:"Ok",
+            onPress: () => navigation.goBack()
+          }
+        ])
         setisLoading(false)
-        return;
+        // return;
       }
     })
     return unsubscribe;
@@ -89,7 +95,7 @@ const Television = ({route, navigation}) => {
 
   useEffect(() => {
     setisLoading(true)
-    const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
+    const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
     const response = axios.get(url, {
         headers:{
             Accept:'application/json',
@@ -205,8 +211,8 @@ const Television = ({route, navigation}) => {
       const response = await TvRenewalPay(ref, rprice, authCtx.token, commissonvalue)
       // console.log(response.data)  
       // if(response.data.status){
-        if(response.data.message === "failed"){
-          Alert.alert(response.data.message, response.data.description + ", fund wallet and try again", [
+        if(response.data.message === "failed" || "Failed" && response.data.description === "Insufficient wallet balance"){
+          Alert.alert("Failed", response.data.description, [
             {
               text:"Ok",
               onPress:() => navigation.goBack()
@@ -249,8 +255,8 @@ const Television = ({route, navigation}) => {
         const response = await TvPayment(ref, price, bouquetData, authCtx.token, commissonvalue)
         // console.log(response.data)
         
-        if(response.data.message === "failed"){
-          Alert.alert(response.data.message, response.data.description + ", fund wallet and try again", [
+        if(response.data.message === "failed" || "Failed" && response.data.description === "Insufficient wallet balance"){
+          Alert.alert("Failed", response.data.description, [
             {
               text:"Ok",
               onPress:() => navigation.goBack()
@@ -331,7 +337,7 @@ const Television = ({route, navigation}) => {
         body: `${id === "DSTVR" ? "Dstv Renewal" : id === "GOTVR" ? "Gotv Renewal" : id + "Subscription"}  ${response.data.message}\nAmount: ${id === "DSTVR" || id === "GOTVR" ? rprice : price}\nSmartCard Number: ${smartcard}\nRef: ${response.data.requestID}\nDate: ${date} ${time}`,
         data: { data: 'goes here' },
       },
-      trigger: { seconds: 2 },
+      trigger: { seconds: 10 },
     });
   }
 
@@ -350,6 +356,10 @@ const Television = ({route, navigation}) => {
         {
           text: "Ok",
           onPress: () => navigation.navigate('TransactionPin')
+        },
+        {
+          text: "Cancel",
+          onPress: () => navigation.goBack()
         }
       ]) 
       :

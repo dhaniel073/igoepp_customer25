@@ -643,18 +643,7 @@ export default function App() {
 
   const Navigation =  () => {
     const authCtx = useContext(AuthContext)
-    const idleTimerRef = useRef(null);
-
-    const logoutUser = () => {
-      // Perform the logout action
-      Alert.alert('Idle Timeout', 'You have been logged out due to inactivity.');
-      // Implement your logout logic here, such as navigating to the login screen.
-    };
-  
-    // setIdleTimerDisabled
-
     
-
     const checkAuth =  () => {
       if(authCtx.isAuthenticated === false){
         return <AuthStack/>
@@ -733,7 +722,7 @@ export default function App() {
   return (
     <>
       {/* <Text>Open up App.js to start working on your app!</Text> */}
-      <StatusBar style="auto" />
+      <StatusBar style="dark-content"/>
       <AuthContextProvider>
         <Root/>
       </AuthContextProvider>

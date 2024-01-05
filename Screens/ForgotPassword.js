@@ -32,7 +32,7 @@ const ForgotPassword = ({navigation}) => {
       // console.log(emailIsValid)
       try {
         const responce = await ForgotCustomerPassword(emailEntered)
-        Alert.alert("Successful", `A mail has been sent to ${emailEntered}`, [
+        Alert.alert("Successful", `A mail has been sent to \n${emailEntered}`, [
           {
             text:"Ok",
               onPress: () => navigation.navigate("Login")

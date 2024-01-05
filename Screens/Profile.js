@@ -28,12 +28,14 @@ const Profile = ({navigation}) => {
     try {
       setIsLoading(true)
       const response = await CustomerInfoCheck(authCtx.Id, authCtx.token)
+      console.log(response)
       setFetchedMesssage(response)
       authCtx.customerFirstName(response.first_name)
       authCtx.customerLastName(response.last_name)
       authCtx.customerPicture(response.picture)
       authCtx.customerBalance(response.wallet_balance)
       authCtx.customerPhone(response.phone)
+      authCtx.customerPoints(response.total_points)
       setIsLoading(false)
     } catch (error) {
       return;
@@ -97,7 +99,7 @@ const Profile = ({navigation}) => {
                 </TouchableOpacity>
                 : 
                 <TouchableOpacity  onPress={() => navigation.navigate('ProfilePicsView')}>
-                  <Image style={{ width: 80, height: 80, borderWidth:1, borderColor: Color.darkolivegreen_100, borderRadius: 50 }} size={80} source={{ uri: `https://phixotech.com/igoepp/public/customers/${fetchedMessage.picture}`}}/>
+                  <Image style={{ width: 80, height: 80, borderWidth:1, borderColor: Color.darkolivegreen_100, borderRadius: 50 }} size={80} source={{ uri: `https://igoeppms.com/igoepp/public/customers/${fetchedMessage.picture}`}}/>
                 </TouchableOpacity>
                }
                 <View style={{ marginLeft: 10  }}>

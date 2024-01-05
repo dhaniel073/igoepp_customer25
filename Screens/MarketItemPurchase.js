@@ -86,7 +86,7 @@ const MarketItemPurchase = ({navigation, route}) => {
             <Image
             style={styles.image2}
             // contentFit='contain'
-            source={{ uri: `https://phixotech.com/igoepp/public/products/${image}` }}
+            source={{ uri: `https://igoppms.com/igoepp/public/products/${image}` }}
             />
           </View>
         <Text style={styles.catNameText}>{productName}</Text>
@@ -170,7 +170,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     color: 'white',
-    marginLeft:5
+    marginLeft:5,
+    marginTop:5
   },
   markplctext:{
     fontSize: 18,

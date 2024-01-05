@@ -15,7 +15,7 @@ import LoadingOverlay from '../Component/Ui/LoadingOverlay'
 
 
 const feedbackfield = [
-  { label: 'Whats your expereince while using the app', value: 'Whats your expereince while using the app' },
+  { label: "What's your experience while using the app", value: "Whats your experience while using the app" },
   { label: 'Thoughts concerning the app', value: 'What are your thoughts concerning the app' },
   { label: 'How can we improve the app', value: 'How can we improve the application' },
 ]
@@ -80,6 +80,7 @@ const FeedBack = ({navigation}) => {
         setisloding(false)
       } catch (error) {
         setisloding(true)
+        console.log(error.response)
         setisloding(false)
         Alert.alert("Error", "An error occured while sending  feedback", [
           {

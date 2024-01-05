@@ -304,15 +304,15 @@ const Requests = ({navigation}) => {
                   <Pressable style={styles.pressable}>
                     <View style={{flexDirection:'row'}}>
                       <Text style={styles.requestName}>{item.cat_name}</Text>
-                      <Text style={{fontSize:12, top:3}}> (RID:{item.id}) {item.help_status}</Text>
+                      <Text style={{fontSize:12, top:3}}>(RID:{item.id})</Text>
                     </View>
                     <View style={{flexDirection:'row', justifyContent:'space-between', width:DIMENSION.WIDTH * 0.85, top:5}}>
                       <Text style={{fontFamily:'poppinsMedium', color: Color.saddlebrown_200, fontSize:10}}>
                       <Ionicons name="location" size={14} color="tomato" />
-                        {item.help_lga} {item.help_state} { item.help_country} </Text>
+                        {item.help_lga} {item.help_state} {item.help_country} </Text>
                     </View>
                                     
-                    <TouchableOpacity style={{position:'absolute', left:'85%', top:'20%'}} onPress={() => navigation.navigate("BidScreen", [
+                    <TouchableOpacity style={{position:'absolute', left:'87%', top:'20%'}} onPress={() => navigation.navigate("BidScreen", [
                       {
                         cat_name: item.cat_name,
                         bid_id: item.id
@@ -323,8 +323,8 @@ const Requests = ({navigation}) => {
 
                     {/* bid count number */}
                     {item.bid_count === 0 ? null :
-                    <View style={{ flexDirection:'row', position:'absolute', alignSelf:'flex-end', right:17, top:20 }}>
-                      <ImageBackground  source={require("../assets/ellipse-127.png")} contentFit="contain" style={{height:15, width:15, justifyContent:'center', marginRight:5, marginTop:-4}}>
+                    <View style={{ flexDirection:'row', position:'absolute', alignSelf:'flex-end', right:13, top:20 }}>
+                      <ImageBackground  source={require("../assets/ellipse-127.png")} contentFit="contain" style={{height:16, width:16, justifyContent:'center', marginRight:5, marginTop:-4}}>
                         <Text style={{ fontSize: 8,  color: Color.white, fontFamily:'poppinsBold', textAlign:'center'}}>{item.bid_count}</Text>
                       </ImageBackground>
                     </View>

@@ -15,7 +15,10 @@ const RequestHelp = ({navigation}) => {
 
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
     fetchCategorydata();
+    })
+    return unsubscribe;
   },[])
 
   const fetchCategorydata = async () => {
@@ -65,7 +68,7 @@ const RequestHelp = ({navigation}) => {
               })}>
               <Image
               style={styles.image2}
-              source={{ uri:`https://phixotech.com/igoepp/public/category/${item.image}`  }}
+              source={{ uri:`https://igoeppms.com/igoepp/public/category/${item.image}`  }}
               />
 
                 <Text style={styles.item}>

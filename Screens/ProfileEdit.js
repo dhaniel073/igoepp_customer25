@@ -59,7 +59,7 @@ const ProfileEdit = ({route, navigation}) => {
   useEffect(() => {
     var config = {
       method: 'get',
-      url: "https://phixotech.com/igoepp/public/api/auth/general/country",
+      url: "https://igoeppms.com/igoepp/public/api/auth/general/country",
       headers:{
           Accept: 'application/json',
           Authorization: `Bearer ${authCtx.token}`
@@ -91,7 +91,7 @@ const ProfileEdit = ({route, navigation}) => {
 const handleState = (countryCode) => {
     var config = {
       method: 'get',
-      url: `https://phixotech.com/igoepp/public/api/auth/general/state/${countryCode}`,
+      url: `https://igoeppms.com/igoepp/public/api/auth/general/state/${countryCode}`,
       headers:{
         Accept: 'application/json',
         Authorization: `Bearer ${authCtx.token}`
@@ -122,7 +122,7 @@ const handleState = (countryCode) => {
 const handleCity = (countryCode, stateCode) => {
     var config = {
       method: 'get',
-      url: `https://phixotech.com/igoepp/public/api/auth/general/lga/${stateCode}`,
+      url: `https://igoeppms.com/igoepp/public/api/auth/general/lga/${stateCode}`,
       headers:{
         Accept: 'application/json',
         Authorization: `Bearer ${authCtx.token}`
@@ -175,7 +175,7 @@ const handleCity = (countryCode, stateCode) => {
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect:[4,3],
+      aspect:[6,8],
       quality: 0.75,
       base64: true
     })
@@ -197,7 +197,7 @@ const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect:[4,3],
+        aspect:[6,8],
         quality: 0.75,
         base64: true
     })
@@ -319,7 +319,7 @@ const pickImage = async () => {
                 alignItems: 'center'
              }}>
                 <ImageBackground
-                source={{uri: !image ? `https://phixotech.com/igoepp/public/customers/${authCtx.image}` : image}}
+                source={{uri: !image ? `https://igoeppms.com/igoepp/public/customers/${authCtx.image}` : image}}
                 style={{ height: 100, width:100, borderWidth: 1, borderRadius: 15}}
                 imageStyle={{ borderRadius: 15, }}
                 >

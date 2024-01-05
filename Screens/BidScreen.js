@@ -314,7 +314,7 @@ const BidScreen = ({navigation, route}) => {
         body: `You successfully accepted the bid of id: ${Id}\nAmount: NGN${amount}\nDate: ${date} ${time}`,
         data: { data: 'goes here' },
       },
-      trigger: { seconds: 2 },
+      trigger: { seconds: 10 },
     });
   }
 
@@ -345,10 +345,14 @@ const BidScreen = ({navigation, route}) => {
       <Text style={styles.bidtxt}>BidScreen</Text>
 
       {
-        pincheckifempty === "N" ? Alert.alert("Message", "No transaction pin, set a transaction pin to be able to accept bid", [
+        pincheckifempty === "N" ? Alert.alert("Message", "No transaction pin, set a transaction pin to be able to make transactions", [
           {
             text: "Ok",
             onPress: () => navigation.navigate('TransactionPin')
+          },
+          {
+            text: "Cancel",
+            onPress: () => navigation.goBack()
           }
         ]) 
         : 

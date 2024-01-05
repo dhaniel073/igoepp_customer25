@@ -73,8 +73,14 @@ const Bet = ({route, navigation}) => {
         setisloading(false)
       } catch (error) {
         setisloading(true)
+        Alert.alert('Error', "An error occured try again later", [
+          {
+            text:"Ok",
+            onPress: () => navigation.goBack()
+          }
+        ])
         setisloading(false)
-        return;
+        // return;
       }
     })
     return unsubscribe;
@@ -92,7 +98,7 @@ const Bet = ({route, navigation}) => {
     
 
   useEffect(() => {
-    const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
+    const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
     const response = axios.get(url, {
         headers:{
           Accept:'application/json',
@@ -259,15 +265,15 @@ const Bet = ({route, navigation}) => {
         setisloading(true)
         const response = await BetPay(ref, amount, authCtx.token, commissonvalue)
         console.log(response)
-        if(response.data.message === "failed"){
-          Alert.alert(response.data.message, response.data.description + ", fund wallet and try again", [
+        if(response.data.message === "failed" || "Failed" && response.data.description === "Insufficient wallet balance"){
+          Alert.alert('Failed', response.data.description, [
             {
               text:"Ok",
               onPress:() => navigation.goBack()
             }
           ])
+          return;
         }else{
-          // console.log(response.data)
           schedulePushNotification()
           toggleModal()
         }
@@ -297,7 +303,7 @@ const Bet = ({route, navigation}) => {
         body: `You successfully funded your betting account\nBet Id: ${betId}\nAmount: NGN${amount}\nRef: ${ref}\nDate: ${date} ${time}`,
         data: { data: 'goes here' },
       },
-      trigger: { seconds: 2 },
+      trigger: { seconds: 10 },
     });
   }
 
@@ -308,10 +314,14 @@ const Bet = ({route, navigation}) => {
       <Text style={styles.bettxt}>{route.params.name === "Betting and/or Lottery" ? "Betting and Lottery" : null}</Text>
 
       {
-        pincheckifempty === "N" ? Alert.alert("Message", "No transaction pin, set a transaction pin to be able to make transactions", [
+        pincheckifempty === "N" ?  Alert.alert("Message", "No transaction pin, set a transaction pin to be able to make transactions", [
           {
             text: "Ok",
-            onPress: () =>  navigation.navigate('TransactionPin')
+            onPress: () => navigation.navigate('TransactionPin')
+          },
+          {
+            text: "Cancel",
+            onPress: () => navigation.goBack()
           }
         ]) 
         :

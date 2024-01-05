@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "igoepp_customer",
+    "name": "IgoeppCus",
     "slug": "igoepp_customer",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -12,14 +12,16 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "checkAutomatically": "ON_ERROR_RECOVERY",
+      "fallbackToCacheTimeout": 1000,
+      "url": "https://u.expo.dev/e8a1e2a3-7c71-4a4e-9e7b-60ca9cecf323"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
-      "infoPlist":{
+      "infoPlist": {
         "NSFaceIDUsageDescription": "Igoepp Customer uses Face Id and Touch ID to verify the user's identity and protect sensitive data"
       }
     },
@@ -37,6 +39,9 @@
       "eas": {
         "projectId": "e8a1e2a3-7c71-4a4e-9e7b-60ca9cecf323"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }

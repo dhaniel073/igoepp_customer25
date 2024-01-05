@@ -58,6 +58,12 @@ const TransactionPin = ({navigation}) => {
         } catch (error) {
         setisloading(true)
         // console.log(error)
+        Alert.alert('Error', "An error occured try again later", [
+          {
+            text:"Ok",
+            onPress: () => navigation.goBack()
+          }
+        ])
         setisloading(false)
         }
       })
@@ -135,7 +141,7 @@ const TransactionPin = ({navigation}) => {
             console.log(error)
             setCode('')
             setPinerrorMessage(error.response.data.message + "\n" + (3 - refT.current + " attempts remaining"))
-            // console.log(error.response)
+            console.log(error.response)
             Alert.alert("Error", error.response.data.message+ " " + "Try again", [
               {
                 text: "Ok",

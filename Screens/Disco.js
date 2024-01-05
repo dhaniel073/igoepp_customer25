@@ -74,27 +74,27 @@ const Disco = ({route, navigation}) => {
  
 
   useEffect(() => {
-    const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
+    const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
     const response = axios.get(url, {
-        headers:{
-            Accept:'application/json',
-            Authorization: `Bearer ${authCtx.token}`
-        }
+      headers:{
+        Accept:'application/json',
+        Authorization: `Bearer ${authCtx.token}`
+      }
     }).then((res) => {
-        // console.log(res.data)dx
-        var count = Object.keys(res.data).length;
-        let catarray = []
-        for (var i = 0; i < count; i++){
-            catarray.push({
-                label: res.data[i].name,
-                value: res.data[i].id,
-            })
-            // setCityCode(response.data.data[i].lga_code)
-        }
-        setcategory(catarray)
+      // console.log(res.data)dx
+      var count = Object.keys(res.data).length;
+      let catarray = []
+      for (var i = 0; i < count; i++){
+        catarray.push({
+          label: res.data[i].name,
+          value: res.data[i].id,
+        })
+        // setCityCode(response.data.data[i].lga_code)
+      }
+      setcategory(catarray)
     }).catch((error) => {
-        // console.log(error)
-        return;
+      // console.log(error)
+      return;
       })
   }, [])
 
@@ -108,8 +108,14 @@ const Disco = ({route, navigation}) => {
       setisLoading(false)
     } catch (error) {
       setisLoading(true)
+      Alert.alert('Error', "An error occured try again later", [
+        {
+          text:"Ok",
+          onPress: () => navigation.goBack()
+        }
+      ])
       setisLoading(false)
-      return
+      // return
     }
     })
     return unsubscribe;
@@ -228,8 +234,8 @@ const Disco = ({route, navigation}) => {
         setisLoading(true)
         const response = await DiscoPayment(ref, amount, authCtx.token, commissonvalue)
         console.log(response)
-        if(response.message === "failed"){
-          Alert.alert(response.message, response.description + ", fund wallet and try again", [
+        if(response.message === "failed" || "Failed" && response.description === "Insufficient wallet balance"){
+          Alert.alert("Failed", response.description, [
             {
               text:"Ok",
               onPress:() => navigation.goBack()
@@ -265,7 +271,7 @@ const Disco = ({route, navigation}) => {
         body: `${response.message}.\nElectricity Token:${response.token}\nRef:${response.requestID}\nAmount:${amount}\nDate: ${date} ${time}`,
         data: { data: 'goes here' },
       },
-      trigger: { seconds: 2 },
+      trigger: { seconds: 10 },
     });
   }
 
@@ -279,10 +285,14 @@ const Disco = ({route, navigation}) => {
       <Text style={styles.discotxt}>Disco</Text>
 
       {
-        pincheckifempty === "N" ? Alert.alert("Message", "No transaction pin, set a transaction pin to be able to make transactions", [
+        pincheckifempty === "N" ?  Alert.alert("Message", "No transaction pin, set a transaction pin to be able to make transactions", [
           {
             text: "Ok",
             onPress: () => navigation.navigate('TransactionPin')
+          },
+          {
+            text: "Cancel",
+            onPress: () => navigation.goBack()
           }
         ]) 
         :
@@ -531,7 +541,7 @@ const Disco = ({route, navigation}) => {
                         <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}>{token}</Text>
                       </View> 
 
-                      <View style={{justifyContent:'space-between', flexDirection:'row'}}>
+                      {/* <View style={{justifyContent:'space-between', flexDirection:'row'}}>
                         <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Bonus Token:</Text>
                         <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}></Text>
                       </View> 
@@ -570,7 +580,7 @@ const Disco = ({route, navigation}) => {
                       <View style={{justifyContent:'space-between', flexDirection:'row'}}>
                         <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Arrears Remaining :</Text>
                         <Text  style={{fontFamily:'poppinsRegular', fontSize:10}}></Text>
-                      </View> 
+                      </View>  */}
 
                       <View style={{justifyContent:'space-between', flexDirection:'row'}}>
                         <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Date :</Text>

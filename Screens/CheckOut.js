@@ -127,7 +127,7 @@ const CheckOut = ({navigation, route}) => {
   useEffect(() => {
     var config = {
       method: 'get',
-      url: "https://phixotech.com/igoepp/public/api/auth/general/country",
+      url: "https://igoeppms.com/igoepp/public/api/auth/general/country",
       headers:{
         Accept: 'application/json',
         Authorization: `Bearer ${authCtx.token}`
@@ -136,7 +136,7 @@ const CheckOut = ({navigation, route}) => {
 
     axios (config)
     .then(function (response) {
-      // console.log(JSON.stringify(response.data.data))
+      console.log(JSON.stringify(response.data.data))
       var count = Object.keys(response.data.data).length
       // console.log(count)
       let countryArray = []
@@ -158,16 +158,15 @@ const CheckOut = ({navigation, route}) => {
   const handleState = (countryCode) => {
     var config = {
       method: 'get',
-      url: `https://phixotech.com/igoepp/public/api/auth/general/state/${countryCode}`,
+      url: `https://igoeppms.com/igoepp/public/api/auth/general/state/${countryCode}`,
       headers:{
         Accept: 'application/json',
         Authorization: `Bearer ${authCtx.token}`
       }
     }
-
     axios(config)
     .then(function (response) {
-        // console.log(JSON.stringify(response.data))
+        console.log(JSON.stringify(response.data))
       var count = Object.keys(response.data.data).length;
       let stateArray = []
       for (var i = 0; i < count; i++){
@@ -180,16 +179,16 @@ const CheckOut = ({navigation, route}) => {
       setStateData(stateArray)
     })
     .catch(function (error) {
-        // console.log(error);
+        console.log(error.response);
         return;
     })
   }
 
 const handleCity = (countryCode, stateCode) => {
-    // console.log(`http://phixotech.com/igoepp/public/api/auth/general/lga/${stateCode}`)
+    // console.log(`http://igoeppms.com/igoepp/public/api/auth/general/lga/${stateCode}`)
     var config = {
       method: 'get',
-      url: `https://phixotech.com/igoepp/public/api/auth/general/lga/${stateCode}`,
+      url: `https://igoeppms.com/igoepp/public/api/auth/general/lga/${stateCode}`,
       headers:{
         Accept: 'application/json',
         Authorization: `Bearer ${authCtx.token}`
@@ -198,7 +197,7 @@ const handleCity = (countryCode, stateCode) => {
 
     axios(config)
     .then(function (response) {
-      // console.log(JSON.stringify(response.data))
+      console.log(JSON.stringify(response.data))
       var count = Object.keys(response.data.data).length;
       let cityArray = []
       for (var i = 0; i < count; i++){
@@ -337,7 +336,7 @@ const handleCity = (countryCode, stateCode) => {
       setIsLoading(false)
       } catch (error) {
         setIsLoading(true)
-        // console.log(error)
+        console.log(error.response)
         Alert.alert("", error.response.data.message, [
           {
             text: "OK",
@@ -357,7 +356,7 @@ const handleCity = (countryCode, stateCode) => {
         body: `You successfully purchase all items in your cart.\nAmount: NGN${priceToShow}\nDate: ${date} ${time}`,
         data: { data: 'goes here' },
       },
-      trigger: { seconds: 2 },
+      trigger: { seconds: 10 },
     });
   }
 
@@ -373,7 +372,11 @@ const handleCity = (countryCode, stateCode) => {
         pincheckifempty === "N" ? Alert.alert("Message", "No transaction pin, set a transaction pin to be able to make transactions", [
           {
             text: "Ok",
-            onPress: () =>  navigation.navigate('TransactionPin')
+            onPress: () => navigation.navigate('TransactionPin')
+          },
+          {
+            text: "Cancel",
+            onPress: () => navigation.goBack()
           }
         ]) 
         :

@@ -1,13 +1,12 @@
 import { Alert, SafeAreaView, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
 import React, { useContext, useEffect, useId, useState } from 'react'
 import * as LocalAuthentication from 'expo-local-authentication'
-import { Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle'
-import {Ionicons, Octicons} from '@expo/vector-icons'
-import LoadingOverlay from '../Component/Ui/LoadingOverlay'
 import GoBack from '../Component/Ui/GoBack'
-import * as Device from 'expo-device';
-import { AuthContext } from '../utils/AuthContext'
 import { BiometricSetup, CustomerInfoCheck, DisableBiometric } from '../utils/AuthRoute'
+import { Color, marginStyle } from '../Component/Ui/GlobalStyle'
+import LoadingOverlay from '../Component/Ui/LoadingOverlay'
+import * as Device from 'expo-device'
+import { AuthContext } from '../utils/AuthContext'
 
 const Biometric = ({navigation}) => {
     const [biometric, setBiometric] = useState(true)
@@ -25,46 +24,30 @@ const Biometric = ({navigation}) => {
         try {
           setisloading(true)
           const response = await CustomerInfoCheck(authCtx.Id, authCtx.token)
-          // console.log(response)
+          console.log(response)
           setCheck(response.biometric_setup)
           setisloading(false)
         } catch (error) {
           setisloading(true)
-          // console.log(error)
+          console.log(error.response.data)
           setisloading(false)
         }
       })
       return unsuscribe;
     }, [])
 
-    const refresh = async () => {
-      try {
-        setisloading(true)
-        const response = await CustomerInfoCheck(authCtx.Id, authCtx.token)
-        // console.log(response)
-        setCheck(response.biometric_setup)
-        setisloading(false)
-      } catch (error) {
-        setisloading(true)
-        // console.log(error)
-        setisloading(false)
-      }
-    }
-
     useEffect(() => {
       (async () => {
       const compatible = await LocalAuthentication.hasHardwareAsync();
-      // console.log(compatible)
+      console.log(compatible)
       setIsBiometricSupported(compatible)
     })
     }, [])
 
 
     function toggleBiometric(){
-      onAuthenticate()
+      // onAuthenticate()
     }
-
-
 
     const Enabled = async () => {
       try {
@@ -76,21 +59,21 @@ const Biometric = ({navigation}) => {
             onPress: () => navigation.goBack()
           }
         ]) 
+        console.log(response)
       } catch (error) {
-        console.log(error.response.data)
-        if(error.response.data.finger_print[0] === "The finger print has already been taken.")
-        Alert.alert("Error", "The device finger print has already been taken.",[
+        Alert.alert("Error", "An error occured",[
           {
             text: 'Ok',
             onPress: () => navigation.goBack()
           }
-        ])  
+        ]) 
       }
     }
     
     const DisEnabled = async () => {
       try {
         const response = await DisableBiometric(authCtx.Id, authCtx.token)
+        console.log(response)
         setBiometric(previousState => !previousState)
         Alert.alert("Successful", "Bimoetric disabled sucessfully",[
           {
@@ -99,8 +82,8 @@ const Biometric = ({navigation}) => {
           }
         ]) 
       } catch (error) {
-        // console.log(error.response)
-        Alert.alert("Error", "An error occured. Try again later",[
+        console.log(error.response)
+        Alert.alert("Error", "An error occured",[
           {
             text: 'Ok',
             onPress: () => navigation.goBack()
@@ -108,9 +91,10 @@ const Biometric = ({navigation}) => {
         ]) 
       }
     }
-  
-    // console.log(biometric)
 
+    console.log(biometric)
+
+  
     function onAuthenticate1 (){
       const auth = LocalAuthentication.authenticateAsync({
         promptMessage: 'Authenticate with Touch ID',
@@ -120,7 +104,7 @@ const Biometric = ({navigation}) => {
         setIsAuthenticated(result.success);
         if(result.success === true){
             Enabled()
-            console.log('enabled')
+            // Enabled()
         }else if (result.error === 'not_enrolled'){
           Alert.alert("", "Device not enrolled, setup up a screen lock to use this feature")
         }
@@ -136,7 +120,7 @@ const Biometric = ({navigation}) => {
         setIsAuthenticated(result.success);
         if(result.success === true){
             DisEnabled()
-            console.log('disenabled')
+            // Enabled()
         }else if (result.error === 'not_enrolled'){
           Alert.alert("", "Device not enrolled, setup up a screen lock to use this feature")
         }
@@ -164,6 +148,7 @@ const Biometric = ({navigation}) => {
           ios_backgroundColor={'white'}
           onValueChange={check === "N" ? onAuthenticate1 : onAuthenticate2}
           value={check === "N" ? !biometric : biometric}
+          // value={!biometric ? false : true}
         />
       </View>
     </View>

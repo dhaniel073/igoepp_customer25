@@ -96,7 +96,7 @@ const NotificationScreen = ({navigation}) => {
             <TouchableOpacity style={styles.pressable} onPress={() => [toggleModal(), checknotid(item.id)]}>
             <Text style={item.status === 'U' ? styles.unread : styles.read}>{item.message.slice(0, maxCharacters)+ "...."}</Text>
 
-            <Text style={{position: 'absolute', justifyContent:'flex-end', fontSize:11, alignSelf:'flex-end', top:'130%', right: 15,}}>
+            <Text style={{position: 'absolute', justifyContent:'flex-end', fontSize:11, alignSelf:'flex-end', top:8, right: 15,}}>
               Tap to view
             </Text>
           </TouchableOpacity>

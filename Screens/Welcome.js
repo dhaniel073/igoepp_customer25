@@ -11,6 +11,7 @@ import { CustomerInfoCheck, NotificationUnread, SliderImage, TrendingService, Wa
 import { AuthContext } from '../utils/AuthContext';
 import * as Notifications from 'expo-notifications'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {FontAwesome5} from '@expo/vector-icons'
 
 const WIDTH = Dimensions.get('window').width
 const HEIGHT = Dimensions.get('window').height
@@ -138,7 +139,6 @@ const Welcome = ({navigation}) => {
 
     useEffect(() => {
       TrendsArray()
-      customerget()
       slider()
     }, [])
 
@@ -156,16 +156,24 @@ const Welcome = ({navigation}) => {
       return WalletCheck;
     }, [])
 
-    const customerget = async () => {
+    useEffect(() => { 
+    const customerget = navigation.addListener('focus', async () => {
       try {
         const response = await CustomerInfoCheck(authCtx.Id, authCtx.token)
         // console.log(response)
         setPhoto(response.photo)
-        authCtx.helperPicture(response.photo)
+        authCtx.customerPoints(response.total_points)
+        authCtx.customerFirstName(response.first_name)
+        authCtx.customerLastName(response.last_name)
+        authCtx.customerPicture(response.picture)
+        authCtx.customerBalance(response.wallet_balance)
+        authCtx.customerPhone(response.phone)
       } catch (error) {
         return;
       }
-    }
+      })
+      return customerget;
+    }, [])
 
     const slider = async () => {
       try {
@@ -210,7 +218,7 @@ const Welcome = ({navigation}) => {
                     </TouchableOpacity>
                     :
                     <TouchableOpacity onPress={() => navigation.navigate('ProfilePicsView')}>
-                      <Image transition={1000} source={{uri: `https://phixotech.com/igoepp/public/customers/${authCtx.picture}`}} style={{width:35, height:35, borderRadius:30, borderWidth:1, top:-5}}/>
+                      <Image transition={1000} source={{uri: `https://igoeppms.com/igoepp/public/customers/${authCtx.picture}`}} style={{width:35, height:35, borderRadius:30, borderWidth:1, top:-5}}/>
                     </TouchableOpacity>
                   }
                   
@@ -240,8 +248,8 @@ const Welcome = ({navigation}) => {
 
           </TouchableOpacity>
         </View>
-
       </View>
+      
       <View>
           <ScrollView >
           <Swiper style={styles.wrapper} 
@@ -253,8 +261,7 @@ const Welcome = ({navigation}) => {
                 // dotStyle={{ width:10, height:11}}
                 
               >
-             
-              
+                           
               {isLoading ? <LoadingOverlay/> :
               <View style={styles.slide1}>
                 {/* <Image style={{height:30, width:30}} source={require("../assets/vectors/vector2.png")}/> */}
@@ -263,7 +270,7 @@ const Welcome = ({navigation}) => {
                   <Text style={styles.text}>
                     <MaterialCommunityIcons name="currency-ngn" size={20} color={Color.white} />
                    
-                    {authCtx.showAmount === 'show' ?  authCtx.balance : 'XXXXX.XX' } 
+                    {authCtx.showAmount === 'show' ?  authCtx.balance : <Text>******</Text>} 
                    
                   </Text>
                   </View>
@@ -272,7 +279,6 @@ const Welcome = ({navigation}) => {
 
                   {authCtx.showAmount === 'show' ?
                    <TouchableOpacity style={{alignSelf:'center', marginLeft:10}} onPress={() => onAuthenticate('hide')}>
-
                       <Entypo name="eye-with-line" size={24} color="white" />
                     </TouchableOpacity>
                   :
@@ -363,7 +369,7 @@ const Welcome = ({navigation}) => {
                 {
                   isLoading ? <LoadingOverlay/> :
 
-                  <ImageBackground key={index} contentFit='contain' source={{uri: `https://phixotech.com/igoepp/public/slider/${item.slide}`}} style={styles.slide2}/>
+                  <ImageBackground key={index} contentFit='contain' source={{uri: `https://igoeppms.com/igoepp/public/slider/${item.slide}`}} style={styles.slide2}/>
 
                 }
                 </>
@@ -383,30 +389,30 @@ const Welcome = ({navigation}) => {
      
       <View>
 
-        < View style={{}}>
+        <View style={{}}>
           <ScrollView 
             horizontal={true}
             showsHorizontalScrollIndicator={false}
-            style={[styles.subContainer,]}
+            style={[styles.subContainer]}
           >
 
-              <View style={{marginRight:10, marginTop:5,}}>
+            <View style={{marginRight:10, marginTop:5,}}>
 
-                <TouchableOpacity style={styles.makepayment}  onPress={() => navigation.navigate('BillPayment')}>
-                  <Image contentFit='contain' source={require("../assets/makepay.png")} style={{width:40, height: 40,  }} transition={1000}/>
-                  <Text style={{ color: Color.steelblue, marginTop:5, fontSize:10}}>Bill Payment</Text>
-                </TouchableOpacity>
+              <TouchableOpacity style={styles.makepayment}  onPress={() => navigation.navigate('BillPayment')}>
+                <Image contentFit='contain' source={require("../assets/makepay.png")} style={{width:40, height: 40,  }} transition={1000}/>
+                <Text style={{ color: Color.steelblue, marginTop:5, fontSize:10}}>Bill Payment</Text>
+              </TouchableOpacity>
 
-                <TouchableOpacity style={[styles.viewrequest, {paddingLeft:8}]} onPress={() => navigation.navigate('RequestHelp')}>
-                  {/* <Image contentFit='contain' source={require('../assets/vectors/service.png')} style={{width:50, height: 50, marginTop:50, alignSelf:'flex-end', marginRight:30}} transition={1000}/> */}
-                  <Image contentFit='contain' source={require("../assets/group4.png")} style={{width:50, height: 50, left:7 , marginTop: 55, marginBottom: 25 }} transition={1000}/>
-                  <View style={{ justifyContent:'flex-end', alignItems:'flex-end', marginTop: 50}}>
-                    <Text style={{color: Color.blueviolet, alignSelf:'baseline', fontSize:10}}> Make Request</Text>
-                  </View>
-                  <View style={{marginBottom:'30%'}}/>
-                </TouchableOpacity>
-                
-              </View>
+              <TouchableOpacity style={[styles.viewrequest, {paddingLeft:8}]} onPress={() => navigation.navigate('RequestHelp')}>
+                {/* <Image contentFit='contain' source={require('../assets/vectors/service.png')} style={{width:50, height: 50, marginTop:50, alignSelf:'flex-end', marginRight:30}} transition={1000}/> */}
+                <Image contentFit='contain' source={require("../assets/group4.png")} style={{width:50, height: 50, left:7 , marginTop: 55, marginBottom: 25 }} transition={1000}/>
+                <View style={{ justifyContent:'flex-end', alignItems:'flex-end', marginTop: 50}}>
+                  <Text style={{color: Color.blueviolet, alignSelf:'baseline', fontSize:10}}> Make Request</Text>
+                </View>
+                <View style={{marginBottom:'30%'}}/>
+              </TouchableOpacity>
+              
+            </View>
 
               <View style={{marginRight:10, marginTop:5,}}>
                 <TouchableOpacity style={[styles.searchhistory, {paddingLeft:8}]} onPress={() => navigation.navigate('ServiceHistory')}>
@@ -458,7 +464,10 @@ const Welcome = ({navigation}) => {
                 </TouchableOpacity>
               
                 <TouchableOpacity style={[styles.availability, {paddingLeft:8}]} onPress={() => navigation.navigate('Requests')}>
-                  <Image contentFit='contain' source={require("../assets/group13.png")} style={{width:50, height: 50,  marginTop: 55, marginBottom: 25, alignSelf:'flex-start', marginLeft:10 }} transition={1000}/>
+                  {/* <Image contentFit='contain' source={require("../assets/group13.png")}  transition={1000}/> */}
+                  <View style={{width:50, height: 50,  marginTop: 55, marginBottom: 25, alignSelf:'flex-start', marginLeft:10 }}>
+                    <FontAwesome5 name="clipboard-list" size={40} color={Color.steelblue} />
+                  </View>
                   <View style={{ justifyContent:'flex-start', alignItems:'flex-start', marginTop: 50}}>
                     <Text style={{textAlign:'left', color:Color.steelblue, fontFamily: 'poppinsRegular', fontSize:10}}>Requests</Text>
 
@@ -477,7 +486,7 @@ const Welcome = ({navigation}) => {
       {
         trend.length === 0 ? null :
         <>
-        <View style={{marginTop:10}}>
+        <View style={{marginTop:10, marginBottom:20}}>
           <Text style={{fontSize:15, marginLeft:10, fontFamily:'poppinsSemiBold'}}>Trending Service</Text>
           {
             trend.map((item, key) => {
@@ -503,8 +512,8 @@ const Welcome = ({navigation}) => {
             })
           }
          
-        </View>
         <Text style={{fontSize:15, marginLeft:10, fontFamily:'poppinsSemiBold'}}>Top Selling Product</Text>
+        </View>
         </>
       }
         <View style={{marginBottom:'20%'}}/>
@@ -616,7 +625,7 @@ const styles = StyleSheet.create({
     // marginBottom:10
   },
   nameContainer:{
-    marginBottom:25 ,
+    marginBottom:10,
     marginHorizontal:10
   },
   viewrequest:{
@@ -672,9 +681,6 @@ const styles = StyleSheet.create({
     backgroundColor: Color.darkolivegreen_100,
     borderRadius: 10,
   },
-
-
-
   text: {
     color: '#fff',
     fontSize: 20,

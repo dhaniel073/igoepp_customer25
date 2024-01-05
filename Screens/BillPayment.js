@@ -23,12 +23,12 @@ const BillPayment = ({navigation}) => {
   const Billers = async() => {
     setisloading(true)
     try {
-      const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getBillCategory`
+      const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getBillCategory`
       const response = await axios.get(url, {
-          headers:{
-              Accept: 'application/json',
-              Authorization: `Bearer ${authCtx.token}`
-          }
+        headers:{
+          Accept: 'application/json',
+          Authorization: `Bearer ${authCtx.token}`
+        }
       })
       // console.log(response)
     setcategory(response.data)

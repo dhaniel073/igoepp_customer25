@@ -77,8 +77,14 @@ const Internet = ({route, navigation}) => {
         setisLoading(false)
       } catch (error) {
         setisLoading(true)
+        Alert.alert('Error', "An error occured try again later", [
+          {
+            text:"Ok",
+            onPress: () => navigation.goBack()
+          }
+        ])
         setisLoading(false)
-        return;
+        // return;
       }
     })
     return unsubscribe;
@@ -86,7 +92,7 @@ const Internet = ({route, navigation}) => {
 
   useEffect(() => {
     setisLoading(true)
-    const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
+    const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
     const response = axios.get(url, {
         headers:{
             Accept:'application/json',
@@ -259,8 +265,8 @@ const Internet = ({route, navigation}) => {
       setisLoading(true)
       const response = await InternetPayment(ref, price, bouquestData, authCtx.token, commissonvalue)
       // console.log(response)
-      if(response.data.message === "failed"){
-        Alert.alert(response.data.message, response.data.description + ", fund wallet and try again", [
+      if(response.data.message === "failed" || "Failed" && response.data.description === "Insufficient wallet balance"){
+        Alert.alert("Failed", response.data.description, [
           {
             text:"Ok",
             onPress:() => navigation.goBack()
@@ -273,7 +279,7 @@ const Internet = ({route, navigation}) => {
       }
       setisLoading(false)
     } catch (error) {
-      // console.log(error.response)
+      console.log(error.response)
       setisLoading(true)
       Alert.alert("Error", "An error occured please try again later", [
         {
@@ -292,7 +298,7 @@ const Internet = ({route, navigation}) => {
         body: `Internet subscription payment was successful\nAmount: ${price}\nSmartCard Id: ${smartcard}\nRef: ${response.data.requestID}\nDate: ${date} ${time} `,
         data: { data: 'goes here' },
       },
-      trigger: { seconds: 2 },
+      trigger: { seconds: 10 },
     });
   }
 
@@ -307,10 +313,14 @@ const Internet = ({route, navigation}) => {
 
     
       {
-        pincheckifempty === "N" ? Alert.alert("Message", "No transaction pin, set a transaction pin to be able to make transactions", [
+        pincheckifempty === "N" ?  Alert.alert("Message", "No transaction pin, set a transaction pin to be able to make transactions", [
           {
             text: "Ok",
-            onPress: () =>  navigation.navigate('TransactionPin')
+            onPress: () => navigation.navigate('TransactionPin')
+          },
+          {
+            text: "Cancel",
+            onPress: () => navigation.goBack()
           }
         ]) 
         :

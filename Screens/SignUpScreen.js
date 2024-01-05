@@ -11,6 +11,7 @@ import LoadingOverlay from '../Component/Ui/LoadingOverlay';
 import  Modal  from 'react-native-modal';
 import {MaterialIcons} from '@expo/vector-icons'
 import * as  Notification from 'expo-notifications'
+import { Base64 } from 'js-base64';
 
 const data = [
   {
@@ -25,9 +26,9 @@ const data = [
   ];
 
   const IDTYPE = [
-    { label: 'Nimc', value: 'nin' },
-    { label: 'Drivers license', value: 'DL' },
-    { label: 'Id Card', value: 'Idcard' },
+    { label: 'NIMC', value: 'nin' },
+    { label: "Driver's license", value: 'DL' },
+    { label: 'ID CARD', value: 'Idcard' },
 
   ];
 
@@ -43,6 +44,7 @@ const SignUpScreen = ({navigation}) => {
     const [enteredGender, setEnteredGender] = useState('')
     const [idtype, setIdType] = useState('')
     const [idnum, setidnum] = useState('')
+    const [referral_code, setreferral_code] = useState()
 
 
     const [emailIsInvalid, setEmailIsInvalid] = useState(false)
@@ -87,6 +89,9 @@ const SignUpScreen = ({navigation}) => {
         case 'idnum':
           setidnum(enteredValue)
           break 
+        case 'referral':
+          setreferral_code(enteredValue)
+          break;
       }
     }
 
@@ -102,11 +107,14 @@ const SignUpScreen = ({navigation}) => {
       const gendercheck = enteredGender === null || undefined || "" || enteredGender.length === 0
       const idnumcheck = idnum === null || undefined || "" || idnum.length === 0
       const idtypecheck = idtype === null || undefined || "" || idtype.length === 0
+      const firstnamecheck = enteredfirstname.length > 4
+      const lastnamecheck = enteredlastname.length > 4
+
 
 
       console.log(passcheck)
     
-      if(!emailIsValid || passwordIsInvalid || !passcheck || phonecheck || gendercheck || idnumcheck || idtypecheck || !enteredfirstname || !enteredlastname){
+      if(!emailIsValid || passwordIsInvalid || !passcheck || phonecheck || gendercheck || idnumcheck || idtypecheck || !firstnamecheck || !lastnamecheck){
 
         const InvalidPhone = phonecheck
         setEmailIsInvalid(!emailIsValid)
@@ -114,8 +122,8 @@ const SignUpScreen = ({navigation}) => {
         setConfirmPasswordIsInvalid(!passcheck)
         setPhoneIsInvalid(InvalidPhone)
         setGenderIsInvalid(gendercheck)
-        setFirstNameIsInvalid(!enteredfirstname)
-        setLastNameIsInvalid(!enteredlastname)
+        setFirstNameIsInvalid(!firstnamecheck)
+        setLastNameIsInvalid(!lastnamecheck)
         setIsIdnum(idnumcheck)
         setIsIdtype(idtypecheck)
 
@@ -128,10 +136,13 @@ const SignUpScreen = ({navigation}) => {
     }
 
     const signuphandler = async () => {         
+      const passwordMd5 = Base64.encode(enteredPassword)
+      toggleAcceptTermsModal()
+      console.log(enteredEmail, passwordMd5, enteredGender, enteredPhone, enteredfirstname, enteredlastname, idtype, idnum, referral_code)
       try {
         setisloading(true)
-        const response = await SignUp(enteredEmail, enteredPassword, enteredGender, enteredPhone, enteredfirstname, enteredlastname, idtype, idnum)
-        // console.log(response)
+        const response = await SignUp(enteredEmail, passwordMd5, enteredGender, enteredPhone, enteredfirstname, enteredlastname, idtype, idnum, referral_code)
+        console.log(response)
         authCtx.authenticated(response.access_token)  
         authCtx.customerId(response.customer_id)
         authCtx.customerEmail(response.email)
@@ -147,9 +158,10 @@ const SignUpScreen = ({navigation}) => {
         setisloading(false)
       } catch (error) {
         setisloading(true)
-        // console.log(error.response)
-        const myObj = error.response.data.email[0];
-        Alert.alert('SignUp Failed', myObj)
+        console.log(error.response)
+        const myObj = error.response.data.email[0]
+
+        Alert.alert('SignUp Failed', [myObj])
         setisloading(false)
       }
       
@@ -189,6 +201,7 @@ const SignUpScreen = ({navigation}) => {
             isInvalid={firstnameIsInvalid}
             onFocus={() => setFirstNameIsInvalid(false)}
             />
+          {firstnameIsInvalid && <Text style={{fontSize:10, marginTop:-10, marginBottom:8, color:Color.red}}>First name must beat least 5 characters</Text>}
         </View>
 
         <View style={styles.lastname}>
@@ -199,6 +212,7 @@ const SignUpScreen = ({navigation}) => {
             isInvalid={lastnameIsInvalid}
             onFocus={() => setLastNameIsInvalid(false)}
             />
+          {lastnameIsInvalid && <Text style={{fontSize:10, marginTop:-10, marginBottom:8, color:Color.red}}>Last name must be at least 5 characters</Text>}
           </View>
 
         </View>
@@ -277,7 +291,7 @@ const SignUpScreen = ({navigation}) => {
         }
 
         <Input
-          placeholder="Phone"
+          placeholder="Phone Number"
           onUpdateValue={updateInputValueHandler.bind(this, 'phone')}
           value={enteredPhone}
           isInvalid={phoneIsInvalid}
@@ -285,6 +299,12 @@ const SignUpScreen = ({navigation}) => {
           autoCapitalize={'none'}
           keyboardType={"numeric"}
           onFocus={() => setPhoneIsInvalid(false)}
+        />
+
+        <Input
+          placeholder={"Referral Code"}
+          onUpdateValue={updateInputValueHandler.bind(this, 'referral')}
+          value={referral_code}
         />
 
       <Input
@@ -354,7 +374,7 @@ const SignUpScreen = ({navigation}) => {
 
     <Text style={styles.textsty}> 
     1.	Services to be Performed
-    I have agreed to work in the capacity of <Text> {enteredfirstname} {enteredlastname}</Text> as an Artisan 
+    I have agreed to work in the capacity of <Text  style={{fontFamily:'poppinsBold'}}> {enteredfirstname} {enteredlastname}</Text> as an Artisan 
     </Text>
 
     <Text style={styles.textsty}>
@@ -379,24 +399,25 @@ const SignUpScreen = ({navigation}) => {
     Either party may terminate this Agreement at any time by giving 30 days written notice to the other party of the intention to terminate. However, Artisan cannot terminate this agreement when there is a pending dispute with one of IGOEPP’s customers involving him.
     </Text>
 
+
+    <View style={{flexDirection:'row', justifyContent:'center', flex:1, marginTop:10, paddingLeft:15 }}>
     <View style={{marginTop:'1%'}}>
       {data.map((item, key) => 
         <View key={key} style={{flexDirection:'row', justifyContent:'center', }}>
           <TouchableOpacity style={[styles.outer, ]} onPress={() => setavail(item.id)}>
             {avail === item.id && <View style={styles.inner}/>} 
           </TouchableOpacity>
-          <Text> Accept</Text>
+          <Text style={{marginTop:5}}> Accept</Text>
       </View>
       )}
     </View>
         <View style={{marginBottom:10}}/>
     {
       avail  && 
-      <View style={{marginHorizontal:20}}>
-        <SubmitButton message={"Continue"} onPress={() => signuphandler()}/>
-      </View>
+        <SubmitButton style={{flex:1, marginLeft:10, marginHorizontal:20}} message={"Continue"} onPress={() => signuphandler()}/>
     }
-      <View style={{marginBottom:10}}/>
+    </View>
+      <View style={{marginBottom:20}}/>
 
     </ScrollView>
 

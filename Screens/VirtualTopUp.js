@@ -109,7 +109,7 @@ const VirtualTopUp = ({navigation, route}) => {
 
   useEffect(() => {
     setisloading(true)
-    const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
+    const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
     const response = axios.get(url, {
         headers:{
             Accept:'application/json',
@@ -147,7 +147,7 @@ const VirtualTopUp = ({navigation, route}) => {
 const getBouquets = (value) => {
     // console.log(authId, id)
     
-    const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getAllBouquetByBillerID/${authId}/${value}`
+    const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getAllBouquetByBillerID/${authId}/${value}`
     const response = axios.get(url, {
         headers:{
             Accept:'application/json',
@@ -392,8 +392,8 @@ const getBouquets = (value) => {
         const response = await CustomerVtuAirtime(requestId, id, amount, authCtx.token, commissonvalue)
         // console.log(response)
 
-        if(response.message === "failed"){
-            Alert.alert(response.message, response.description + ", fund wallet and try again", [
+        if(response.message === "failed" || "Failed" && response.description === "Insufficient wallet balance"){
+            Alert.alert("Failed", response.description, [
               {
                 text:"Ok",
                 onPress:() => navigation.goBack()
@@ -413,7 +413,7 @@ const getBouquets = (value) => {
             }
           ])
           setisloading(false)
-        // console.log(error.response)
+        console.log(error)
     }
   }
 
@@ -425,8 +425,8 @@ const datatoptup = async() => {
         const response = await CustomerVtuData(requestId, id, bosquetPrice, bosquetData, authCtx.token, commissonvalue)
         // console.log(response)
 
-        if(response.message === "failed"){
-            Alert.alert(response.message, response.description + ", fund wallet and try again", [
+        if(response.message === "failed" || "Failed" && response.description === "Insufficient wallet balance"){
+            Alert.alert("Failed", response.description, [
               {
                 text:"Ok",
                 onPress:() => navigation.goBack()
@@ -457,7 +457,7 @@ const datatoptup = async() => {
         body: `${id} ${response.message}.\nAmount: ${DATACHECK ? bosquetPrice : amount} \nPhone Number ${self === "self" ? authCtx.phone : phoneValidation} \nReference: ${response.requestID} \nDate: ${date} ${time}`,
         data: { data: 'goes here' },
       },
-      trigger: { seconds: 2 },
+      trigger: { seconds: 10 },
     });
   }
 
@@ -468,17 +468,20 @@ const datatoptup = async() => {
   return (
     <ScrollView style={{marginTop:marginStyle.marginTp, marginHorizontal:10}}>
       <GoBack onPress={() => navigation.goBack()}>Back</GoBack>
-      <Text style={styles.virtuatopuptxt}>VirtualTopUp</Text>
+      <Text style={styles.virtualtopuptxt}>VirtualTopUp</Text>
 
       
       {
-        pincheckifempty === "N" ? Alert.alert("Message", "No transaction pin, set a transaction pin to be able to make transactions", [
+        pincheckifempty === "N" ?  Alert.alert("Message", "No transaction pin, set a transaction pin to be able to make transactions", [
           {
             text: "Ok",
             onPress: () => navigation.navigate('TransactionPin')
+          },
+          {
+            text: "Cancel",
+            onPress: () => navigation.goBack()
           }
         ]) 
-
         :
 
         <>
@@ -670,7 +673,7 @@ const datatoptup = async() => {
                    <View style={{borderBottomWidth:0.5, marginTop:5}}/>
                 }
                 
-                  <View style={{marginBottom:10, marginTop:25}}>
+                  <View style={{marginBottom:25, marginTop:25}}>
                       
                       <View style={{justifyContent:'space-between', flexDirection:'row'}}>
                         <Text style={{fontFamily:'poppinsRegular', fontSize:10}}>Phone Number</Text>
@@ -721,6 +724,14 @@ const datatoptup = async() => {
 export default VirtualTopUp
 
 const styles = StyleSheet.create({
+  virtualtopuptxt:{
+    fontSize: 16,
+    color: Color.darkolivegreen_100,
+    fontFamily: 'poppinsSemiBold',
+    left: 10,
+    marginTop:10,
+    marginBottom:15,
+  },
   cancel:{
     backgroundColor:Color.darkolivegreen_100,
     borderColor: Color.darkolivegreen_100,
