@@ -156,6 +156,8 @@ const Welcome = ({navigation}) => {
       return WalletCheck;
     }, [])
 
+    // console.log(authCtx.token, authCtx.Id)
+
     useEffect(() => { 
     const customerget = navigation.addListener('focus', async () => {
       try {
@@ -451,10 +453,7 @@ const Welcome = ({navigation}) => {
                     </ImageBackground>
                   <Text style={{ fontSize: 10,  marginTop: 10, color: Color.peru}}>Market Place</Text>
                 </TouchableOpacity>
-
               </View>
-
-             
 
               <View style={{marginRight:10, marginTop:5}}>
                 <TouchableOpacity style={styles.feedback}  onPress={() => navigation.navigate('FeedBack')}>
@@ -516,7 +515,7 @@ const Welcome = ({navigation}) => {
         </View>
         </>
       }
-        <View style={{marginBottom:'20%'}}/>
+        <View style={{marginBottom:'20%', marginTop:'7%'}}/>
 
       </ScrollView>
     </SafeAreaView>

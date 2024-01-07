@@ -248,7 +248,7 @@ export default function App() {
             tabBarIcon:({focused}) => (
               <View style={{alignItems:'center'}}>
                   <Ionicons name="home" size={24} color={focused ? Color.white : '#d3d3d3'} />
-                <Text style={{ fontSize:8, fontFamily: 'poppinsRegular', color: focused ? Color.white : '#d3d3d3'}}>Home</Text>
+                <Text style={{ fontSize:10, fontFamily: 'poppinsRegular', color: focused ? Color.white : '#d3d3d3'}}>Home</Text>
               </View>
             ),
           }}
@@ -257,7 +257,7 @@ export default function App() {
            tabBarIcon:({focused}) => (
             <View style={{alignItems:'center'}}>
               <FontAwesome5 name="money-bill-wave" size={22}  color={focused ? Color.white : '#d3d3d3'}  />
-              <Text style={{ fontSize:8, fontFamily: 'poppinsRegular', color: focused ? Color.white : '#d3d3d3'}}>Bills</Text>
+              <Text style={{ fontSize:10, fontFamily: 'poppinsRegular', color: focused ? Color.white : '#d3d3d3'}}>Bills</Text>
             </View>
           )
         }}  name='BillsPayment' component={BillPayment}/>
@@ -268,7 +268,7 @@ export default function App() {
           tabBarIcon: ({focused}) => (
            <View style={{alignItems:'center'}}>
             <FontAwesome5 name="clipboard-list" size={22} color={focused ? Color.white : '#d3d3d3'}/>
-            <Text style={{fontFamily: 'poppinsRegular', color: focused ? Color.white : '#d3d3d3', fontSize:8}}>Request</Text>
+            <Text style={{fontFamily: 'poppinsRegular', color: focused ? Color.white : '#d3d3d3', fontSize:10}}>Request</Text>
            </View>
 
           ),
@@ -281,7 +281,7 @@ export default function App() {
             <View style={{alignItems:'center'}}>
               {/* <FontAwesome5 name="money-bill-wave" size={24}  color={focused ? Color.darkolivegreen_100 : '#748c94'}  /> */}
               <MaterialIcons name="point-of-sale" size={22} color={focused ? Color.white : '#d3d3d3'} />
-              <Text style={{ fontSize:8, color: focused ? Color.white : '#d3d3d3'}}>Market</Text>
+              <Text style={{ fontSize:10, color: focused ? Color.white : '#d3d3d3'}}>Market</Text>
             </View>
           )
         }} name='MarketPlace' component={MarketPlace}/>

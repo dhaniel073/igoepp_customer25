@@ -59,7 +59,7 @@ export default ProfilePicsView
 const styles = StyleSheet.create({
     imageContainer:{
       flex:1,
-      marginBottom:'20%'
+      marginBottom:'10%'
     },
     container: {
       flex: 1,

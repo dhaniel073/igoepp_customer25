@@ -121,8 +121,10 @@ const Requests = ({navigation}) => {
   const HelperDetails = async(id) => {
     try {
       const response = await HelpersUrl(id, authCtx.token)
+      console.log(response)
       Phonecall(response.phone)
     } catch (error) {
+      console.log(error.response)
       return;
     }
   }
@@ -359,12 +361,12 @@ const Requests = ({navigation}) => {
                     <View style={{position:'absolute', padding:5, left:'80%', top:'17%', flexDirection:'row'}}>
 
                       {/* phone */}
-                      <TouchableOpacity style={{top:5}}  onPress={()=> {HelperDetails(item.assigned_helper)}}>
+                      {/* <TouchableOpacity style={{top:5, right:5}}  onPress={()=> {HelperDetails(item.assigned_helper)}}>
                         <Feather name="phone-call" size={20} color={Color.limegreen} />
-                      </TouchableOpacity>
+                      </TouchableOpacity> */}
 
                         {/* //chat */}
-                      <TouchableOpacity style={{paddingLeft:5}} onPress={() => navigation.navigate('ChatScreen', {
+                      <TouchableOpacity style={{left:15}} onPress={() => navigation.navigate('ChatScreen', {
                           helperId: item.assigned_helper,
                           bid_id: item.id
                         })}>
@@ -418,12 +420,12 @@ const Requests = ({navigation}) => {
                         <View style={{position:'absolute', padding:5, left:'83%', top:'35%', flexDirection:'row'}}>
 
                         {/* phone */}
-                        <TouchableOpacity style={{top:5}}  onPress={()=> {HelperDetails(item.assigned_helper)}}>
+                        {/* <TouchableOpacity style={{top:5}}  onPress={()=> {HelperDetails(item.assigned_helper)}}>
                           <Feather name="phone-call" size={20} color={Color.limegreen} />
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
   
                           {/* //chat */}
-                        <TouchableOpacity style={{paddingLeft:5}} onPress={() => navigation.navigate('ChatScreen', {
+                        <TouchableOpacity style={{left:15}} onPress={() => navigation.navigate('ChatScreen', {
                             helperId: item.assigned_helper,
                             bid_id: item.id
                           })}>

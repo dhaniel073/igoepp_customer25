@@ -6,7 +6,7 @@ import { Image } from 'expo-image'
 import { Color } from '../Component/Ui/GlobalStyle'
 import SubmitButton from '../Component/Ui/SubmitButton'
 import Flat from '../Component/Ui/Flat'
-import { LoginUrl, LoginWithBiometric } from '../utils/AuthRoute'
+import { ConvertPassword, LoginUrl, LoginWithBiometric } from '../utils/AuthRoute'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
 import { AuthContext } from '../utils/AuthContext'
 import {Ionicons} from '@expo/vector-icons'
@@ -44,45 +44,31 @@ const Login = ({navigation}) => {
     }
   }
 
-  const loginhandler = async () => {
-    const emailcheck = enteredEmail.includes('@') && enteredEmail.includes(".com")
-    const passwordcheck = enteredPassword.length < 7
-    
-    // console.log(emailcheck, passwordcheck)
-    
-    if(!emailcheck || passwordcheck){
-      setEmailIsInvalid(emailcheck)
-      setPasswordIsInvalid(passwordcheck)
-      Alert.alert('Invalid details', 'Please check your entered credentials.')
-    }else{
-      const passwordMd5 = Base64.encode(enteredPassword)
-      console.log(passwordMd5)
-      // Alert.alert("", passwordMd5)
-      try {
-        setIsloading(true)
-        const response = await LoginUrl(enteredEmail, passwordMd5) 
-        // console.log(response)
-        authCtx.authenticated(response.access_token)  
-        authCtx.customerId(response.customer_id)
-        authCtx.customerEmail(response.email)
-        authCtx.customerFirstName(response.first_name)
-        authCtx.customerLastName(response.last_name)
-        authCtx.customerBalance(response.wallet_balance)
-        authCtx.customerPhone(response.phone)
-        authCtx.customerPicture(response.picture)
-        authCtx.customerShowAmount('show')
-        authCtx.customeruserid(response.user_id)
-        authCtx.customerPoints(response.total_points)
-        authCtx.customerlastLoginTimestamp(new Date().toString())
-        AsyncStorage.setItem("checktime",new Date().toString())
-        // console.log(response)
-        setIsloading(false)
-      } catch (error) {
-        setIsloading(true)
-        Alert.alert('Login Failed', error.response.data.message)
-        // console.log(error.response)
-        setIsloading(false)
-      }
+  const loginhandler = async (conpass) => {
+    try {
+      setIsloading(true)
+      const response = await LoginUrl(enteredEmail, conpass) 
+      // console.log(response)
+      authCtx.authenticated(response.access_token)  
+      authCtx.customerId(response.customer_id)
+      authCtx.customerEmail(response.email)
+      authCtx.customerFirstName(response.first_name)
+      authCtx.customerLastName(response.last_name)
+      authCtx.customerBalance(response.wallet_balance)
+      authCtx.customerPhone(response.phone)
+      authCtx.customerPicture(response.picture)
+      authCtx.customerShowAmount('show')
+      authCtx.customeruserid(response.user_id)
+      authCtx.customerPoints(response.total_points)
+      authCtx.customerlastLoginTimestamp(new Date().toString())
+      AsyncStorage.setItem("checktime",new Date().toString())
+      // console.log(response)
+      setIsloading(false)
+    } catch (error) {
+      setIsloading(true)
+      Alert.alert('Login Failed', error.response.data.message)
+      // console.log(error.response)
+      setIsloading(false)
     }
   }
 
@@ -131,6 +117,30 @@ const Login = ({navigation}) => {
     }
   }
 
+  const convertpasswordget = async () => {
+    const emailcheck = enteredEmail.includes('@') && enteredEmail.includes(".com")
+    const passwordcheck = enteredPassword.length > 6
+    
+    if(!emailcheck || !passwordcheck){
+      setEmailIsInvalid(emailcheck)
+      setPasswordIsInvalid(passwordcheck)
+      Alert.alert('Invalid details', 'Please check your entered credentials.')
+    }else{
+      try {
+        setIsloading(true)
+        const response = await ConvertPassword(enteredPassword)
+        console.log(response)
+        const password = response
+        loginhandler(password)
+      } catch (error) {
+        setIsloading(true)
+        // console.log(error.response)
+        Alert.alert("Error", "An error occured")
+        setIsloading(false)
+      }
+    }
+  }
+
  
   if(isloading){
     return <LoadingOverlay message={"Logging in"}/>
@@ -171,7 +181,7 @@ const Login = ({navigation}) => {
         </View>
 
         <View style={{marginHorizontal:50, marginTop:10}}>
-          <SubmitButton message={"Login"} onPress={() => loginhandler()}/>
+          <SubmitButton message={"Login"} onPress={() => convertpasswordget()}/>
         </View>
 
         <TouchableOpacity style={{alignItems:'center', justifyContent:'center', marginTop: 10}} onPress={() => onAuthenticate()}>

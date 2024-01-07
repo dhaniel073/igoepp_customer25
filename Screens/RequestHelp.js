@@ -60,24 +60,24 @@ const RequestHelp = ({navigation}) => {
         style={{marginBottom:'1%'}}
         keyExtractor={(item) => item.id}
         renderItem={({item}) => 
-            <View style={styles.container}  >
+          <View style={styles.container}  >
 
-              <TouchableOpacity style={[styles.pressables]} onPress={() => navigation.navigate("SubCategory", {
-                categoryId: item.id,
-                first_name: fetchedName.first_name
-              })}>
-              <Image
-              style={styles.image2}
-              source={{ uri:`https://igoeppms.com/igoepp/public/category/${item.image}`  }}
-              />
+            <TouchableOpacity style={[styles.pressables]} onPress={() => navigation.navigate("SubCategory", {
+              categoryId: item.id,
+              first_name: fetchedName.first_name
+            })}>
+            <Image
+            style={styles.image2}
+            source={{ uri:`https://igoeppms.com/igoepp/public/category/${item.image}`  }}
+            />
 
-                <Text style={styles.item}>
-                  {item.cat_name}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            }
-         numColumns={2}
+              <Text style={styles.item}>
+                {item.cat_name}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          }
+        numColumns={2}
         /> 
 
       

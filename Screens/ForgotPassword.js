@@ -31,7 +31,8 @@ const ForgotPassword = ({navigation}) => {
     }else{
       // console.log(emailIsValid)
       try {
-        const responce = await ForgotCustomerPassword(emailEntered)
+        const response = await ForgotCustomerPassword(emailEntered)
+        console.log(response)
         Alert.alert("Successful", `A mail has been sent to \n${emailEntered}`, [
           {
             text:"Ok",
@@ -39,12 +40,13 @@ const ForgotPassword = ({navigation}) => {
             }
           ]) 
       } catch (error) {
+        console.log(error.response)
         Alert.alert("Error", `An error Occured`, [
           {
             text:"Ok",
-              onPress: () => {}
-            }
-          ]) 
+            onPress: () => {}
+          }
+        ]) 
       } 
     }
   }
@@ -84,7 +86,7 @@ export default ForgotPassword
 const styles = StyleSheet.create({
   authContent: {
     flex: 1,
-    marginTop: 170,
+    marginTop: 150,
     marginHorizontal: 10,
     padding: 16,
     borderRadius: 8,

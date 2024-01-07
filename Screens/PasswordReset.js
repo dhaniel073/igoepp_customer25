@@ -5,7 +5,7 @@ import { AuthContext } from '../utils/AuthContext'
 import { Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle'
 import GoBack from '../Component/Ui/GoBack'
 import SubmitButton from '../Component/Ui/SubmitButton'
-import { CustomerResetPassword, ValidateLogin } from '../utils/AuthRoute'
+import { ConvertPassword, CustomerResetPassword, ValidateLogin } from '../utils/AuthRoute'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
 import { Base64 } from 'js-base64'
 
@@ -28,12 +28,12 @@ const PasswordReset = ({navigation}) => {
 
 
    
-    let refT = useRef(0);
-  
-    function handleClick() {
-      refT.current = refT.current + 1;
-      // alert('You clicked ' + ref.current + ' times!');
-    }
+  let refT = useRef(0);
+
+  function handleClick() {
+    refT.current = refT.current + 1;
+    // alert('You clicked ' + ref.current + ' times!');
+  }
 
   const ValidateOldPassword = async () => {
     if(refT.current > 3){
@@ -44,39 +44,78 @@ const PasswordReset = ({navigation}) => {
         }
       ])
     }else{
-      const passwordMd5Old = Base64.encode(oldpassword)
+      // const passwordMd5Old = Base64.encode(oldpassword)
       try {
         setisloading(true)
-        const response = await ValidateLogin(authCtx.email, passwordMd5Old)
-        // console.log(response.message)
-        if(response.message === "Invalid passoword"){
-          setoldpassworderrormessage(response.message)
-          setoldpasswordvalid(true)
-          Alert.alert("Error", response.message, [
-            {
-              text:"Ok",
-              onPress: () => setisloading(false)
-            }
-          ])
-        }else{
-          ResetHandler()
-        }
-        // setisloading(false)
+        const response = await ConvertPassword(oldpassword)
+        console.log(response)
+        const passwordCon = response
+        passwordvalidate(passwordCon)
       } catch (error) {
         setisloading(true)
-        // console.log(error)
-        setisloading(true)
+        console.log(error)
+        Alert.alert("Error", "An error occured try again later", [
+          {
+            text: "Ok",
+            onPress: () => navigation.goBack()
+          }
+        ])
+        setisloading(false)
       }
     }
   }
 
+  const passwordvalidate = async (passwordCon) => {
+    try {
+      setisloading(true)
+      const response = await ValidateLogin(authCtx.email, passwordCon)
+      // console.log(response.message)
+      if(response.message === "Invalid passoword"){
+        setoldpassworderrormessage(response.message)
+        setoldpasswordvalid(true)
+        Alert.alert("Error", response.message, [
+          {
+            text:"Ok",
+            onPress: () => setisloading(false)
+          }
+        ])
+      }else{
+        ResetHandler()
+      }
+      // setisloading(false)
+    } catch (error) {
+      setisloading(true)
+      // console.log(error)
+      setisloading(true)
+    }
+  }
     
 
     const ResetHandler = async () => {
-      const passwordMd5New = Base64.encode(password)
+      // const passwordMd5New = Base64.encode(password)
       try {
         setisloading(true)
-        const response = await CustomerResetPassword(authCtx.email, passwordMd5New, authCtx.token)
+        const response = await ConvertPassword(password)
+        console.log(response)
+        const passwordCon = response
+        passwordreset(passwordCon)
+      } catch (error) {
+        setisloading(true)
+        console.log(error)
+        Alert.alert("Error", "An error occured try again later", [
+          {
+            text: "Ok",
+            onPress: () => navigation.goBack()
+          }
+        ])
+        setisloading(false)
+      }
+    }
+
+    const passwordreset = async (passwordCon) => {
+      try {
+        setisloading(true)
+        const response = await CustomerResetPassword(authCtx.email, passwordCon, authCtx.token)
         // console.log(response)
         Alert.alert("Successful", "Password reset successful", [
           {

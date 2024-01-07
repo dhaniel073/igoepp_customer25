@@ -16,7 +16,7 @@ async function authenticateSignUp(email, password, gender, phone, firstname, las
     'password': password,
     "identification_type":identification_type,
     "identification_num":  identification_num,
-    "referral_code": referral_code,
+    "referal_code": referral_code,
     'application': "mobileapp"
   })
   const data = response.data;
@@ -149,62 +149,59 @@ async function fetchrequestbyid(requestid, token){
 
 //cancel request made by customer
 async function cancelrequests(id, token, reason){
-      const response = await axios.post(
-          `https://igoeppms.com/igoepp/public/api/auth/hrequest/cancelrequest`, 
-          {
-              'book_id': id,
-              'cancel_reason': reason
-          },
-         {
-            headers:{
-              Accept: 'application/json',
-              Authorization: `Bearer ${token}`
-            }
-          }
-        )
-          const data = response.data
-          return response.data;
-    
+  const response = await axios.post(`https://igoeppms.com/igoepp/public/api/auth/hrequest/cancelrequest`, 
+    {
+        'book_id': id,
+        'cancel_reason': reason
+    },
+    {
+      headers:{
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    }
+    )
+    const data = response.data
+    return response.data;
   }
 
 
 //bid request endpoint
 async function bidrequests(bid_id, token){
  const url =  `https://igoeppms.com/igoepp/public/api/auth/hrequest/showbidrequestbyrequestid/${bid_id}`
-      const response = await axios.get(url,
-         {
-            headers:{
-              Accept: 'application/json',
-              Authorization: `Bearer ${token}`
-            }
-          }
-        )
-          const data = response.data
-          return data;
-    
+  const response = await axios.get(url,
+    {
+      headers:{
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    }
+    )
+    const data = response.data
+    return data;   
 }
 
 //bid accept by cash endpoint
 async function bidacceptcash(Id,paymentmethod,paymentmethod1,sessionId, token){
-    const url = 'https://igoeppms.com/igoepp/public/api/auth/hrequest/acceptbidcash'
+  const url = 'https://igoeppms.com/igoepp/public/api/auth/hrequest/acceptbidcash'
 
-    const response = await axios.post(url, {
-        "bidid": Id,
-        "payment_type": paymentmethod,
-        "payment_mode" : paymentmethod1,
-        "charge_payment_type": "W",
-        "session_id": sessionId,
-        "application": "mobileapp"
-     },
-     {
-        headers:{
-            Accept: 'application/json',
-            Authorization: `Bearer ${token}`
-        }
-    }
-     )
-    const data = response.data
-    return data 
+  const response = await axios.post(url, {
+      "bidid": Id,
+      "payment_type": paymentmethod,
+      "payment_mode" : paymentmethod1,
+      "charge_payment_type": "W",
+      "session_id": sessionId,
+      "application": "mobileapp"
+    },
+    {
+      headers:{
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`
+      }
+  }
+    )
+  const data = response.data
+  return data 
 }
 
 //bid accept endpoint
@@ -385,7 +382,7 @@ async function wallettransaction(customerId, token){
 
 
 async function marketplaceitemsget(token){
-  const response = await axios.get("http://igoeppms.com/igoepp/public/api/auth/globalproductcategory", {
+  const response = await axios.get("https://igoeppms.com/igoepp/public/api/auth/globalproductcategory", {
     headers:{
       Accept: 'application/json',
       Authorization: `Bearer ${token}`
@@ -1237,12 +1234,22 @@ async function customerresetpassword(email, password, token){
   return data
 }
 
+async function convertpassword(password){
+  // console.log(email,password)
+  const url = 'https://igoeppms.com/igoepp/public/api/igoeppauth/getconvpass'
+  const response = await axios.post(url, {
+      "password": password,
+  })
+  // console.log(response.data)
+  const data = response.data
+  return data 
+}
 
 
 
-
-
-
+export const ConvertPassword = (password) => {
+  return convertpassword(password)
+}
 
 //SignUp
 export  function SignUp(email, password,gender, phone, firstname, lastname,identification_type,identification_num, referral_code) {

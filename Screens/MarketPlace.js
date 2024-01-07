@@ -25,7 +25,7 @@ const MarketPlace = ({navigation}) => {
       } catch (error) {
         setIsFetching(true)
         setIsFetching(false)
-        // console.log(error)
+        console.log(error)
         return;
       }
     })

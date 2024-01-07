@@ -5,7 +5,7 @@ import Input from '../Component/Ui/Input'
 import SubmitButton from '../Component/Ui/SubmitButton';
 import { Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle';
 import { Dropdown } from 'react-native-element-dropdown';
-import { SignUp } from '../utils/AuthRoute';
+import { ConvertPassword, SignUp } from '../utils/AuthRoute';
 import { AuthContext } from '../utils/AuthContext';
 import LoadingOverlay from '../Component/Ui/LoadingOverlay';
 import  Modal  from 'react-native-modal';
@@ -135,14 +135,31 @@ const SignUpScreen = ({navigation}) => {
       }
     }
 
-    const signuphandler = async () => {         
-      const passwordMd5 = Base64.encode(enteredPassword)
+    const convertpasswordget = async () => {
       toggleAcceptTermsModal()
-      console.log(enteredEmail, passwordMd5, enteredGender, enteredPhone, enteredfirstname, enteredlastname, idtype, idnum, referral_code)
       try {
         setisloading(true)
-        const response = await SignUp(enteredEmail, passwordMd5, enteredGender, enteredPhone, enteredfirstname, enteredlastname, idtype, idnum, referral_code)
+        const response = await ConvertPassword(enteredPassword)
         console.log(response)
+        const passwordCon = response
+        signuphandler(passwordCon)
+      } catch (error) {
+        setisloading(true)
+        // console.log(error.response)
+        Alert.alert("Error", "An error occured")
+        setisloading(false)
+      }
+    }
+  
+    console.log(enteredEmail,  enteredGender, enteredPhone, enteredfirstname, enteredlastname, idtype, idnum, referral_code)
+
+    const signuphandler = async (conpass) => {         
+      const passwordMd5 = Base64.encode(enteredPassword)
+      console.log(enteredEmail, conpass, enteredGender, enteredPhone, enteredfirstname, enteredlastname, idtype, idnum, referral_code)
+      try {
+        setisloading(true)
+        const response = await SignUp(enteredEmail, conpass, enteredGender, enteredPhone, enteredfirstname, enteredlastname, idtype, idnum, referral_code)
+        // console.log(response)
         authCtx.authenticated(response.access_token)  
         authCtx.customerId(response.customer_id)
         authCtx.customerEmail(response.email)
@@ -160,7 +177,6 @@ const SignUpScreen = ({navigation}) => {
         setisloading(true)
         console.log(error.response)
         const myObj = error.response.data.email[0]
-
         Alert.alert('SignUp Failed', [myObj])
         setisloading(false)
       }
@@ -201,7 +217,7 @@ const SignUpScreen = ({navigation}) => {
             isInvalid={firstnameIsInvalid}
             onFocus={() => setFirstNameIsInvalid(false)}
             />
-          {firstnameIsInvalid && <Text style={{fontSize:10, marginTop:-10, marginBottom:8, color:Color.red}}>First name must beat least 5 characters</Text>}
+          {firstnameIsInvalid && <Text style={{fontSize:10, marginTop:-10, marginBottom:8, color:Color.red}}>First name must be at least 5 characters</Text>}
         </View>
 
         <View style={styles.lastname}>
@@ -296,14 +312,15 @@ const SignUpScreen = ({navigation}) => {
           value={enteredPhone}
           isInvalid={phoneIsInvalid}
           maxLength={11}
-          autoCapitalize={'none'}
           keyboardType={"numeric"}
           onFocus={() => setPhoneIsInvalid(false)}
         />
 
         <Input
           placeholder={"Referral Code"}
-          onUpdateValue={updateInputValueHandler.bind(this, 'referral')}
+          autoCapitalize={'none'}
+
+          onUpdateValue={updateInputValueHandler.bind(this, 'referal')}
           value={referral_code}
         />
 
@@ -414,7 +431,7 @@ const SignUpScreen = ({navigation}) => {
         <View style={{marginBottom:10}}/>
     {
       avail  && 
-        <SubmitButton style={{flex:1, marginLeft:10, marginHorizontal:20}} message={"Continue"} onPress={() => signuphandler()}/>
+        <SubmitButton style={{flex:1, marginLeft:10, marginHorizontal:20}} message={"Continue"} onPress={() => convertpasswordget()}/>
     }
     </View>
       <View style={{marginBottom:20}}/>

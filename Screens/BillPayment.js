@@ -30,7 +30,7 @@ const BillPayment = ({navigation}) => {
           Authorization: `Bearer ${authCtx.token}`
         }
       })
-      // console.log(response)
+      console.log(response)
     setcategory(response.data)
     setisloading(false)
     } catch (error) {

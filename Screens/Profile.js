@@ -103,9 +103,9 @@ const Profile = ({navigation}) => {
                 </TouchableOpacity>
                }
                 <View style={{ marginLeft: 10  }}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={[styles.title , {marginTop: 15, marginBottom: 5}]}>{fetchedMessage.first_name}</Text>
-                        <Text style={[styles.title , {marginTop: 15, margin: 5}]}> {fetchedMessage.last_name}</Text>
+                    <View style={{ flexDirection:'row'}}>
+                        <Text style={[styles.title , {marginTop: 15}]}>{fetchedMessage.first_name}</Text>
+                        <Text style={[styles.title,  {marginTop: 15}]}> {fetchedMessage.last_name}</Text>
                     </View>
                     <Text style={styles.caption}>{fetchedMessage.email}</Text>
                 </View>
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     marginBottom: 25
   },
   title:{
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'poppinsRegular'
   },
