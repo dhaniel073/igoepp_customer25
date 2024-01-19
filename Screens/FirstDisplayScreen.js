@@ -1,8 +1,13 @@
-import { StyleSheet, View, Text, SafeAreaView, Button, Pressable,TouchableOpacity} from "react-native";
+import { StyleSheet, View, Text, SafeAreaView, Button, Pressable,TouchableOpacity, Dimensions} from "react-native";
 import Onboarding from "react-native-onboarding-swiper";
 import {Image} from "expo-image"
 import { Color, FontSize } from "../Component/Ui/GlobalStyle";
+import { StatusBar } from "expo-status-bar";
+import Swiper from "react-native-swiper";
 
+
+const width = Dimensions.get('window').width
+const height = Dimensions.get('window').height
 
 
 function FirstDisplayScreen({navigation}){
@@ -26,99 +31,54 @@ function FirstDisplayScreen({navigation}){
      )
 
     return (
-      <Onboarding
-      onSkip={() => navigation.replace("Login")}
-      onDone={() => navigation.navigate("Login")}
-      // bottomBarColor= {Color.peru}
-      bottomBarHeight={90}
-      NextButtonComponent={Next}
-      DoneButtonComponent={Down}
-      SkipButtonComponent={Skip}
-      titleStyles={styles.title}
-      subTitleStyles={styles.subtitle}
-      imageContainerStyles={styles.imageStyles}
-      pages={
-      
-        [
-        {
-          backgroundColor: Color.dimgray_100,
-          image: <Image contentFit="contain"  style={styles.image1} source={require('../assets/g10.png')}/>,
-          title: 'Welcome To Igoepp',
-          subtitle: 'We make sure all customers are well satisfied with all services.',
-        },
-        {
-          // backgroundColor: '#a6e4d0',
-          backgroundColor: Color.darkgray,
-          image: <Image contentFit="contain"  style={styles.image2} source={require('../assets/onboarding2.png')} />,
-          title: 'HandyMen',
-          subtitle: 'We make sure your requests are carried out effectively.',
-        },
-        
-        {
-          // backgroundColor: '#e9bcbe',
-          backgroundColor: Color.darkolivegreen_100,
-          image: <Image contentFit="contain" style={styles.image3} source={require("../assets/group-783.png")} />,
-          title: 'Transactions',
-          subtitle: 'Our Transactions Are Smooth And Steady. ',
-        },
-        
-        
-      ]}
-    />
+     <View style={styles.container}>
+      {/* <StatusBar hidden={true}/> */}
+      <Text></Text>
+      <Swiper autoplay={true}>
+        <View style={styles.slide}>
+          <Image source={require('../assets/Artboard1.jpg')} style={styles.image}/>
+        </View>
+
+        <View style={styles.slide}>
+          <Image source={require('../assets/Artboard2.jpg')} style={styles.image}/>
+        </View>
+
+        <View style={styles.slide}>
+          <Image source={require('../assets/Artboard3.jpg')} style={styles.image}/>
+        </View>
+      </Swiper>
+      <View style={styles.textContainer}>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={{paddingLeft: 20, fontFamily: 'poppinsSemiBold', color: Color.new_color}}>Login</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={ () => navigation.navigate('SignUp')}>
+          <Text  style={{paddingRight: 20, fontFamily: 'poppinsSemiBold', color: Color.new_color}}>SignUp</Text>
+        </TouchableOpacity>
+      </View>
+     </View>
     )
 }
 
 export default FirstDisplayScreen;
 const styles = StyleSheet.create({
   container:{
-    padding: 0,
-    margin: 0
+    flex:1
   },
-  imageStyles:{
-    height: "52%",
-    width: "100%",
+  slide:{
+    flex:1,
+    alignItems:'center',
+    justifyContent:'center'
   },
-  image1:{
-    marginTop: "10%",
-    height: "93%",
-    width: "85%",
+  image: {
+    width: width,
+    height: height
   },
-  image2:{
-    marginTop: "10%",
-    height: "100%",
-    width: "90%",
-  },
-  image3:{
-    marginTop: "10%",
-    marginBottom: 0,
-    height: "93%",
-    width: "85%",
-  },
-  logo:{
-    width: 100,
-    height: 100
-  },
-  title:{
-    fontFamily: 'poppinsBold',
-    fontSize: FontSize.size_7xl,
-    color: Color.white
-  },
-  subtitle:{
-    fontSize: FontSize.size_base,
-    fontFamily: 'poppinsSemiBold'
-  },
-  pressed:{
-    opacity: 0.4
-  },
-  press:{
-    paddingRight: 20,
-  },
-  presstext:{
-    fontFamily: 'poppinsSemiBold',
-    color: Color.white
-  },
-  skip:{
-    paddingLeft: 20,
-  },
-  
+  textContainer:{
+    // position: 'absolute',
+    bottom: 30,
+    // height:15,
+    flexDirection:'row',
+    justifyContent:'space-between'
+  }
 });

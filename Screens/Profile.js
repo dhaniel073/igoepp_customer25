@@ -2,7 +2,7 @@ import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, Share } from 'r
 import React, { useContext, useEffect, useState } from 'react'
 import { Color, marginStyle } from '../Component/Ui/GlobalStyle'
 import GoBack from '../Component/Ui/GoBack'
-import {MaterialCommunityIcons, Ionicons, Octicons} from '@expo/vector-icons'
+import {MaterialCommunityIcons, Ionicons, Octicons, Entypo} from '@expo/vector-icons'
 import { Image } from 'expo-image'
 import { CustomerInfoCheck, ShowFetchedRequests } from '../utils/AuthRoute'
 import { AuthContext } from '../utils/AuthContext'
@@ -28,7 +28,7 @@ const Profile = ({navigation}) => {
     try {
       setIsLoading(true)
       const response = await CustomerInfoCheck(authCtx.Id, authCtx.token)
-      console.log(response)
+      // console.log(response)
       setFetchedMesssage(response)
       authCtx.customerFirstName(response.first_name)
       authCtx.customerLastName(response.last_name)
@@ -87,6 +87,8 @@ const Profile = ({navigation}) => {
             lga: fetchedMessage.lga,
             Phone: fetchedMessage.phone,
             Sex: fetchedMessage.sex,
+            Dob: fetchedMessage.dob,
+            Address: fetchedMessage.address
         })}/>
     </View>
     
@@ -115,14 +117,18 @@ const Profile = ({navigation}) => {
         <View style={styles.userInfoSection}>
             <View style={styles.row}>
                 <Ionicons name="location" color="#777777" size={20}/>
-                <Text style=    {{ color: '#777777', marginLeft: 20, fontFamily:'poppinsRegular' }}>{fetchedMessage.Country} {fetchedMessage.State} {fetchedMessage.lga}</Text>
-                
-
+                <Text style= {{ color: '#777777', marginLeft: 20, fontFamily:'poppinsRegular' }}>{fetchedMessage.Country === null ? "Nill" : fetchedMessage.Country} {fetchedMessage.State === null ? "Nill" : fetchedMessage.State} {fetchedMessage.lga === null ? "Nill" : fetchedMessage.lga}</Text>
             </View>
+
+            <View style={styles.row}>
+                <Entypo name="address" size={24} color="black"/>
+                <Text style= {{ color: '#777777', marginLeft: 20, fontFamily:'poppinsRegular'}}>{fetchedMessage.address === null ? "Nill" : fetchedMessage.address}</Text>
+            </View>
+
 
              <View style={styles.row}>
                 <Ionicons name="call" color="#777777" size={20}/>
-                <Text style=    {{ color: '#777777', marginLeft: 20, fontFamily:'poppinsRegular' }}>{fetchedMessage.phone}</Text>
+                <Text style= {{ color: '#777777', marginLeft: 20, fontFamily:'poppinsRegular' }}>{fetchedMessage.phone}</Text>
             </View>
 
             <View style={styles.row}>
@@ -204,7 +210,7 @@ const styles = StyleSheet.create({
   },
   userInfoSection: {
     paddingHorizontal: 20,
-    marginBottom: 25
+    marginBottom: 20
   },
   title:{
     fontSize: 18,

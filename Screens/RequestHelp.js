@@ -1,4 +1,4 @@
-import { FlatList, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, FlatList, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useContext, useState, useEffect } from 'react'
 import { Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle'
 import GoBack from '../Component/Ui/GoBack'
@@ -25,7 +25,7 @@ const RequestHelp = ({navigation}) => {
     try {
       setIsFetching(true)
       const response = await Category()
-      // console.log(response)
+      console.log(response)
       setFetchedCategory(response)
       setIsFetching(false)
     } catch (error) {
@@ -47,11 +47,14 @@ const RequestHelp = ({navigation}) => {
 
 
   return (
-    <SafeAreaView style={{marginTop: marginStyle.marginTp, marginHorizontal:10, flex:1}}>
-      <GoBack onPress={() => navigation.goBack()}>Back</GoBack>
-      <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-      <Text style={styles.makerequesttxt}>RequestHelp</Text>
-      <Text style={styles.name}>Hi {authCtx.firstname}</Text>
+
+    <SafeAreaView style={{marginTop: marginStyle.marginTp, marginHorizontal:5, flex:1}}>
+       <View style={{marginHorizontal:5}}>
+        <GoBack onPress={() => navigation.goBack()}>Back</GoBack>
+        <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+          <Text style={styles.makerequesttxt}>RequestHelp</Text>
+          <Text style={styles.name}>Hi {authCtx.firstname}</Text>
+        </View>
       </View>
       <FlatList        
         showsVerticalScrollIndicator={false}
@@ -62,7 +65,7 @@ const RequestHelp = ({navigation}) => {
         renderItem={({item}) => 
           <View style={styles.container}  >
 
-            <TouchableOpacity style={[styles.pressables]} onPress={() => navigation.navigate("SubCategory", {
+            <TouchableOpacity style={[styles.pressables]} onPress={() => item.avail_to_customer === "N" ? Alert.alert("Alert", "Category not available") : navigation.navigate("SubCategory", {
               categoryId: item.id,
               first_name: fetchedName.first_name
             })}>

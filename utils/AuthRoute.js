@@ -519,17 +519,20 @@ async function forgotpass(email){
   }
 
 //profile update endpoint
-async function profileupdate(last_name, first_name, sex, phone, customerId, token, countryName, stateName, cityName){
+async function profileupdate(last_name, first_name, dob, sex, phone, customerId, token, countryName, stateName, cityName, address){
   const response = await axios.put(
       `https://igoeppms.com/igoepp/public/api/auth/customer/${customerId}/update`, 
       {
           'last_name': last_name,
           'first_name': first_name,
+          'dob': dob,
           'phone': phone,
           'sex':sex,
           'Country': countryName,
           'State': stateName,
-          'lga': cityName  
+          'lga': cityName,
+          'address': address,
+          'nationlity': countryName  
       },{
         headers:{
           Accept: 'application/json',
@@ -896,7 +899,7 @@ async function tvrenewalpay(requestID, amount, token, commission){
 
 //get helper by helper id endpoint
 async function helperget(id, token){
-  const url = `https://igoeppms.com/igoepp/public/api/auth/helper/${id}`
+  const url = `https://igoeppms.com/igoepp/public/api/auth/helperfew/${id}`
   const response = axios.get(url, {
     headers:{
       Accept: 'application/json',
@@ -1245,11 +1248,39 @@ async function convertpassword(password){
   return data 
 }
 
+async function deleteaccount(id, token){
+  const url = `https://igoeppms.com/igoepp/public/api/auth/customer/deleteaccount`
+  const response = await axios.post(url,{
+    "customer_id": id,
+  }, {
+    headers:{
+      Accept: 'application/json',
+      Authorization: `Bearer ${token}`
+    }
+  })
+
+  const data = response.data
+  return data
+}
+
+async function getpaystackkey(){
+  const url = `https://igoeppms.com/igoepp/public/api/general/getPaystackKey`
+  const response = await axios.get(url,{
+  })
+
+  const data = response.data
+  return data
+}
 
 
 export const ConvertPassword = (password) => {
   return convertpassword(password)
 }
+
+export const GetPayStackKey = () => {
+  return getpaystackkey()
+}
+
 
 //SignUp
 export  function SignUp(email, password,gender, phone, firstname, lastname,identification_type,identification_num, referral_code) {
@@ -1413,8 +1444,8 @@ export function CartCheckoutCash(first_name,last_name, address,landmark,phone,em
 
 
 
-export function ProfileUpdate(last_name, first_name, sex, phone, customerId, token, countryName, stateName, cityName){
-  return profileupdate(last_name, first_name, sex, phone, customerId, token, countryName, stateName, cityName)
+export function ProfileUpdate(last_name, first_name, dob, sex, phone, customerId, token, countryName, stateName, cityName, address){
+  return profileupdate(last_name, first_name, dob, sex, phone, customerId, token, countryName, stateName, cityName, address)
 }
 
 export function DisputeLog(id, description, token){
@@ -1597,3 +1628,6 @@ export const NotificationById = (id, token) => {
   return notificationbyid(id, token)
 }
 
+export const DeleteAccount = (id, token) => {
+  return deleteaccount(id, token)
+}

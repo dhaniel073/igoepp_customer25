@@ -186,6 +186,7 @@ const Education = ({route, navigation}) => {
         // console.log(response)
         setCode('')
         validate()
+        setischecking(false)
       } catch (error) {
         setischecking(true)
         setCode('')

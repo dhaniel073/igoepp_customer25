@@ -57,6 +57,8 @@ import * as LocalAuthentication from 'expo-local-authentication'
 import * as Device from 'expo-device'
 import PasswordReset from './Screens/PasswordReset';
 import NotificationScreen from './Screens/NotificationScreen';
+import NetInfo from "@react-native-community/netinfo"
+import RNRestart from 'react-native-restart'
 
 
 
@@ -123,7 +125,7 @@ export default function App() {
 
       // Learn more about projectId:
       // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
-      token = (await Notification.getExpoPushTokenAsync({ projectId: '0e18ffeb-cbc7-439c-8348-da5e8ba93af1' })).data;
+      token = (await Notification.getExpoPushTokenAsync({ projectId: 'e8a1e2a3-7c71-4a4e-9e7b-60ca9cecf323' })).data;
       console.log(token);
     } else {
       // alert('Must use physical device for Push Notifications');
@@ -131,6 +133,20 @@ export default function App() {
   
     return token;
   }
+
+  const unsuscribe = NetInfo.addEventListener((state) => {
+    if(state.isConnected === false){
+      Alert.alert("No Internet Connection", "Please check your internet connection and try again!", [{
+        text: "Reload App",
+        onPress: () => RNRestart.restart()
+      }])
+    }else if(state.isConnected === true){
+    }
+  })
+
+  useEffect(() => {
+    unsuscribe()
+  })
 
 
   const [fontloaded] =  useFonts({
@@ -343,6 +359,7 @@ export default function App() {
             // Prompt the user to reauthenticate
             // You can navigate to a login screen or show a modal for reauthentication
             console.log('Reauthentication required');
+            Alert.alert("Session Timeout", "Session has expired")
             authCtx.logout()
           }
         }

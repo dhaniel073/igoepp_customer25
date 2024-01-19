@@ -94,27 +94,27 @@ const Internet = ({route, navigation}) => {
     setisLoading(true)
     const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
     const response = axios.get(url, {
-        headers:{
-            Accept:'application/json',
-            Authorization: `Bearer ${authCtx.token}`
-        }
+      headers:{
+        Accept:'application/json',
+        Authorization: `Bearer ${authCtx.token}`
+      }
     }).then((res) => {
-        // console.log(res.data)
-        var count = Object.keys(res.data).length;
-        let catarray = []
-        for (var i = 0; i < count; i++){
-            catarray.push({
-                label: res.data[i].name,
-                value: res.data[i].id,
-            })
-            // setCityCode(response.data.data[i].lga_code)
-        }
-        setcategory(catarray)
+      // console.log(res.data)
+      var count = Object.keys(res.data).length;
+      let catarray = []
+      for (var i = 0; i < count; i++){
+        catarray.push({
+          label: res.data[i].name,
+          value: res.data[i].id,
+        })
+        // setCityCode(response.data.data[i].lga_code)
+      }
+      setcategory(catarray)
     }).catch((error) => {
-        // console.log(error)
-        return;
-      })
-      setisLoading(false)
+      // console.log(error)
+      return;
+    })
+    setisLoading(false)
   }, [])
 
   const toggleModal =  (value) => {
@@ -122,37 +122,38 @@ const Internet = ({route, navigation}) => {
     // console.log(id)
     reqId = value
   }
+
   const getBouquets = (value) => {
     // console.log(authId, id)
     
     const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getAllBouquetByBillerID/${authId}/${value}`
     const response = axios.get(url, {
-        headers:{
-            Accept:'application/json',
-            Authorization: `Bearer ${authCtx.token}`
-        }
+      headers:{
+        Accept:'application/json',
+        Authorization: `Bearer ${authCtx.token}`
+      }
     }).then((res) => {
-        // console.log(res.data.data.bouquets)
-        var count = Object.keys(res.data.data.bouquets).length;
-        let catarray = []
-        for (var i = 0; i < count; i++){
-            catarray.push({
-                label: res.data.data.bouquets[i].name,
-                value: res.data.data.bouquets[i].code,
-                price: res.data.data.bouquets[i].price
-            })
-            // setCityCode(response.data.data[i].lga_code)
-        }
-        setBosquet(catarray)
+      // console.log(res.data.data.bouquets)
+      var count = Object.keys(res.data.data.bouquets).length;
+      let catarray = []
+      for (var i = 0; i < count; i++){
+        catarray.push({
+          label: res.data.data.bouquets[i].name,
+          value: res.data.data.bouquets[i].code,
+          price: res.data.data.bouquets[i].price
+        })
+        // setCityCode(response.data.data[i].lga_code)
+      }
+      setBosquet(catarray)
     }).catch((error) => {
-        // console.log(error.response.data)
-        Alert.alert(error.response.data.status, error.response.data.message+ " internet type not available",[
-          {
-            text:'Ok',
-            onPress: () => setBosquet([])
-          }
-        ])
-        return;
+      // console.log(error.response.data)
+      Alert.alert(error.response.data.status, error.response.data.message+ " internet type not available",[
+        {
+          text:'Ok',
+          onPress: () => setBosquet([])
+        }
+      ])
+      return;
     })
   }
 
@@ -210,14 +211,14 @@ const Internet = ({route, navigation}) => {
     }
 
     const commissionget = async (id) => {
-          try {
-            const response = await CustomerBillerCommission(id, authCtx.token)
-            console.log(response)
-            setcommissonvalue(response)
-          } catch (error) {
-            return;
-          }
-        }
+      try {
+        const response = await CustomerBillerCommission(id, authCtx.token)
+        console.log(response)
+        setcommissonvalue(response)
+      } catch (error) {
+        return;
+      }
+    }
     
     const pinValidateCheck = async () => {
       if(refT.current > 3){
@@ -234,6 +235,7 @@ const Internet = ({route, navigation}) => {
           // console.log(response)
           setCode('')
           makePayment(ref)
+          setischecking(false)
         } catch (error) {
           setischecking(true)
           setCode('')

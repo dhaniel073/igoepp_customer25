@@ -1,17 +1,19 @@
-import { Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView, Alert } from 'react-native'
+import { Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView, Alert, Pressable } from 'react-native'
 import React, { useContext, useState, useEffect } from 'react'
 import { Color, DIMENSION, marginStyle } from '../Component/Ui/GlobalStyle'
 import { Dropdown } from 'react-native-element-dropdown'
 import { AuthContext } from '../utils/AuthContext'
 import GoBack from '../Component/Ui/GoBack'
 import { ImageBackground } from 'expo-image'
-import {Ionicons, MaterialCommunityIcons, MaterialIcons, FontAwesome} from '@expo/vector-icons'
+import {Ionicons, MaterialCommunityIcons, MaterialIcons, FontAwesome, Entypo, Fontisto} from '@expo/vector-icons'
 import SubmitButton from '../Component/Ui/SubmitButton'
 import axios from 'axios'
 import * as ImagePicker from 'expo-image-picker'
 import Modal from 'react-native-modal'
 import LoadingOverlay from '../Component/Ui/LoadingOverlay'
 import { ProfileUpdate, UploadImage } from '../utils/AuthRoute'
+import DateTimePicker from "@react-native-community/datetimepicker"
+
 
 
 const data = [
@@ -35,6 +37,8 @@ const ProfileEdit = ({route, navigation}) => {
   const [last_name, setLastName] = useState(route?.params?.lastName)
   const [phone, setPhone] = useState(route?.params?.Phone)
   const [sex, setSex] = useState(route?.params?.Sex)
+  const [dob, setdob] = useState(route?.params?.Dob)
+  const [address, setaddress] = useState(route?.params?.address)
 
   const [isloading, setisloading] = useState(false)
 
@@ -54,6 +58,11 @@ const ProfileEdit = ({route, navigation}) => {
   const [countryName, setCountryName] = useState(route.params.Country);
   const [stateName, setStateName] = useState(route.params.State);
   const [cityName, setCityName] = useState(route.params.lga);
+
+  const [helpdate, setHelpDate] = useState('')
+  const [date, setDate] = useState(new Date())
+  const [showdatePicker, setShowDatePicker] = useState(false)
+  const [helpdateInvalid, sethelpdateInvalid] = useState(false)
 
 
   useEffect(() => {
@@ -116,8 +125,9 @@ const handleState = (countryCode) => {
         // console.log(error);
         return;
     })
+  }
 
-}
+  // console.log(route.params)
 
 const handleCity = (countryCode, stateCode) => {
     var config = {
@@ -161,6 +171,12 @@ const handleCity = (countryCode, stateCode) => {
         break;
       case 'phone':
         setPhone(enteredValue)
+        break;
+      case 'dob':
+        setdob(enteredValue)
+        break;
+      case 'address':
+        setaddress(enteredValue)
         break;
     }
   }
@@ -234,16 +250,58 @@ const pickImage = async () => {
     setisloading(false)
   }
 
+  const toggleDatePicker = () => {
+    setShowDatePicker(!showdatePicker)
+  }
+  
+  const onChangeDatePicker = ({type}, selectdDate) => {
+    if(type == 'set'){
+      const currentDate = selectdDate;
+      setDate(currentDate)
+  
+      if(Platform.OS === 'android'){
+          toggleDatePicker();
+          const getdobdate = currentDate.getDate()
+          const getdobyear = currentDate.getFullYear()
+          const getdobmonth = currentDate.getMonth()+1
+
+          // console.log(currentDate.getMonth())
+          // console.log(currentDate.getDate())
+
+
+          const dobtosend = getdobyear + "-" + getdobmonth + "-" + getdobdate
+          // console.log(dobtosend)
+          // setHelpDate(currentDate.toLocaleDateString())
+          setHelpDate(dobtosend)
+      }
+    }else{
+      toggleDatePicker()
+    }
+  }
+  
+  const confirmIOSDate = () => {
+    const getdobdate = date.getDate()
+    const getdobyear = date.getFullYear()
+    const getdobmonth = date.getMonth()+1
+
+    const dobtosend = getdobyear + "-" + getdobmonth + "-" + getdobdate
+
+    // setHelpDate(date.toDateString())
+    setHelpDate(dobtosend)
+    toggleDatePicker()
+  }
+  
+
 
 
   const updateProfilehandler = async () => {
-    if(!last_name || !first_name || !sex || !phone || !countryName || !stateName || !cityName ){
+    if(!last_name || !first_name || !sex || !phone || !countryName || !stateName || !cityName || !helpdate ){
         Alert.alert("Empty Field", "Please fill in the fields correctly")
       }else{
         // console.log(last_name,   first_name, sex, phone, countryName, stateName, cityName)
       try {
         setisloading(true)
-        const response = await ProfileUpdate(last_name, first_name, sex, phone, authCtx.Id, authCtx.token, countryName, stateName, cityName)
+        const response = await ProfileUpdate(last_name, first_name, helpdate, sex, phone, authCtx.Id, authCtx.token, countryName, stateName, cityName, address)
         // console.log(response)
         Alert.alert('Successful', 'Your profile has been updated successfully', [
           {
@@ -253,7 +311,7 @@ const pickImage = async () => {
         ])
         setisloading(false)
       } catch (error) {
-        // console.log(error)
+        console.log(error.response)
         Alert.alert('Error', 'An error occured while updating your profile please try again later', [
           {
             text: 'OK',
@@ -290,6 +348,14 @@ const pickImage = async () => {
     }
   }
 
+    const pictureReturn = () => {
+      if(authCtx.picture === 'NoImage'){
+        return  require("../assets/person-4.png")
+      }else{
+        return {uri:`https://igoeppms.com/igoepp/public/customers/${authCtx.picture}`}
+      }
+    }
+
   // console.log(image)
 
   if(isloading){
@@ -319,7 +385,7 @@ const pickImage = async () => {
                 alignItems: 'center'
              }}>
                 <ImageBackground
-                source={{uri: !image ? `https://igoeppms.com/igoepp/public/customers/${authCtx.image}` : image}}
+                source={!image ? pictureReturn() : image}
                 style={{ height: 100, width:100, borderWidth: 1, borderRadius: 15}}
                 imageStyle={{ borderRadius: 15, }}
                 >
@@ -364,21 +430,20 @@ const pickImage = async () => {
     </View>
           
           <View style={styles.action}>
-              <Ionicons size={20} color="black" name="person"/>
-              <TextInput
-                  placeholder="First Name"
-                  placeholderTextColor="#666666"
-                  onChangeText={updateInputValueHandler.bind(this, 'firstname')}
-                  autoCorrect={false}
-                  autoCapitalize='sentences'
-                  // value={route.params.firstName}
-                  value={first_name}
-                  // autoCapitalize={true}
-                  style={[styles.textInput, 
-                  ]}
-              />      
+            <Ionicons size={20} color="black" name="person"/>
+            <TextInput
+              placeholder="First Name"
+              placeholderTextColor="#666666"
+              onChangeText={updateInputValueHandler.bind(this, 'firstname')}
+              autoCorrect={false}
+              autoCapitalize='sentences'
+              // value={route.params.firstName}
+              value={first_name}
+              // autoCapitalize={true}
+              style={[styles.textInput, 
+              ]}
+            />      
           </View>
-
           
           <View style={styles.action}>
               <Ionicons size={20} 
@@ -415,6 +480,56 @@ const pickImage = async () => {
                 ]}
               />      
           </View>
+
+          {showdatePicker && (
+          <DateTimePicker
+            mode="date"
+            display='spinner'
+            value={date}
+            onChange={onChangeDatePicker}
+            style={{ height: 120, marginTop: -10, fontFamily: 'poppinsRegular'}}
+            // minimumDate={new Date()}
+          />
+        )}  
+
+        {showdatePicker && Platform.OS === "ios" && (
+        <View style={{ flexDirection: "row", justifyContent: 'space-around' }}>
+          <TouchableOpacity style={[styles.button1, styles.pickerButton, {backgroundColor: "#11182711"}]}
+            onPress={toggleDatePicker}
+          >
+            <Text style={[styles.buttonText, {color: "#075985", fontFamily: 'poppinsRegular'}]}>Cancel</Text>
+          </TouchableOpacity>
+
+
+          <TouchableOpacity style={[styles.button1, styles.pickerButton,]}
+            onPress={confirmIOSDate}
+          >
+            <Text style={[styles.buttonText, {fontFamily: 'poppinsRegular'}]}>Confirm</Text>
+          </TouchableOpacity>
+        </View>
+        )}
+
+      {!showdatePicker && (
+        <Pressable style={styles.action} onPress={ () => [toggleDatePicker(), helpdateInvalid && sethelpdateInvalid(false)]}>
+          <FontAwesome size={20} 
+              color="black" 
+              name="calendar"/>
+          <TextInput
+            placeholder={dob === null  || "null" || "" ?  "Select Date of Birth" : dob}
+            value={helpdate}
+            onChangeText={updateInputValueHandler.bind(this, 'date')}
+            placeholderTextColor={"#11182744"}
+            editable={false}
+            // isInvalid={helpdateInvalid}
+            // onFocus={() => sethelpdateInvalid(false)}
+            onPressIn={toggleDatePicker}
+            style={[styles.textInput, 
+            ]}
+          />
+        </Pressable>
+        )}
+
+
 
           <View style={styles.action2}>
           <Dropdown
@@ -499,7 +614,7 @@ const pickImage = async () => {
         </View>
 
        
-        <View style={styles.action2}>
+        <View style={[styles.action2, {marginBottom:8}]}>
         <Dropdown
           style={[styles.dropdown, isCityFocus && { borderColor: 'blue' }]}
           placeholderStyle={[styles.placeholderStyle, {fontFamily: 'poppinsRegular'}]}
@@ -523,7 +638,24 @@ const pickImage = async () => {
           }}
         />
         </View>
+
+        <View style={[styles.action, ]}>
+        <Entypo size={20} 
+              color="black" 
+              name="address"/>
+        <TextInput
+          placeholder={address === null || "null" || "" ?  "Address" : address}
+          onChangeText={updateInputValueHandler.bind(this, 'address')}
+          placeholderTextColor="#666666"
+          autoCorrect={false}
+          value={address}
+          // value={route.params.Phone}
+          style={[styles.textInput, 
+          ]}
+          />  
+        </View>
           <SubmitButton message={"Submit"}  onPress={() => updateProfilehandler()}/>
+        <View style={{marginBottom:30}}/>
       </View>
 
   </ScrollView>
@@ -569,6 +701,7 @@ const pickImage = async () => {
 export default ProfileEdit
 
 const styles = StyleSheet.create({
+  
   addtowalletpaymentxt:{
     fontSize: 18,
     color: Color.darkolivegreen_100,
@@ -601,22 +734,22 @@ const styles = StyleSheet.create({
     marginTop: Platform.OS === 'ios' ? 0 : -12,
     padding:5,
     fontSize: 15,
-    top: 5,
+    top: 8,
   },
   action:{
     flexDirection: 'row',
-    marginTop: 15,
-    marginBottom: 10,
+    marginTop: 5,
+    marginBottom: 7,
     borderBottomWidth: 1,
     borderBottomColor: '#f2f2f2',
     paddingBottom: 5
   },
   action2:{
-    marginTop: 3,
+    marginTop: 2,
     marginBottom: 1,
     borderBottomWidth: 1,
     borderBottomColor: '#f2f2f2',
-    paddingBottom: 5
+    paddingBottom: 2
   },
   centeredView: {
     flex: 1,

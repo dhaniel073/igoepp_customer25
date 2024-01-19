@@ -29,7 +29,6 @@ const data = [
     { label: 'NIMC', value: 'nin' },
     { label: "Driver's license", value: 'DL' },
     { label: 'ID CARD', value: 'Idcard' },
-
   ];
 
 
@@ -100,21 +99,21 @@ const SignUpScreen = ({navigation}) => {
     }
 
     const signupValaidate = () => {
-      const emailIsValid = enteredEmail.includes('@') && enteredEmail.includes('.com');
+      const emailIsValid = enteredEmail.includes('@') || enteredEmail.includes('.com');
       const passwordIsValid = enteredPassword.length < 7;
       const passcheck =  enteredConfirmPassword === enteredPassword 
       const phonecheck = enteredPhone === null || undefined || "" || enteredPhone.length === 0
       const gendercheck = enteredGender === null || undefined || "" || enteredGender.length === 0
       const idnumcheck = idnum === null || undefined || "" || idnum.length === 0
       const idtypecheck = idtype === null || undefined || "" || idtype.length === 0
-      const firstnamecheck = enteredfirstname.length > 4
-      const lastnamecheck = enteredlastname.length > 4
+      // const firstnamecheck = enteredfirstname.length > 4
+      // const lastnamecheck = enteredlastname.length > 4
 
 
 
-      console.log(passcheck)
+      // console.log(passcheck)
     
-      if(!emailIsValid || passwordIsInvalid || !passcheck || phonecheck || gendercheck || idnumcheck || idtypecheck || !firstnamecheck || !lastnamecheck){
+      if(!emailIsValid || passwordIsInvalid || !passcheck || phonecheck || gendercheck || idnumcheck || idtypecheck){
 
         const InvalidPhone = phonecheck
         setEmailIsInvalid(!emailIsValid)
@@ -122,8 +121,8 @@ const SignUpScreen = ({navigation}) => {
         setConfirmPasswordIsInvalid(!passcheck)
         setPhoneIsInvalid(InvalidPhone)
         setGenderIsInvalid(gendercheck)
-        setFirstNameIsInvalid(!firstnamecheck)
-        setLastNameIsInvalid(!lastnamecheck)
+        // setFirstNameIsInvalid(!firstnamecheck)
+        // setLastNameIsInvalid(!lastnamecheck)
         setIsIdnum(idnumcheck)
         setIsIdtype(idtypecheck)
 
@@ -151,7 +150,7 @@ const SignUpScreen = ({navigation}) => {
       }
     }
   
-    console.log(enteredEmail,  enteredGender, enteredPhone, enteredfirstname, enteredlastname, idtype, idnum, referral_code)
+    // console.log(enteredEmail,  enteredGender, enteredPhone, enteredfirstname, enteredlastname, idtype, idnum, referral_code)
 
     const signuphandler = async (conpass) => {         
       const passwordMd5 = Base64.encode(enteredPassword)
@@ -217,7 +216,7 @@ const SignUpScreen = ({navigation}) => {
             isInvalid={firstnameIsInvalid}
             onFocus={() => setFirstNameIsInvalid(false)}
             />
-          {firstnameIsInvalid && <Text style={{fontSize:10, marginTop:-10, marginBottom:8, color:Color.red}}>First name must be at least 5 characters</Text>}
+          {/* {firstnameIsInvalid && <Text style={{fontSize:10, marginTop:-10, marginBottom:8, color:Color.red}}>First name must be at least 5 characters</Text>} */}
         </View>
 
         <View style={styles.lastname}>
@@ -228,7 +227,7 @@ const SignUpScreen = ({navigation}) => {
             isInvalid={lastnameIsInvalid}
             onFocus={() => setLastNameIsInvalid(false)}
             />
-          {lastnameIsInvalid && <Text style={{fontSize:10, marginTop:-10, marginBottom:8, color:Color.red}}>Last name must be at least 5 characters</Text>}
+          {/* {lastnameIsInvalid && <Text style={{fontSize:10, marginTop:-10, marginBottom:8, color:Color.red}}>Last name must be at least 5 characters</Text>} */}
           </View>
 
         </View>

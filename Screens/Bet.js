@@ -208,6 +208,7 @@ const Bet = ({route, navigation}) => {
           setCode('')
           toggleModal()
           betPayment(ref)
+          setischecking(false)
         } catch (error) {
           setischecking(true)
           setCode('')

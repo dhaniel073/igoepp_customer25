@@ -253,7 +253,7 @@ const Welcome = ({navigation}) => {
       </View>
       
       <View>
-          <ScrollView >
+          <ScrollView>
           <Swiper style={styles.wrapper} 
                 dotColor= {Color.dimgray_100}
                 // autoplay={true}

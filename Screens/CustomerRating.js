@@ -141,7 +141,7 @@ const CustomerRating = ({navigation, route}) => {
         <View style={{padding: 10, marginTop:10}}>
             <View style={{flexDirection:'row', justifyContent:'center'}}>
               <Text style=    {{ color: '#777777', fontFamily:'poppinsRegular' }}> {helpershowrating === null || [] ? "No Rating" : helpershowrating} </Text>
-              <Image contentFit='contain' style={{  width: 20, height: 20, marginTop:2 }} source={require("../assets/group-723.png")}/>
+              <Image contentFit='contain' style={{  width: 20, height: 20, top: -1 }} source={require("../assets/group-723.png")}/>
             </View>
             <Text style={styles.textStyle}>Rate the Handyman service performed on {date1} </Text>
             <CustomerRatingBar />

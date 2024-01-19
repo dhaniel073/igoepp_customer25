@@ -130,19 +130,19 @@ const Television = ({route, navigation}) => {
             Authorization: `Bearer ${authCtx.token}`
         }
     }).then((res) => {
-        var count = Object.keys(res.data.data.bouquets).length;
-        let catarray = []
-        for (var i = 0; i < count; i++){
-            catarray.push({
-                label: res.data.data.bouquets[i].name,
-                value: res.data.data.bouquets[i].code,
-                price: res.data.data.bouquets[i].price
-            })
-        }
-        setBouquet(catarray)
+      var count = Object.keys(res.data.data.bouquets).length;
+      let catarray = []
+      for (var i = 0; i < count; i++){
+        catarray.push({
+          label: res.data.data.bouquets[i].name,
+          value: res.data.data.bouquets[i].code,
+          price: res.data.data.bouquets[i].price
+        })
+      }
+      setBouquet(catarray)
     }).catch((error) => {
-        // console.log(error.response.data)
-        return;
+      // console.log(error.response.data)
+      return;
     })
   }
 
@@ -312,6 +312,7 @@ const Television = ({route, navigation}) => {
         }else{
           tvPayment()
         }
+        setischecking(false)
       } catch (error) {
         setischecking(true)
         setCode('')

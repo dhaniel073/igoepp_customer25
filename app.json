@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "IgoeppCus_Prod",
+    "name": "IgoeppCus",
     "slug": "igoepp_customer",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,7 +13,7 @@
     },
     "updates": {
       "checkAutomatically": "ON_ERROR_RECOVERY",
-      "fallbackToCacheTimeout": 1000,
+      "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/e8a1e2a3-7c71-4a4e-9e7b-60ca9cecf323"
     },
     "assetBundlePatterns": [
@@ -23,7 +23,8 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSFaceIDUsageDescription": "Igoepp Customer uses Face Id and Touch ID to verify the user's identity and protect sensitive data"
-      }
+      },
+      "bundleIdentifier": "igoepp73673662"
     },
     "android": {
       "adaptiveIcon": {

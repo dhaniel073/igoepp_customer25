@@ -269,6 +269,7 @@ const handleCity = (countryCode, stateCode) => {
         // console.log(response)
         setCode('')
         MakePurchase()
+        setischecking(false)
       } catch (error) {
         setischecking(true)
         setCode('')

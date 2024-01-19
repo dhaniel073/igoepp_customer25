@@ -271,44 +271,44 @@ const getBouquets = (value) => {
 
     const mobilevalidationSelf = async () => {
       try {
-          setisloading(true)
-          const response = await CustomerSelf(authCtx.Id, authCtx.token)
-          // console.log(response)
-          setRequestId(response.requestID)
-          if(response.status === "Success"){
-              if(DATACHECK){
-                  Alert.alert("Confirm Purchase", `Confirm Data Topup for ${authCtx.phone}`, [
-                    {
-                      text: "Cancel",
-                      onPress: () => {}
-                    },
-                    {
-                      text:'Confirm',
-                      onPress: () => toggleModal1()
-                    }
-                  ])
-              }else{
-                  if(AIRTIMECHECK){
-                    Alert.alert("Confirm Purchase", `Confirm Airtime Purchase for ${authCtx.phone}`, [
-                      {
-                        text: "Cancel",
-                        onPress: () => []
-                      },
-                      {
-                        text:'Confirm',
-                        onPress: () => toggleModal1()
-                      }
-                    ])
-                  }
+        setisloading(true)
+        const response = await CustomerSelf(authCtx.Id, authCtx.token)
+        // console.log(response)
+        setRequestId(response.requestID)
+        if(response.status === "Success"){
+          if(DATACHECK){
+            Alert.alert("Confirm Purchase", `Confirm Data Topup for ${authCtx.phone}`, [
+              {
+                text: "Cancel",
+                onPress: () => {}
+              },
+              {
+                text:'Confirm',
+                onPress: () => toggleModal1()
               }
-              setisloading(false)
+            ])
           }else{
-              Alert.alert("Error", response, [
+            if(AIRTIMECHECK){
+              Alert.alert("Confirm Purchase", `Confirm Airtime Purchase for ${authCtx.phone}`, [
                 {
-                  text:"Ok",
-                  onPress: () => {}
+                  text: "Cancel",
+                  onPress: () => []
+                },
+                {
+                  text:'Confirm',
+                  onPress: () => toggleModal1()
                 }
               ])
+            }
+          }
+          setisloading(false)
+          }else{
+            Alert.alert("Error", response, [
+              {
+                text:"Ok",
+                onPress: () => {}
+              }
+            ])
           }
           setisloading(false)
       } catch (error) {
@@ -356,6 +356,7 @@ const getBouquets = (value) => {
         }else{
           airtimetopup()
         }
+        setischecking(false)
       } catch (error) {
         setischecking(true)
         setCode('')

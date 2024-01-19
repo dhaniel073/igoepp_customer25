@@ -77,7 +77,8 @@ const MarketPlace = ({navigation}) => {
 
 
   return (
-    <SafeAreaView style={{marginTop: marginStyle.marginTp, marginHorizontal:10, flex:1}}>
+    <SafeAreaView style={{marginTop: marginStyle.marginTp, marginHorizontal:5, flex:1}}>
+      <View style={{marginHorizontal:5}}>
       <GoBack onPress={() => navigation.goBack()}>Back</GoBack>
       <View style={{flexDirection:'row', justifyContent:'space-between'}}>
         <Text style={styles.mrkplacetxt}>MarketPlace</Text>
@@ -100,6 +101,7 @@ const MarketPlace = ({navigation}) => {
           }
         </View>
       </TouchableOpacity>
+      </View>
 
       {fetchedcategory.length === 0 ? <NoSubCategoryNote/> : 
       <FlatList
