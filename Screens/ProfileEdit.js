@@ -38,7 +38,11 @@ const ProfileEdit = ({route, navigation}) => {
   const [phone, setPhone] = useState(route?.params?.Phone)
   const [sex, setSex] = useState(route?.params?.Sex)
   const [dob, setdob] = useState(route?.params?.Dob)
+<<<<<<< HEAD
   const [address, setaddress] = useState(route?.params?.Address)
+=======
+  const [address, setaddress] = useState(route?.params?.address)
+>>>>>>> 7ff6ee581574490f8ff89b3c232fb2a07dd26129
 
   const [isloading, setisloading] = useState(false)
 
@@ -353,7 +357,11 @@ const pickImage = async () => {
       if(authCtx.picture === 'NoImage'){
         return  require("../assets/person-4.png")
       }else{
+<<<<<<< HEAD
         return {uri:`https://phixotech.com/igoepp/public/customers/${authCtx.picture}`}
+=======
+        return {uri:`https://igoeppms.com/igoepp/public/customers/${authCtx.picture}`}
+>>>>>>> 7ff6ee581574490f8ff89b3c232fb2a07dd26129
       }
     }
 
@@ -516,7 +524,11 @@ const pickImage = async () => {
               color="black" 
               name="calendar"/>
           <TextInput
+<<<<<<< HEAD
             placeholder={!dob ? 'Select Date of Birth' : dob}
+=======
+            placeholder={dob === null  || "null" || "" ?  "Select Date of Birth" : dob}
+>>>>>>> 7ff6ee581574490f8ff89b3c232fb2a07dd26129
             value={helpdate}
             onChangeText={updateInputValueHandler.bind(this, 'date')}
             placeholderTextColor={"#11182744"}
@@ -645,7 +657,11 @@ const pickImage = async () => {
               color="black" 
               name="address"/>
         <TextInput
+<<<<<<< HEAD
           placeholder={!address ? "Enter Address" : address}
+=======
+          placeholder={address === null || "null" || "" ?  "Address" : address}
+>>>>>>> 7ff6ee581574490f8ff89b3c232fb2a07dd26129
           onChangeText={updateInputValueHandler.bind(this, 'address')}
           placeholderTextColor="#666666"
           autoCorrect={false}

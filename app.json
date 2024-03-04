@@ -1,6 +1,10 @@
 {
   "expo": {
+<<<<<<< HEAD
     "name": "IgoeppTest",
+=======
+    "name": "IgoeppCus",
+>>>>>>> 7ff6ee581574490f8ff89b3c232fb2a07dd26129
     "slug": "igoepp_customer",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -23,7 +27,8 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSFaceIDUsageDescription": "Igoepp Customer uses Face Id and Touch ID to verify the user's identity and protect sensitive data"
-      }
+      },
+      "bundleIdentifier": "igoepp73673662"
     },
     "android": {
       "adaptiveIcon": {

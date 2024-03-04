@@ -358,7 +358,11 @@ export default function App() {
           if (timeDifferenceInMinutes > authenticationThresholdInMinutes) {
             // Prompt the user to reauthenticate
             // You can navigate to a login screen or show a modal for reauthentication
+<<<<<<< HEAD
             // console.log('Reauthentication required');
+=======
+            console.log('Reauthentication required');
+>>>>>>> 7ff6ee581574490f8ff89b3c232fb2a07dd26129
             Alert.alert("Session Timeout", "Session has expired")
             authCtx.logout()
           }

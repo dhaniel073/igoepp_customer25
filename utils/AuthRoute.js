@@ -899,7 +899,11 @@ async function tvrenewalpay(requestID, amount, token, commission){
 
 //get helper by helper id endpoint
 async function helperget(id, token){
+<<<<<<< HEAD
   const url = `https://phixotech.com/igoepp/public/api/auth/helperfew/${id}`
+=======
+  const url = `https://igoeppms.com/igoepp/public/api/auth/helperfew/${id}`
+>>>>>>> 7ff6ee581574490f8ff89b3c232fb2a07dd26129
   const response = axios.get(url, {
     headers:{
       Accept: 'application/json',
@@ -1249,7 +1253,11 @@ async function convertpassword(password){
 }
 
 async function deleteaccount(id, token){
+<<<<<<< HEAD
   const url = `https://phixotech.com/igoepp/public/api/auth/customer/deleteaccount`
+=======
+  const url = `https://igoeppms.com/igoepp/public/api/auth/customer/deleteaccount`
+>>>>>>> 7ff6ee581574490f8ff89b3c232fb2a07dd26129
   const response = await axios.post(url,{
     "customer_id": id,
   }, {
@@ -1264,7 +1272,11 @@ async function deleteaccount(id, token){
 }
 
 async function getpaystackkey(){
+<<<<<<< HEAD
   const url = `https://phixotech.com/igoepp/public/api/general/getPaystackKey`
+=======
+  const url = `https://igoeppms.com/igoepp/public/api/general/getPaystackKey`
+>>>>>>> 7ff6ee581574490f8ff89b3c232fb2a07dd26129
   const response = await axios.get(url,{
   })
 

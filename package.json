@@ -11,6 +11,8 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.18.2",
     "@react-native-community/datetimepicker": "7.2.0",
+    "@react-native-community/netinfo": "9.3.10",
+    "@react-native-firebase/app": "^18.7.3",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
@@ -50,8 +52,12 @@
     "react-native-screens": "~3.22.0",
     "react-native-swiper": "^1.6.0",
     "react-native-webview": "13.2.2",
+<<<<<<< HEAD
     "styled-components": "^6.1.1",
     "@react-native-community/netinfo": "9.3.10"
+=======
+    "styled-components": "^6.1.1"
+>>>>>>> 7ff6ee581574490f8ff89b3c232fb2a07dd26129
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

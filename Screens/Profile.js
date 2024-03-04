@@ -28,7 +28,7 @@ const Profile = ({navigation}) => {
     try {
       setIsLoading(true)
       const response = await CustomerInfoCheck(authCtx.Id, authCtx.token)
-      console.log(response)
+      // console.log(response)
       setFetchedMesssage(response)
       authCtx.customerFirstName(response.first_name)
       authCtx.customerLastName(response.last_name)
@@ -77,6 +77,7 @@ const Profile = ({navigation}) => {
 
   return (
     <SafeAreaView style={[styles.container, {marginTop:marginStyle.marginTp, marginHorizontal:10}]}>
+<<<<<<< HEAD
     <View style={{flexDirection:'row',  justifyContent:'space-between'}}>
       <GoBack onPress={() => navigation.goBack()}>Back</GoBack>
       <MaterialCommunityIcons style={{paddingRight:3,}} name="note-edit" size={24} color={Color.limegreen} onPress={() => navigation.navigate('ProfileEdit',{
@@ -90,6 +91,21 @@ const Profile = ({navigation}) => {
         Dob: fetchedMessage.dob,
         Address: fetchedMessage.address
       })}/>
+=======
+    <View style={{flexDirection:'row', paddingLeft:12, paddingRight:12, justifyContent:'space-between'}}>
+        <GoBack onPress={() => navigation.goBack()}>Back</GoBack>
+        <MaterialCommunityIcons style={{}} name="note-edit" size={24} color={Color.limegreen} onPress={() => navigation.navigate('ProfileEdit',{
+            firstName: fetchedMessage.first_name,
+            lastName: fetchedMessage.last_name,
+            Country: fetchedMessage.Country,
+            State: fetchedMessage.State,
+            lga: fetchedMessage.lga,
+            Phone: fetchedMessage.phone,
+            Sex: fetchedMessage.sex,
+            Dob: fetchedMessage.dob,
+            Address: fetchedMessage.address
+        })}/>
+>>>>>>> 7ff6ee581574490f8ff89b3c232fb2a07dd26129
     </View>
     
       <View style={styles.userInfoSection}>
@@ -115,6 +131,7 @@ const Profile = ({navigation}) => {
       </View>
         
         <View style={styles.userInfoSection}>
+<<<<<<< HEAD
           <View style={styles.row}>
             <Ionicons name="location" color="#777777" size={20}/>
             <Text style= {{ color: '#777777', marginLeft: 20, fontFamily:'poppinsRegular' }}>{fetchedMessage.Country === null ? "Nill" : fetchedMessage.Country} {fetchedMessage.State === null ? "Nill" : fetchedMessage.State} {fetchedMessage.lga === null ? "Nill" : fetchedMessage.lga}</Text>
@@ -130,6 +147,23 @@ const Profile = ({navigation}) => {
             <Ionicons name="call" color="#777777" size={20}/>
             <Text style= {{ color: '#777777', marginLeft: 20, fontFamily:'poppinsRegular' }}>{fetchedMessage.phone}</Text>
           </View>
+=======
+            <View style={styles.row}>
+                <Ionicons name="location" color="#777777" size={20}/>
+                <Text style= {{ color: '#777777', marginLeft: 20, fontFamily:'poppinsRegular' }}>{fetchedMessage.Country === null ? "Nill" : fetchedMessage.Country} {fetchedMessage.State === null ? "Nill" : fetchedMessage.State} {fetchedMessage.lga === null ? "Nill" : fetchedMessage.lga}</Text>
+            </View>
+
+            <View style={styles.row}>
+                <Entypo name="address" size={24} color="black"/>
+                <Text style= {{ color: '#777777', marginLeft: 20, fontFamily:'poppinsRegular'}}>{fetchedMessage.address === null ? "Nill" : fetchedMessage.address}</Text>
+            </View>
+
+
+             <View style={styles.row}>
+                <Ionicons name="call" color="#777777" size={20}/>
+                <Text style= {{ color: '#777777', marginLeft: 20, fontFamily:'poppinsRegular' }}>{fetchedMessage.phone}</Text>
+            </View>
+>>>>>>> 7ff6ee581574490f8ff89b3c232fb2a07dd26129
 
             <View style={styles.row}>
                 <Ionicons name="mail" color="#777777" size={20}/>
