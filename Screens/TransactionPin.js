@@ -194,7 +194,7 @@ const TransactionPin = ({navigation}) => {
   return (
     <Pressable style={{marginTop: marginStyle.marginTp, marginHorizontal:10, flex:1}} >
       <GoBack onPress={() => navigation.goBack()}>Back</GoBack>
-        <Text>TransactionPin</Text>
+        <Text style={styles.transactionpintxt}>TransactionPin</Text>
 
         <View style={{ flexDirection: 'row', marginTop: '5%', justifyContent:'space-between', marginHorizontal:10 }}>
         <View style={{flexDirection:'row'}}>
@@ -364,24 +364,31 @@ const TransactionPin = ({navigation}) => {
 export default TransactionPin
 
 const styles = StyleSheet.create({
-    container:{
-        // flex:1,
-        // alignItems:'center',
-        // justifyContent:'center'
-    },
-    centeredView: {
-        flex: 1,
-        // backgroundColor: Color.light_black,
-        justifyContent: 'center',
-        alignItems: 'center',
-        // marginTop: 22,
-      },
-      modalView: {
-        backgroundColor: 'white',
-        width: DIMENSION.WIDTH  * 0.9,
-        borderRadius: 20,
-        // flex:1,
-        alignItems:'center',
-        height: DIMENSION.HEIGHT * 0.4
-      },
+  container:{
+    // flex:1,
+    // alignItems:'center',
+    // justifyContent:'center'
+  },
+  centeredView: {
+    flex: 1,
+    // backgroundColor: Color.light_black,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // marginTop: 22,
+  },
+  modalView: {
+    backgroundColor: 'white',
+    width: DIMENSION.WIDTH  * 0.9,
+    borderRadius: 20,
+    // flex:1,
+    alignItems:'center',
+    height: DIMENSION.HEIGHT * 0.4
+  },
+  transactionpintxt:{
+    fontSize: 18,
+    color: Color.darkolivegreen_100,
+    fontFamily: 'poppinsSemiBold',
+    left: 10,
+    marginTop:10,
+  },
 })

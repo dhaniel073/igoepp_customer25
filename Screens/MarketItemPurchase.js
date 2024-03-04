@@ -57,7 +57,7 @@ const MarketItemPurchase = ({navigation, route}) => {
       ])              
       setIsLoading(false)
     } catch (error) {
-      // console.log(error)
+      console.log(error.response)
       setIsLoading(true)
       Alert.alert("Error", "Error Purchasing Item, Please Try Again Later", [
         {

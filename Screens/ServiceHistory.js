@@ -127,10 +127,10 @@ const ServiceHistory = ({navigation}) => {
       <FlatList
         showsVerticalScrollIndicator={false}
         data={fetchedRequest}
-        style={{ marginBottom: 15 }}
+        style={{ marginBottom:'10%'}}
         key={(item) => item.id}
         renderItem={({item}) => 
-        <View style={{ flex:1 }}>
+        <View>
         {item.help_status === 'C' && item.start_request_time !== null && item.end_request_time !== null  ?
           <>
         {/* <Text style={styles.serviceDate}>{item.created_at}</Text> */}
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     margin:5,
     borderRadius: Border.br_3xs,
-    padding:15,
+    padding:25,
   },
   centeredView: {
     flex: 1,

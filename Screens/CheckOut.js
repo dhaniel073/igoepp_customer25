@@ -127,7 +127,7 @@ const CheckOut = ({navigation, route}) => {
   useEffect(() => {
     var config = {
       method: 'get',
-      url: "https://igoeppms.com/igoepp/public/api/auth/general/country",
+      url: "https://phixotech.com/igoepp/public/api/auth/general/country",
       headers:{
         Accept: 'application/json',
         Authorization: `Bearer ${authCtx.token}`
@@ -158,7 +158,7 @@ const CheckOut = ({navigation, route}) => {
   const handleState = (countryCode) => {
     var config = {
       method: 'get',
-      url: `https://igoeppms.com/igoepp/public/api/auth/general/state/${countryCode}`,
+      url: `https://phixotech.com/igoepp/public/api/auth/general/state/${countryCode}`,
       headers:{
         Accept: 'application/json',
         Authorization: `Bearer ${authCtx.token}`
@@ -185,10 +185,10 @@ const CheckOut = ({navigation, route}) => {
   }
 
 const handleCity = (countryCode, stateCode) => {
-    // console.log(`http://igoeppms.com/igoepp/public/api/auth/general/lga/${stateCode}`)
+    // console.log(`http://phixotech.com/igoepp/public/api/auth/general/lga/${stateCode}`)
     var config = {
       method: 'get',
-      url: `https://igoeppms.com/igoepp/public/api/auth/general/lga/${stateCode}`,
+      url: `https://phixotech.com/igoepp/public/api/auth/general/lga/${stateCode}`,
       headers:{
         Accept: 'application/json',
         Authorization: `Bearer ${authCtx.token}`
@@ -269,6 +269,7 @@ const handleCity = (countryCode, stateCode) => {
         // console.log(response)
         setCode('')
         MakePurchase()
+        setischecking(false)
       } catch (error) {
         setischecking(true)
         setCode('')

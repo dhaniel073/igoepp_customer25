@@ -23,7 +23,7 @@ const BillPayment = ({navigation}) => {
   const Billers = async() => {
     setisloading(true)
     try {
-      const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getBillCategory`
+      const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getBillCategory`
       const response = await axios.get(url, {
         headers:{
           Accept: 'application/json',

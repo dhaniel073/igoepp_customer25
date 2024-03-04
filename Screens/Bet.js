@@ -98,7 +98,7 @@ const Bet = ({route, navigation}) => {
     
 
   useEffect(() => {
-    const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
+    const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
     const response = axios.get(url, {
         headers:{
           Accept:'application/json',
@@ -208,6 +208,7 @@ const Bet = ({route, navigation}) => {
           setCode('')
           toggleModal()
           betPayment(ref)
+          setischecking(false)
         } catch (error) {
           setischecking(true)
           setCode('')

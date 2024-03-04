@@ -85,10 +85,16 @@ const BidScreen = ({navigation, route}) => {
   const unsubscribe = async () => {
     try {
     const response = await SessionIDCheck(authCtx.email, authCtx.token)
-    // console.log(response)
+    console.log(response)
     authCtx.customerSessionId(response.login_session_id)
     } catch (error) {
-    // console.log(error.response.data)
+    console.log(error.response.data)
+    Alert.alert('Error', "An error occured while getting bid details", [
+      {
+        text: "Ok",
+        onPress: () => navigation.goBack()
+      }
+    ])
     }
   };
 
@@ -164,7 +170,7 @@ const BidScreen = ({navigation, route}) => {
       ])
       } catch (error) {
         setisloading(true)
-        //  console.log(error.response)
+         console.log(error.response)
         Alert.alert('Error Occured', error.response.data.message, [
           {
             text: "Ok",
@@ -222,9 +228,10 @@ const BidScreen = ({navigation, route}) => {
         setPaymentMethod(null)
         setIsFocus(false)
         setisloading(false)
+        setischecking(false)
       } catch (error) {
         setisloading(true)
-        // console.log(error.response)
+        console.log(error.response)
         Alert.alert('Error Occured', error.response.data.message)
         setisloading(false)
         setPaymentMethod(null)
@@ -247,7 +254,7 @@ const BidScreen = ({navigation, route}) => {
         setisloading(false)
       } catch (error) {
         setisloading(true)
-        // console.log(error.response)
+        console.log(error.response)
         Alert.alert('Error Occured', error.response.data.message)
         setisloading(false)
         setPaymentMethod(null)
@@ -286,11 +293,12 @@ const BidScreen = ({navigation, route}) => {
         // console.log(response)
         setCode('')
         AcceptBidHandler()
+        setischecking(false)
       } catch (error) {
         setischecking(true)
         setCode('')
         setPinerrorMessage(error.response.data.message + "\n" + (3 - ref.current + ` trial${3-ref.current > 1 ? 's' : ""} remaining`))
-        // console.log(error.response)
+        console.log(error.response)
         Alert.alert("Error", error.response.data.message+ " " + "Try again", [
           {
             text: "Ok",
@@ -383,7 +391,7 @@ const BidScreen = ({navigation, route}) => {
               </View>
             </View>
 
-            <View style={{position: 'absolute', top: '38%', left:'22.5%', backgroundColor:'white', paddingLeft:5, paddingRight:5, paddingTop:2, borderWidth:0.5, borderRadius:4, borderColor: Color.tomato }}>
+            <View style={{position: 'absolute', top: '38%', left:'25%', backgroundColor:'white', paddingLeft:5, paddingRight:5, paddingTop:2, borderWidth:0.5, borderRadius:4, borderColor: Color.tomato }}>
               <Text style={{fontSize:12, color: Color.tomato, fontFamily: 'poppinsRegular'}}>{item.negotiable === "Y" ? "Negotiable" : "Non-Negotiable"}</Text>
             </View>
             

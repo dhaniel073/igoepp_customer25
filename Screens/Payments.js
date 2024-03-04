@@ -108,9 +108,9 @@ const styles = StyleSheet.create({
     borderColor: "rgba(151, 173, 182, 0.2)",
     borderWidth: 1,
     borderStyle: "solid",
-    margin:2,
+    margin:2.5,
     borderRadius: Border.br_3xs,
-    padding:13,
+    padding:16,
   },
   textAmount:{
     fontFamily: 'poppinsSemiBold',

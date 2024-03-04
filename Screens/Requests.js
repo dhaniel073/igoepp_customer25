@@ -306,7 +306,7 @@ const Requests = ({navigation}) => {
                   <Pressable style={styles.pressable}>
                     <View style={{flexDirection:'row'}}>
                       <Text style={styles.requestName}>{item.cat_name}</Text>
-                      <Text style={{fontSize:12, top:3}}>(RID:{item.id})</Text>
+                      <Text style={{fontSize:12, top:2}}> (RID:{item.id})</Text>
                     </View>
                     <View style={{flexDirection:'row', justifyContent:'space-between', width:DIMENSION.WIDTH * 0.85, top:5}}>
                       <Text style={{fontFamily:'poppinsMedium', color: Color.saddlebrown_200, fontSize:10}}>
@@ -325,8 +325,8 @@ const Requests = ({navigation}) => {
 
                     {/* bid count number */}
                     {item.bid_count === 0 ? null :
-                    <View style={{ flexDirection:'row', position:'absolute', alignSelf:'flex-end', right:13, top:20 }}>
-                      <ImageBackground  source={require("../assets/ellipse-127.png")} contentFit="contain" style={{height:16, width:16, justifyContent:'center', marginRight:5, marginTop:-4}}>
+                    <View style={{ flexDirection:'row', position:'absolute', alignSelf:'flex-end', right:15, top:20 }}>
+                      <ImageBackground  source={require("../assets/ellipse-127.png")} contentFit="contain" style={{height:16, width:16, justifyContent:'center',  marginTop:-4}}>
                         <Text style={{ fontSize: 8,  color: Color.white, fontFamily:'poppinsBold', textAlign:'center'}}>{item.bid_count}</Text>
                       </ImageBackground>
                     </View>
@@ -372,10 +372,10 @@ const Requests = ({navigation}) => {
                         })}>
                         <Ionicons name="chatbubbles" size={24} color={Color.limegreen} />
                           { item.chat_unread_customer === 0  ? null :
-                            <ImageBackground  source={require("../assets/ellipse-127.png")} contentFit="contain" style={{height:15, width:15, justifyContent:'center', position: 'absolute', marginLeft:23, marginTop:-4}}>
+                            <ImageBackground  source={require("../assets/ellipse-127.png")} contentFit="contain" style={{height:15, width:15, justifyContent:'center', position: 'absolute', marginLeft:20, marginTop:-4}}>
                               <Text style={{ fontSize: 8,  color: Color.white, fontFamily:'poppinsBold', textAlign:'center'}}>{item.chat_unread_customer}</Text>
                             </ImageBackground>
-                          }
+                          } 
                         </TouchableOpacity>
 
                     </View>
@@ -406,7 +406,7 @@ const Requests = ({navigation}) => {
                   <Pressable style={styles.pressable}>
                     <View style={{flexDirection:'row'}}>
                       <Text style={styles.requestName}>{item.cat_name}</Text>
-                      <Text style={{fontSize:12, top:3}}> (RID:{item.id}) </Text>
+                      <Text style={{fontSize:12, top:2}}> (RID:{item.id}) </Text>
                     </View>
 
                       <View style={{flexDirection:'row', justifyContent:'space-between', width:DIMENSION.WIDTH * 0.85, top:10}}>
@@ -470,7 +470,7 @@ const Requests = ({navigation}) => {
                               <Text style={styles.viewtext}>Rate Helper</Text>
                             </TouchableOpacity>  
                           :
-                          <TouchableOpacity>
+                          <TouchableOpacity style={styles.servicecptbtn}>
                             <Text style={styles.viewtext}>Service completed</Text>
                           </TouchableOpacity>  
                         }
@@ -488,7 +488,7 @@ const Requests = ({navigation}) => {
                   <Pressable style={styles.pressable}>
                     <View style={{flexDirection:'row'}}>
                       <Text style={styles.requestName}>{item.cat_name}</Text>
-                      <Text style={{fontSize:12, top:3}}> (RID:{item.id}) </Text>
+                      <Text style={{fontSize:12, top:2}}> (RID:{item.id}) </Text>
                     </View>
                     <View style={{flexDirection:'row', justifyContent:'space-between', width:DIMENSION.WIDTH * 0.85, top:5}}>
                       <Text style={{fontFamily:'poppinsMedium', color: Color.saddlebrown_200, fontSize:10}}>
@@ -795,6 +795,12 @@ const styles = StyleSheet.create({
     margin:5,
     borderRadius: Border.br_3xs,
     padding:10,
+  },
+  servicecptbtn:{
+    justifyContent:'center',
+    borderRadius: 3,
+    width: DIMENSION.WIDTH * 0.36,
+    padding: 5,
   },
   viewbtn:{
     backgroundColor:Color.white,

@@ -123,7 +123,7 @@ const CustomerRating = ({navigation, route}) => {
       {/* <Text style={styles.cusratingtxt}>CustomerRating</Text> */}
 
       <SafeAreaView style={styles.container}>
-        <Image style={styles.profile} source={customerdetails.picture === null ? require("../assets/person-4.png")  : {uri: `https://igoeppms.com/igoepp/public/handyman/${customerdetails.photo}`}}/>
+        <Image style={styles.profile} source={customerdetails.picture === null ? require("../assets/person-4.png")  : {uri: `https://phixotech.com/igoepp/public/handyman/${customerdetails.photo}`}}/>
           <View style={{flexDirection:'row', alignContent:'center', alignSelf:'center'}}>
             <Text style={[styles.title , {marginTop: 15, marginBottom: 5, textAlign:'center'}]}>{customerdetails.first_name}</Text>
             <Text style={[styles.title , {marginTop: 15, marginBottom: 5, textAlign:'center'}]}> {customerdetails.last_name}</Text>
@@ -141,7 +141,7 @@ const CustomerRating = ({navigation, route}) => {
         <View style={{padding: 10, marginTop:10}}>
             <View style={{flexDirection:'row', justifyContent:'center'}}>
               <Text style=    {{ color: '#777777', fontFamily:'poppinsRegular' }}> {helpershowrating === null || [] ? "No Rating" : helpershowrating} </Text>
-              <Image contentFit='contain' style={{  width: 20, height: 20, marginTop:2 }} source={require("../assets/group-723.png")}/>
+              <Image contentFit='contain' style={{  width: 20, height: 20, top: -1 }} source={require("../assets/group-723.png")}/>
             </View>
             <Text style={styles.textStyle}>Rate the Handyman service performed on {date1} </Text>
             <CustomerRatingBar />

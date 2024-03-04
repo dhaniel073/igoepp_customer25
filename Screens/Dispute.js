@@ -14,11 +14,11 @@ export default Dispute
 
 const styles = StyleSheet.create({
     disputetxt:{
-        fontSize: 18,
-        color: Color.darkolivegreen_100,
-        fontFamily: 'poppinsSemiBold',
-        left: 10,
-        marginTop:10,
-        marginBottom:15,
-      }, 
+      fontSize: 18,
+      color: Color.darkolivegreen_100,
+      fontFamily: 'poppinsSemiBold',
+      left: 10,
+      marginTop:10,
+      marginBottom:15,
+    }, 
 })

@@ -46,7 +46,7 @@ const ProfilePicsView = ({navigation}) => {
             photo === null || photo === undefined || photo === "null" || photo === "" ? 
           <Image style={[styles.image, ]} source={require("../assets/person-4.png")} contentFit='contain'/>
           :
-          <Image style={[styles.image, ]} source={{uri: `https://igoeppms.com/igoepp/public/customers/${photo}`}}  contentFit='contain'/>
+          <Image style={[styles.image, ]} source={{uri: `https://phixotech.com/igoepp/public/customers/${photo}`}}  contentFit='contain'/>
 
         }
       </View>

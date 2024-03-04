@@ -15,7 +15,7 @@ const NotificationScreen = ({navigation}) => {
   const [ischecking, setischecking] = useState(false)
   const [ismodalvisible, setismodalvisible] = useState(false)
   const [notificationbyidmessage, setnotificationbyidmessage] = useState([])
-  const maxCharacters = 150;
+  const maxCharacters = 140;
 
   useEffect(() => {
     const unsuscribe = navigation.addListener('focus', async () => {
@@ -92,6 +92,7 @@ const NotificationScreen = ({navigation}) => {
         <FlatList
           data={data}
           keyExtractor={(item) => item.id}
+          style={{ marginBottom:'10%'}}
           renderItem={({item}) => (
             <TouchableOpacity style={styles.pressable} onPress={() => [toggleModal(), checknotid(item.id)]}>
             <Text style={item.status === 'U' ? styles.unread : styles.read}>{item.message.slice(0, maxCharacters)+ "...."}</Text>

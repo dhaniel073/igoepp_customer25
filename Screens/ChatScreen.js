@@ -43,7 +43,7 @@ const ChatScreen = ({route}) => {
     useLayoutEffect(() => {
           const unsubscribe = async() => {
           // do something
-          const url = `https://igoeppms.com/igoepp/public/api/auth/hrequest/helpchatview/${bidid}/customer`
+          const url = `https://phixotech.com/igoepp/public/api/auth/hrequest/helpchatview/${bidid}/customer`
             try {
             const response = await axios.get(url, {
                 headers:{
@@ -64,7 +64,7 @@ const ChatScreen = ({route}) => {
                     _id: response.data[i].from_user_id,
                     name: 'React Native',
                     avatar: null
-                    // avatar: helper.photo === null ? `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKLYtkaHut2_Xctb0hUZGZk7pbCbIzcoMSNA&usqp=CAU`: `https://igoeppms.com/igoepp/public/handyman/${helper.photo}`,
+                    // avatar: helper.photo === null ? `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKLYtkaHut2_Xctb0hUZGZk7pbCbIzcoMSNA&usqp=CAU`: `https://phixotech.com/igoepp/public/handyman/${helper.photo}`,
                   },
                 }, 
                 )
@@ -92,7 +92,7 @@ const ChatScreen = ({route}) => {
       
 
     const SendMessage = (text) => {
-      const url = `https://igoeppms.com/igoepp/public/api/auth/hrequest/helpchat`
+      const url = `https://phixotech.com/igoepp/public/api/auth/hrequest/helpchat`
       // console.log(text)
       axios.post(url, {
           help_id: bidid,
@@ -170,7 +170,7 @@ const ChatScreen = ({route}) => {
         helper.photo === null ? 
         <Image style={styles.image} source={require("../assets/person-4.png")}/>
         :
-        <Image style={styles.image} source={{uri: `https://igoeppms.com/igoepp/public/handyman/${helper.photo}`}}/>
+        <Image style={styles.image} source={{uri: `https://phixotech.com/igoepp/public/handyman/${helper.photo}`}}/>
       }
       <Text style={{fontSize: 14, fontFamily: 'poppinsSemiBold'}}>{helper.first_name} {helper.last_name}</Text>
       {/* <Text style={styles.chattxt}>Chat</Text> */}
@@ -185,7 +185,7 @@ const ChatScreen = ({route}) => {
       user={{ 
           _id: CustomerId,
           name: authCtx.firstname,
-          // avatar: authCtx.picture === null || "" ? <Image source={require("../assets/person-4.png")}/> : `https://igoeppms.com/igoepp/public/handyman/${authCtx.picture}`
+          // avatar: authCtx.picture === null || "" ? <Image source={require("../assets/person-4.png")}/> : `https://phixotech.com/igoepp/public/handyman/${authCtx.picture}`
       }}
       renderBubble={renderBubble}
       alwaysShowSend

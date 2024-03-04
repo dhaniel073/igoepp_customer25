@@ -2,7 +2,7 @@ import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, Share } from 'r
 import React, { useContext, useEffect, useState } from 'react'
 import { Color, marginStyle } from '../Component/Ui/GlobalStyle'
 import GoBack from '../Component/Ui/GoBack'
-import {MaterialCommunityIcons, Ionicons, Octicons} from '@expo/vector-icons'
+import {MaterialCommunityIcons, Ionicons, Octicons, Entypo} from '@expo/vector-icons'
 import { Image } from 'expo-image'
 import { CustomerInfoCheck, ShowFetchedRequests } from '../utils/AuthRoute'
 import { AuthContext } from '../utils/AuthContext'
@@ -77,53 +77,59 @@ const Profile = ({navigation}) => {
 
   return (
     <SafeAreaView style={[styles.container, {marginTop:marginStyle.marginTp, marginHorizontal:10}]}>
-    <View style={{flexDirection:'row', paddingLeft:12, paddingRight:12, justifyContent:'space-between'}}>
-        <GoBack onPress={() => navigation.goBack()}>Back</GoBack>
-        <MaterialCommunityIcons style={{}} name="note-edit" size={24} color={Color.limegreen} onPress={() => navigation.navigate('ProfileEdit',{
-            firstName: fetchedMessage.first_name,
-            lastName: fetchedMessage.last_name,
-            Country: fetchedMessage.Country,
-            State: fetchedMessage.State,
-            lga: fetchedMessage.lga,
-            Phone: fetchedMessage.phone,
-            Sex: fetchedMessage.sex,
-        })}/>
+    <View style={{flexDirection:'row',  justifyContent:'space-between'}}>
+      <GoBack onPress={() => navigation.goBack()}>Back</GoBack>
+      <MaterialCommunityIcons style={{paddingRight:3,}} name="note-edit" size={24} color={Color.limegreen} onPress={() => navigation.navigate('ProfileEdit',{
+        firstName: fetchedMessage.first_name,
+        lastName: fetchedMessage.last_name,
+        Country: fetchedMessage.Country,
+        State: fetchedMessage.State,
+        lga: fetchedMessage.lga,
+        Phone: fetchedMessage.phone,
+        Sex: fetchedMessage.sex,
+        Dob: fetchedMessage.dob,
+        Address: fetchedMessage.address
+      })}/>
     </View>
     
-        <View style={styles.userInfoSection}>
-            <View style={{ flexDirection:'row', marginTop: 15 }}>
-               {
-                fetchedMessage.picture === null || '' ? 
-                <TouchableOpacity onPress={() => navigation.navigate('ProfilePicsView')}>
-                  <Image style={{ width: 80, height: 80, borderWidth:1, borderColor: Color.darkolivegreen_100, borderRadius: 50 }} source={require("../assets/person-4.png")}/>
-                </TouchableOpacity>
-                : 
-                <TouchableOpacity  onPress={() => navigation.navigate('ProfilePicsView')}>
-                  <Image style={{ width: 80, height: 80, borderWidth:1, borderColor: Color.darkolivegreen_100, borderRadius: 50 }} size={80} source={{ uri: `https://igoeppms.com/igoepp/public/customers/${fetchedMessage.picture}`}}/>
-                </TouchableOpacity>
-               }
-                <View style={{ marginLeft: 10  }}>
-                    <View style={{ flexDirection:'row'}}>
-                        <Text style={[styles.title , {marginTop: 15}]}>{fetchedMessage.first_name}</Text>
-                        <Text style={[styles.title,  {marginTop: 15}]}> {fetchedMessage.last_name}</Text>
-                    </View>
-                    <Text style={styles.caption}>{fetchedMessage.email}</Text>
-                </View>
+      <View style={styles.userInfoSection}>
+        <View style={{ flexDirection:'row', marginTop: 15 }}>
+          {
+          fetchedMessage.picture === null || '' ? 
+          <TouchableOpacity onPress={() => navigation.navigate('ProfilePicsView')}>
+            <Image style={{ width: 80, height: 80, borderWidth:1, borderColor: Color.darkolivegreen_100, borderRadius: 50 }} source={require("../assets/person-4.png")}/>
+          </TouchableOpacity>
+          : 
+          <TouchableOpacity  onPress={() => navigation.navigate('ProfilePicsView')}>
+            <Image style={{ width: 80, height: 80, borderWidth:1, borderColor: Color.darkolivegreen_100, borderRadius: 50 }} size={80} source={{ uri: `https://phixotech.com/igoepp/public/customers/${fetchedMessage.picture}`}}/>
+          </TouchableOpacity>
+          }
+          <View style={{ marginLeft: 10  }}>
+            <View style={{ flexDirection:'row'}}>
+              <Text style={[styles.title , {marginTop: 15}]}>{fetchedMessage.first_name}</Text>
+              <Text style={[styles.title,  {marginTop: 15}]}> {fetchedMessage.last_name}</Text>
             </View>
+            <Text style={styles.caption}>{fetchedMessage.email}</Text>
+          </View>
         </View>
+      </View>
         
         <View style={styles.userInfoSection}>
-            <View style={styles.row}>
-                <Ionicons name="location" color="#777777" size={20}/>
-                <Text style=    {{ color: '#777777', marginLeft: 20, fontFamily:'poppinsRegular' }}>{fetchedMessage.Country} {fetchedMessage.State} {fetchedMessage.lga}</Text>
-                
+          <View style={styles.row}>
+            <Ionicons name="location" color="#777777" size={20}/>
+            <Text style= {{ color: '#777777', marginLeft: 20, fontFamily:'poppinsRegular' }}>{fetchedMessage.Country === null ? "Nill" : fetchedMessage.Country} {fetchedMessage.State === null ? "Nill" : fetchedMessage.State} {fetchedMessage.lga === null ? "Nill" : fetchedMessage.lga}</Text>
+          </View>
 
-            </View>
+          <View style={styles.row}>
+            <Entypo name="address" size={24} color="#777777"/>
+            <Text style= {{ color: '#777777', marginLeft: 20, fontFamily:'poppinsRegular'}}>{fetchedMessage.address === null ? "Nill" : fetchedMessage.address}</Text>
+          </View>
 
-             <View style={styles.row}>
-                <Ionicons name="call" color="#777777" size={20}/>
-                <Text style=    {{ color: '#777777', marginLeft: 20, fontFamily:'poppinsRegular' }}>{fetchedMessage.phone}</Text>
-            </View>
+
+          <View style={styles.row}>
+            <Ionicons name="call" color="#777777" size={20}/>
+            <Text style= {{ color: '#777777', marginLeft: 20, fontFamily:'poppinsRegular' }}>{fetchedMessage.phone}</Text>
+          </View>
 
             <View style={styles.row}>
                 <Ionicons name="mail" color="#777777" size={20}/>
@@ -204,7 +210,7 @@ const styles = StyleSheet.create({
   },
   userInfoSection: {
     paddingHorizontal: 20,
-    marginBottom: 25
+    marginBottom: 20
   },
   title:{
     fontSize: 18,

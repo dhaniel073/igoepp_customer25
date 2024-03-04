@@ -124,7 +124,7 @@ const SubCategory = ({route, navigation}) => {
               : toggleModal(item.id, item.sub_cat_name, item.sub_cat_desc, item.image, item.cat_id, item.preassessment_flg)}>
               <Image
               style={styles.image2} contentFit='contain'
-              source={{ uri:`https://igoeppms.com/igoepp/public/subcategory/${item.image}`  }}
+              source={{ uri:`https://phixotech.com/igoepp/public/subcategory/${item.image}`  }}
               />
                 <Text style={styles.item}>
                   {item.sub_cat_name}

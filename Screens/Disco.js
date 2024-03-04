@@ -74,7 +74,7 @@ const Disco = ({route, navigation}) => {
  
 
   useEffect(() => {
-    const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
+    const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
     const response = axios.get(url, {
       headers:{
         Accept:'application/json',
@@ -211,6 +211,7 @@ const Disco = ({route, navigation}) => {
         // console.log(response)
         setCode('')
         makePayment()
+        setischecking(false)
       } catch (error) {
         setischecking(true)
         setCode('')
@@ -233,7 +234,7 @@ const Disco = ({route, navigation}) => {
     try {
         setisLoading(true)
         const response = await DiscoPayment(ref, amount, authCtx.token, commissonvalue)
-        console.log(response)
+        // console.log(response)
         if(response.message === "failed" || "Failed" && response.description === "Insufficient wallet balance"){
           Alert.alert("Failed", response.description, [
             {
@@ -251,7 +252,7 @@ const Disco = ({route, navigation}) => {
        
         setisLoading(false)
     } catch (error) {
-      console.log(error.response.data)
+      console.log(error)
       setisLoading(true)
       Alert.alert("Sorry", "An error occured try again later", [
         {

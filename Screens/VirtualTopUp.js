@@ -109,7 +109,7 @@ const VirtualTopUp = ({navigation, route}) => {
 
   useEffect(() => {
     setisloading(true)
-    const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
+    const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
     const response = axios.get(url, {
         headers:{
             Accept:'application/json',
@@ -147,7 +147,7 @@ const VirtualTopUp = ({navigation, route}) => {
 const getBouquets = (value) => {
     // console.log(authId, id)
     
-    const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getAllBouquetByBillerID/${authId}/${value}`
+    const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getAllBouquetByBillerID/${authId}/${value}`
     const response = axios.get(url, {
         headers:{
             Accept:'application/json',
@@ -271,44 +271,44 @@ const getBouquets = (value) => {
 
     const mobilevalidationSelf = async () => {
       try {
-          setisloading(true)
-          const response = await CustomerSelf(authCtx.Id, authCtx.token)
-          // console.log(response)
-          setRequestId(response.requestID)
-          if(response.status === "Success"){
-              if(DATACHECK){
-                  Alert.alert("Confirm Purchase", `Confirm Data Topup for ${authCtx.phone}`, [
-                    {
-                      text: "Cancel",
-                      onPress: () => {}
-                    },
-                    {
-                      text:'Confirm',
-                      onPress: () => toggleModal1()
-                    }
-                  ])
-              }else{
-                  if(AIRTIMECHECK){
-                    Alert.alert("Confirm Purchase", `Confirm Airtime Purchase for ${authCtx.phone}`, [
-                      {
-                        text: "Cancel",
-                        onPress: () => []
-                      },
-                      {
-                        text:'Confirm',
-                        onPress: () => toggleModal1()
-                      }
-                    ])
-                  }
+        setisloading(true)
+        const response = await CustomerSelf(authCtx.Id, authCtx.token)
+        // console.log(response)
+        setRequestId(response.requestID)
+        if(response.status === "Success"){
+          if(DATACHECK){
+            Alert.alert("Confirm Purchase", `Confirm Data Topup for ${authCtx.phone}`, [
+              {
+                text: "Cancel",
+                onPress: () => {}
+              },
+              {
+                text:'Confirm',
+                onPress: () => toggleModal1()
               }
-              setisloading(false)
+            ])
           }else{
-              Alert.alert("Error", response, [
+            if(AIRTIMECHECK){
+              Alert.alert("Confirm Purchase", `Confirm Airtime Purchase for ${authCtx.phone}`, [
                 {
-                  text:"Ok",
-                  onPress: () => {}
+                  text: "Cancel",
+                  onPress: () => []
+                },
+                {
+                  text:'Confirm',
+                  onPress: () => toggleModal1()
                 }
               ])
+            }
+          }
+          setisloading(false)
+          }else{
+            Alert.alert("Error", response, [
+              {
+                text:"Ok",
+                onPress: () => {}
+              }
+            ])
           }
           setisloading(false)
       } catch (error) {
@@ -356,6 +356,7 @@ const getBouquets = (value) => {
         }else{
           airtimetopup()
         }
+        setischecking(false)
       } catch (error) {
         setischecking(true)
         setCode('')

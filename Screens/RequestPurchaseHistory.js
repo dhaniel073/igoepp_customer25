@@ -13,12 +13,12 @@ const RequestPurchaseHistory = () => {
 export default RequestPurchaseHistory
 
 const styles = StyleSheet.create({
-    addtowalletpaymentxt:{
-        fontSize: 18,
-        color: Color.darkolivegreen_100,
-        fontFamily: 'poppinsSemiBold',
-        left: 10,
-        marginTop:10,
-        marginBottom:15,
-      }, 
+  addtowalletpaymentxt:{
+    fontSize: 18,
+    color: Color.darkolivegreen_100,
+    fontFamily: 'poppinsSemiBold',
+    left: 10,
+    marginTop:10,
+    marginBottom:15,
+  }, 
 })

@@ -1,13 +1,16 @@
 import { Alert, Linking, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { Color, marginStyle } from '../Component/Ui/GlobalStyle'
 import GoBack from '../Component/Ui/GoBack'
 import {Ionicons, Feather, MaterialCommunityIcons, MaterialIcons} from "@expo/vector-icons"
 import { AuthContext } from '../utils/AuthContext'
 import * as Updates from 'expo-updates'
+import LoadingOverlay from '../Component/Ui/LoadingOverlay'
+import { DeleteAccount } from '../utils/AuthRoute'
 
 const Setting = ({navigation}) => {
   const authCtx = useContext(AuthContext)
+  const [isloading, setisloading] = useState(false)
 
   const whatsapp = () => {
      const response =  Linking.openURL('whatsapp://send?text=hello&phone=+2348103902560')
@@ -31,6 +34,36 @@ const Setting = ({navigation}) => {
       alert(error.message);
     }
   }
+
+  const deleteAccountpermanently = async () => {
+    try {
+      setisloading(true)
+      const response = await DeleteAccount(authCtx.Id, authCtx.token)
+      console.log(response)
+      Alert.alert('Success', "Yor account has been deleted successfully", [
+        {
+          text: "Ok",
+          onPress: () => authCtx.logout()
+        }
+      ])
+      setisloading(false)
+    } catch (error) {
+      setisloading(true)
+      Alert.alert('Error', "An error occured while deleting your account", [
+        {
+          text: "Ok",
+          onPress: () => {}
+        }
+      ])
+      console.log(error)
+      setisloading(false)
+    }
+  }
+
+  if(isloading){
+    return <LoadingOverlay message={"..."}/>
+  }
+
 
   return (
     <View style={{ flex:1, marginTop:marginStyle.marginTp, marginHorizontal: 10, }}>
@@ -111,6 +144,25 @@ const Setting = ({navigation}) => {
             <Text style={styles.textStyle}>LogOut</Text>
           </View>
         </TouchableOpacity>
+
+        <TouchableOpacity style={{ alignItems: 'flex-start', borderBottomWidth:1,}} onPress={() => 
+          Alert.alert("Warning", "Are you sure you want to delete your account permanently from Igoepp", [
+            {
+              text: "No",
+              onPress: () => {}
+            },
+            {
+              text: "Yes",
+              onPress: () => deleteAccountpermanently()
+            }
+          ])
+          }>
+          <View style={{ flexDirection: 'row',   paddingBottom: 15, marginTop: 15 }}>
+          {/* <MaterialIcons name="update" size={24} color="black" /> */}
+          <MaterialIcons name="delete" size={24} color="black" />
+            <Text style={styles.textStyle}>Delete Account</Text>
+          </View>
+        </TouchableOpacity>
       <View style={{marginBottom:40}}/>
     </ScrollView>
   </View>
@@ -143,6 +195,5 @@ const styles = StyleSheet.create({
     fontFamily: 'poppinsSemiBold',
     left: 10,
     marginTop:10,
-    marginBottom:10,
   },
 })

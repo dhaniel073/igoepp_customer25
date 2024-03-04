@@ -79,7 +79,7 @@ const MarketPlaceItem = ({navigation, route}) => {
           })}>
           <Image
           style={styles.image2}
-          source={{ uri:`https://igoeppms.com/igoepp/public/products/${item.picture}`}}/>
+          source={{ uri:`https://phixotech.com/igoepp/public/products/${item.picture}`}}/>
             <Text style={styles.item}>{item.name}</Text>
             
           </TouchableOpacity>

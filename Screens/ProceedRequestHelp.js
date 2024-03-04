@@ -21,7 +21,7 @@ const ProceedRequestHelp = ({route, navigation}) => {
         <Image
         style={styles.image2}
         contentFit='contain'
-        source={{ uri: `https://igoepms.com/igoepp/public/subcategory/${image}` }}
+        source={{ uri: `https://phixotech.com/igoepp/public/subcategory/${image}` }}
         />
       </View>
 

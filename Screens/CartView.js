@@ -47,6 +47,24 @@ const CartView = ({navigation}) => {
   
   check()
 
+  const refresh = async() => {
+    try {
+      setIsLoading(true)
+      const response = await Cart(authCtx.Id, authCtx.token)
+      setCartItems(response)
+      setIsLoading(false)
+    } catch (error) {
+      setIsLoading(true)
+      Alert.alert('Error', 'Sorry an error occured', [
+        {
+          text: "Ok",
+          onPress: navigation.goBack()
+        }
+      ])
+      setIsLoading(false)
+    }
+  }
+
   const DeleteHandler = async(id) => {
     // console.log(id)
     try {
@@ -56,7 +74,7 @@ const CartView = ({navigation}) => {
       Alert.alert('Success', 'Item removed successfully from cart', [
         {
           text: "Ok",
-          onPress: () => navigation.goBack()
+          onPress: () => refresh()
         }
       ])
       // navigation.goBack()
@@ -100,7 +118,7 @@ const NoCartItemNote = () => {
       <FlatList
         data={cartitems}
         keyExtractor={(item)=> item.id}
-        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
         renderItem={({item}) => 
         <View style={[styles.container, {marginTop:3}]}>
           <Text style={styles.requestDate}>{item.created_at}</Text>
@@ -134,7 +152,7 @@ const NoCartItemNote = () => {
             />
 
             
-            <TouchableOpacity onPress={() => navigation.navigate('CheckOut', {price: priceArray})} style={{marginTop:DIMENSION.HEIGHT * 0.5,alignItems:'center', justifyContent:'center', position:'absolute', right:5,  shadowColor: 'black', shadowOpacity: 0.25,shadowOffset: {width: 0, height: 2}, shadowRadius: 20, padding:10, borderRadius:30 }}>
+            <TouchableOpacity onPress={() => navigation.navigate('CheckOut', {price: priceArray})} style={{alignItems:'center', justifyContent:'center', position:'absolute', right:5,  shadowColor: 'black', shadowOpacity: 0.25,shadowOffset: {width: 0, height: 2}, shadowRadius: 20, padding:10, borderRadius:30 }}>
               {/* <Image source={require("../assets/payment1.jpeg")} style={{height:50, width:50, borderRadius: 50, alignItems:'baseline', justifyContent:'center'}}/> */}
               <Fontisto name="wallet" size={28} color={Color.darkolivegreen_100} />
               <Text style={{fontFamily:'poppinsRegular', fontSize:11}}>CheckOut</Text>

@@ -6,7 +6,7 @@ import { Color } from './GlobalStyle'
 const GoBack = ({onPress, children}) => {
   return (
     <TouchableOpacity style={{flexDirection:'row', alignItems: 'center'}} onPress={onPress}>
-        <Entypo name="chevron-left" size={14} color={Color.new_color} />
+        <Entypo name="chevron-left" size={14} color={Color.darkolivegreen_100} />
         <Text style={{color: Color.darkolivegreen_100,}}>{children}</Text>
     </TouchableOpacity>
   )

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "IgoeppCus_Prod",
+    "name": "IgoeppTest",
     "slug": "igoepp_customer",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,7 +13,7 @@
     },
     "updates": {
       "checkAutomatically": "ON_ERROR_RECOVERY",
-      "fallbackToCacheTimeout": 1000,
+      "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/e8a1e2a3-7c71-4a4e-9e7b-60ca9cecf323"
     },
     "assetBundlePatterns": [
@@ -30,18 +30,18 @@
         "foregroundImage": "./assets/adaptive-icon1.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.cdhaniel.igoepp_customer"
+      "package": "com.dhanieldcoder.igoepp_customer"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "extra": {
-      "eas": {
-        "projectId": "e8a1e2a3-7c71-4a4e-9e7b-60ca9cecf323"
-      }
-    },
     "runtimeVersion": {
       "policy": "appVersion"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7c3de63b-d626-416d-b514-6c0d0803b297"
+      }
     }
   }
 }

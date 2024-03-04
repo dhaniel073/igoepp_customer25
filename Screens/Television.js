@@ -95,7 +95,7 @@ const Television = ({route, navigation}) => {
 
   useEffect(() => {
     setisLoading(true)
-    const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
+    const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getAllBillersByCategory/${authId}`
     const response = axios.get(url, {
         headers:{
             Accept:'application/json',
@@ -123,26 +123,26 @@ const Television = ({route, navigation}) => {
   const getBouquets = (value) => {
     // console.log(authId, id)
     
-    const url = `https://igoeppms.com/igoepp/public/api/auth/billpayment/getAllBouquetByBillerID/${authId}/${value}`
+    const url = `https://phixotech.com/igoepp/public/api/auth/billpayment/getAllBouquetByBillerID/${authId}/${value}`
     const response = axios.get(url, {
         headers:{
             Accept:'application/json',
             Authorization: `Bearer ${authCtx.token}`
         }
     }).then((res) => {
-        var count = Object.keys(res.data.data.bouquets).length;
-        let catarray = []
-        for (var i = 0; i < count; i++){
-            catarray.push({
-                label: res.data.data.bouquets[i].name,
-                value: res.data.data.bouquets[i].code,
-                price: res.data.data.bouquets[i].price
-            })
-        }
-        setBouquet(catarray)
+      var count = Object.keys(res.data.data.bouquets).length;
+      let catarray = []
+      for (var i = 0; i < count; i++){
+        catarray.push({
+          label: res.data.data.bouquets[i].name,
+          value: res.data.data.bouquets[i].code,
+          price: res.data.data.bouquets[i].price
+        })
+      }
+      setBouquet(catarray)
     }).catch((error) => {
-        // console.log(error.response.data)
-        return;
+      // console.log(error.response.data)
+      return;
     })
   }
 
@@ -312,6 +312,7 @@ const Television = ({route, navigation}) => {
         }else{
           tvPayment()
         }
+        setischecking(false)
       } catch (error) {
         setischecking(true)
         setCode('')

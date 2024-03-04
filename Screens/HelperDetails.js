@@ -21,18 +21,19 @@ const HelperDetails = ({navigation, route}) => {
 
   useEffect(() => {
     const unsuscribe = navigation.addListener('focus', async () => {
-        try {
-            setIsLoading(true)
-            const response = await HelperGet(helperid, authCtx.token)
-            // console.log(response.data.data)
-            setCategory(response.data.data)
-            setIsLoading(false)
-          } catch (error) {
-            setIsLoading(true)
-            // console.log(error)
-            setIsLoading(false)
-            return;
-          }
+      try 
+      {
+        setIsLoading(true)
+        const response = await HelperGet(helperid, authCtx.token)
+        // console.log(response.data.data)
+        setCategory(response.data.data)
+        setIsLoading(false)
+      } catch (error) {
+        setIsLoading(true)
+        // console.log(error)
+        setIsLoading(false)
+        return;
+      }
     })
     return unsuscribe
   }, [])
@@ -95,7 +96,7 @@ const HelperDetails = ({navigation, route}) => {
         {category.photo === null ?
           <Image style={[styles.image, ]} source={require("../assets/person-4.png")}/>
           :
-          <Image style={[styles.image, ]} source={{ uri: `https://igoeppms.com/igoepp/public/handyman/${category.photo}` }} 
+          <Image style={[styles.image, ]} source={{ uri: `https://phixotech.com/igoepp/public/handyman/${category.photo}` }} 
           placeholder={'blurhash'}
           // contentFit="contain"
           transition={1000}/>

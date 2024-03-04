@@ -29,7 +29,6 @@ const data = [
     { label: 'NIMC', value: 'nin' },
     { label: "Driver's license", value: 'DL' },
     { label: 'ID CARD', value: 'Idcard' },
-
   ];
 
 
@@ -100,21 +99,21 @@ const SignUpScreen = ({navigation}) => {
     }
 
     const signupValaidate = () => {
-      const emailIsValid = enteredEmail.includes('@') && enteredEmail.includes('.com');
+      const emailIsValid = enteredEmail.includes('@') || enteredEmail.includes('.com');
       const passwordIsValid = enteredPassword.length < 7;
       const passcheck =  enteredConfirmPassword === enteredPassword 
       const phonecheck = enteredPhone === null || undefined || "" || enteredPhone.length === 0
       const gendercheck = enteredGender === null || undefined || "" || enteredGender.length === 0
       const idnumcheck = idnum === null || undefined || "" || idnum.length === 0
       const idtypecheck = idtype === null || undefined || "" || idtype.length === 0
-      const firstnamecheck = enteredfirstname.length > 4
-      const lastnamecheck = enteredlastname.length > 4
+      // const firstnamecheck = enteredfirstname.length > 4
+      // const lastnamecheck = enteredlastname.length > 4
 
 
 
-      console.log(passcheck)
+      // console.log(passcheck)
     
-      if(!emailIsValid || passwordIsInvalid || !passcheck || phonecheck || gendercheck || idnumcheck || idtypecheck || !firstnamecheck || !lastnamecheck){
+      if(!emailIsValid || passwordIsInvalid || !passcheck || phonecheck || gendercheck || idnumcheck || idtypecheck){
 
         const InvalidPhone = phonecheck
         setEmailIsInvalid(!emailIsValid)
@@ -122,8 +121,8 @@ const SignUpScreen = ({navigation}) => {
         setConfirmPasswordIsInvalid(!passcheck)
         setPhoneIsInvalid(InvalidPhone)
         setGenderIsInvalid(gendercheck)
-        setFirstNameIsInvalid(!firstnamecheck)
-        setLastNameIsInvalid(!lastnamecheck)
+        // setFirstNameIsInvalid(!firstnamecheck)
+        // setLastNameIsInvalid(!lastnamecheck)
         setIsIdnum(idnumcheck)
         setIsIdtype(idtypecheck)
 
@@ -151,7 +150,7 @@ const SignUpScreen = ({navigation}) => {
       }
     }
   
-    console.log(enteredEmail,  enteredGender, enteredPhone, enteredfirstname, enteredlastname, idtype, idnum, referral_code)
+    // console.log(enteredEmail,  enteredGender, enteredPhone, enteredfirstname, enteredlastname, idtype, idnum, referral_code)
 
     const signuphandler = async (conpass) => {         
       const passwordMd5 = Base64.encode(enteredPassword)
@@ -217,7 +216,7 @@ const SignUpScreen = ({navigation}) => {
             isInvalid={firstnameIsInvalid}
             onFocus={() => setFirstNameIsInvalid(false)}
             />
-          {firstnameIsInvalid && <Text style={{fontSize:10, marginTop:-10, marginBottom:8, color:Color.red}}>First name must be at least 5 characters</Text>}
+          {/* {firstnameIsInvalid && <Text style={{fontSize:10, marginTop:-10, marginBottom:8, color:Color.red}}>First name must be at least 5 characters</Text>} */}
         </View>
 
         <View style={styles.lastname}>
@@ -228,7 +227,7 @@ const SignUpScreen = ({navigation}) => {
             isInvalid={lastnameIsInvalid}
             onFocus={() => setLastNameIsInvalid(false)}
             />
-          {lastnameIsInvalid && <Text style={{fontSize:10, marginTop:-10, marginBottom:8, color:Color.red}}>Last name must be at least 5 characters</Text>}
+          {/* {lastnameIsInvalid && <Text style={{fontSize:10, marginTop:-10, marginBottom:8, color:Color.red}}>Last name must be at least 5 characters</Text>} */}
           </View>
 
         </View>
@@ -372,77 +371,108 @@ const SignUpScreen = ({navigation}) => {
 
     <Modal isVisible={isAcceptTermsModalBisible}>
 
-    <SafeAreaView style={styles.centeredView}>
+<SafeAreaView style={styles.centeredView}>
 
-    <TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => toggleAcceptTermsModal()}>
-      <MaterialIcons name="cancel" size={30} color="white" />
-    </TouchableOpacity>
+<TouchableOpacity style={{justifyContent:'flex-end', alignSelf:'flex-end', marginBottom:5, }} onPress={() => toggleAcceptTermsModal()}>
+  <MaterialIcons name="cancel" size={30} color="white" />
+</TouchableOpacity>
 
-    <View style={styles.modalView}>
-    <Text style={styles.modalText}>Accept Terms and Condition</Text>
- 
-    <View style={{marginBottom:'2%'}}/>
-    <ScrollView showsVerticalScrollIndicator={false}>
-    <View style={{alignItems:'center'}}>
-      <Text style={{textAlign:'center'}}>CUSTOMER SERVICE LEVEL AGREEMENT</Text> 
-    </View>
+<View style={styles.modalView}>
+<Text style={styles.modalText}>Accept Terms and Condition</Text>
 
-    <Text> A.	SERVICE LEVEL AGREEMENT(SLA)</Text>
+<View style={{marginBottom:'2%'}}/>
+<ScrollView showsVerticalScrollIndicator={false}>
+<View style={{alignItems:'center'}}>
+  <Text style={{textAlign:'center'}}>SUPPLIER SERVICE LEVEL AGREEMENT</Text> 
+</View>
 
-    <Text style={styles.textsty}> 
-    1.	Services to be Performed
-    I have agreed to work in the capacity of <Text  style={{fontFamily:'poppinsBold'}}> {enteredfirstname} {enteredlastname}</Text> as an Artisan 
-    </Text>
+<Text> A.	SERVICE LEVEL AGREEMENT(SLA)</Text>
 
-    <Text style={styles.textsty}>
-    2.	Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae quo quos laboriosam numquam facilis enim vel iusto similique earum nulla. Aliquid praesentium debitis nihil sed possimus sit corrupti veniam dolores.
-    </Text>
+<Text style={styles.textsty}> 
+  1.	Services to be Performed
+</Text>
+<Text style={styles.textsty2}>
+  I have agreed to work in the capacity of <Text style={{fontFamily:'poppinsBold'}}> {enteredFirstname} { enteredLastName}</Text> as an Artisan 
+</Text>
+  
 
-    <Text style={styles.textsty}>
-    3.  Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae quo quos laboriosam numquam facilis enim vel iusto similique earum nulla. Aliquid praesentium debitis nihil sed possimus sit corrupti veniam dolores.
-    </Text>
+<Text style={styles.textsty}>
+2.	Payment </Text>
+<Text style={styles.textsty2}>
+IGOEPP pays the artisan 36hrs after the customer has confirmed that the service has been executed satisfactory. IGOEPP would deduct 5% commission from the total amount collected from the customer.
+</Text>
 
-    <Text style={styles.textsty}>
-    4.	Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae quo quos laboriosam numquam facilis enim vel iusto similique earum nulla. Aliquid praesentium debitis nihil sed possimus sit corrupti veniam dolores.
-    </Text>
+<Text style={styles.textsty}>
+3.	Expenses</Text>
+<Text style={styles.textsty2}>
+Artisan is to ensure that all expenditure is considered in the bidding process with the customer. The customer can only buy replacement parts from IGOEPP designated suppliers.
+</Text>
 
-    <Text style={styles.textsty}>
-    5.	Terminating the Agreement
-    With reasonable cause, either IGOEPP or Artisan may terminate the Agreement, effective immediately upon giving written notice.
-    Reasonable cause includes:
-    •	A material violation of this Agreement, or
-    •	Any act exposing the other party of liability to others for the personal injury or property damage.
-    OR
-    Either party may terminate this Agreement at any time by giving 30 days written notice to the other party of the intention to terminate. However, Artisan cannot terminate this agreement when there is a pending dispute with one of IGOEPP’s customers involving him.
-    </Text>
+<Text style={styles.textsty}>
+4.	Materials for Work </Text>
+<Text style={styles.textsty2}>
+All parts and materials that would be used to work for a customer must be purchased from IGOEPP designated suppliers by the customer in the IGOEPP Market Place on the APP. Artisan must not replace faulty parts or materials with personal materials or materials purchased from unauthorized supplier. IGOEPP Suppliers would deliver the part not the customer for the artisan to work with.
+</Text>
+
+<Text style={styles.textsty}>
+5.	Terminating the Agreement</Text>
+<Text style={styles.textsty2}>
+With reasonable cause, either IGOEPP or Artisan may terminate the Agreement, effective immediately upon giving written notice.
+Reasonable cause includes:
+•	A material violation of this Agreement, or
+•	Any act exposing the other party of liability to others for the personal injury or property damage.
+OR
+Either party may terminate this Agreement at any time by giving 30 days written notice to the other party of the intention to terminate. However, Artisan cannot terminate this agreement when there is a pending dispute with one of IGOEPP’s customers involving him.
+</Text>
+
+<Text style={styles.textsty}>
+6.	Modifying the  Agreement </Text>
+<Text style={styles.textsty2}>
+This Agreement may be modified on mutual consent of both parties. (Ratification can be done via oral, written, email or other digital agreement).
+</Text>
+
+<Text style={styles.textsty}>
+7.	Confidentiality</Text>
+<Text style={styles.textsty2}>
+Artisans acknowledge that it will be necessary for IGOEPP to disclose certain confidential and proprietary information about the client to them in order for artisan to perform duties under this Agreement. Artisan acknowledges that disclosure to the third party or misuse of this proprietary or confidential information would irreparably harm the Client. Accordingly, Artisan will not disclose or use, either during or after the term of this Agreement, any proprietary or confidential information of the Client without the Client’s prior written permission except to the extent necessary to perform the agreed service on the Client’s behalf.
+Upon termination of Artisan’s service to company or at Client’s request, Artisan shall deliver to client all materials in Artisan’s possession relating to Client’s business.
+
+Artisan acknowledges that any branch or threatened breach of this Agreement will result in irreparable harm to Client for which damages would be an adequate remedy. Therefore, Client shall be entitled to equitable relief, including an injunction, in the event of such breach or threatened breach of this Agreement. Such equitable relief shall be in addition to Client’s right’s and remedies otherwise available at law.
+</Text>
+
+<Text style={styles.textsty}>
+8.	No Partnership</Text>
+<Text style={styles.textsty2}>
+This Agreement does not create a partnership relationship. Artisan does not have authority to enter contracts on IGOEPP’s behalf.
+</Text>
+
+<View style={{flexDirection:'row', justifyContent:'center', flex:1, marginTop:10, paddingLeft:15 }}>
+  
+<View style={{marginTop:'1%'}}>
+  {data.map((item, key) => 
+    <View key={key} style={{flexDirection:'row', justifyContent:'center', marginTop:5}}>
+      <TouchableOpacity style={[styles.outer, ]} onPress={() => setavail(item.id)}>
+        {avail === item.id && <View style={styles.inner}/>} 
+      </TouchableOpacity>
+      <Text style={{marginTop:5}}> Accept</Text>
+  </View>
+  )}
+</View>
+    <View style={{marginBottom:10}}/>
+{
+  avail  && 
+    <SubmitButton style={{flex:1, marginLeft:10, marginHorizontal:20}} message={"Continue"} onPress={() => convertpasswordget()}/>
+}
+</View>
+  <View style={{marginBottom:20}}/>
+
+</ScrollView>
+
+  </View>
 
 
-    <View style={{flexDirection:'row', justifyContent:'center', flex:1, marginTop:10, paddingLeft:15 }}>
-    <View style={{marginTop:'1%'}}>
-      {data.map((item, key) => 
-        <View key={key} style={{flexDirection:'row', justifyContent:'center', }}>
-          <TouchableOpacity style={[styles.outer, ]} onPress={() => setavail(item.id)}>
-            {avail === item.id && <View style={styles.inner}/>} 
-          </TouchableOpacity>
-          <Text style={{marginTop:5}}> Accept</Text>
-      </View>
-      )}
-    </View>
-        <View style={{marginBottom:10}}/>
-    {
-      avail  && 
-        <SubmitButton style={{flex:1, marginLeft:10, marginHorizontal:20}} message={"Continue"} onPress={() => convertpasswordget()}/>
-    }
-    </View>
-      <View style={{marginBottom:20}}/>
-
-    </ScrollView>
-
-      </View>
-
-
-      </SafeAreaView>
-    </Modal>
+  </SafeAreaView>
+</Modal>
   
   </SafeAreaView>
   )
@@ -499,7 +529,10 @@ const styles = StyleSheet.create({
     backgroundColor: Color.darkolivegreen_100,
     borderRadius:10
   },
-  textsty:{
+    textsty:{
+    fontFamily:'poppinsBold'
+  },
+  textsty2:{
     fontFamily:'poppinsRegular'
   },
   backtext:{

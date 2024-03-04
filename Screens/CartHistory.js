@@ -37,19 +37,19 @@ const CartHistory = ({navigation}) => {
     },[])
 
     const viewdetails = async (purchase_id) => {
-        // do something
-        try {
-            setischecking(true)
-           const response = await CartHistoryPreview(purchase_id, authCtx.token)
-          //  console.log(response)
-           setisviewbyid(response)
-           setischecking(false)
-        } catch (error) {
-            setischecking(true)
-            // console.log(error)
-            setischecking(false)
-            return;
-        }
+      // do something
+      try {
+        setischecking(true)
+        const response = await CartHistoryPreview(purchase_id, authCtx.token)
+        console.log(response)
+        setisviewbyid(response)
+        setischecking(false)
+      } catch (error) {
+        setischecking(true)
+        // console.log(error)
+        setischecking(false)
+        return;
+      }
     };
 
     const toggleViewbyIdModal = (id) => {
@@ -60,12 +60,12 @@ const CartHistory = ({navigation}) => {
     // console.log(purchaseid)
 
     const NoSubCategoryNote = () => {
-        return (
-          <View style={{ justifyContent:'center', alignItems:'center', marginTop: DIMENSION.HEIGHT * 0.33}}>
-            <Text style={{ fontSize: 14, color: 'grey', fontFamily: 'poppinsSemiBold' }}>No Record Found</Text>
-          </View>
-        )
-      }
+      return (
+        <View style={{ justifyContent:'center', alignItems:'center', marginTop: DIMENSION.HEIGHT * 0.33}}>
+          <Text style={{ fontSize: 14, color: 'grey', fontFamily: 'poppinsSemiBold' }}>No Record Found</Text>
+        </View>
+      )
+    }
     
     if(isloading){
       return <LoadingOverlay message={"..."}/>
@@ -74,31 +74,31 @@ const CartHistory = ({navigation}) => {
   return (
     <SafeAreaView style={{marginTop:marginStyle.marginTp, marginHorizontal:10, flex:1}}>
         <GoBack onPress={() => navigation.goBack()}>Back</GoBack>
-      <Text style={styles.carthistorytxt}>CartHistory</Text>
+      <Text style={styles.carthistorytxt}>Cart History</Text>
 
     {
         carthistory.length === 0 ? <NoSubCategoryNote/>
         :
     <FlatList
         showsVerticalScrollIndicator={false}
-        style={{marginTop:15, marginBottom:15}}
+        style={{marginTop:15,marginBottom:'10%'}}
         data={carthistory}
         keyExtractor={(item) => item.id}
         renderItem={({item}) => (
-            <TouchableOpacity style={styles.pressable} onPress={() => [toggleViewbyIdModal(), viewdetails(item.purchase_id)]}>
+          <TouchableOpacity style={styles.pressable} onPress={() => [toggleViewbyIdModal(), viewdetails(item.purchase_id)]}>
 
-                <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-                <Text style={styles.textAmount}>NGN {item.total_amount.toLocaleString()}</Text>
-                <Text style={[{color: Color.limegreen, fontSize:12, fontFamily:'poppinsRegular'}]}>{item.status === 'P' ? 'Paid' : 'Not Paid'}</Text>
-                </View>
+            <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+            <Text style={styles.textAmount}>NGN {item.total_amount.toLocaleString()}</Text>
+            <Text style={[{color: Color.limegreen, fontSize:12, fontFamily:'poppinsRegular'}]}>{item.status === 'P' ? 'Paid' : 'Not Paid'}</Text>
+            </View>
 
-                <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-                <Text style={[styles.requestDate, {fontSize:14}]}>Quantity : {item.total_quantity}</Text>
-                <Text style={[styles.requestDate, {}]}>{item.created_at}</Text>
-                </View>
+            <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+            <Text style={[styles.requestDate, {fontSize:14}]}>Quantity : {item.total_quantity}</Text>
+            <Text style={[styles.requestDate, {}]}>{item.created_at}</Text>
+            </View>
 
-                <Text style={{position:'absolute', fontSize:11, left:'46%', top:5}}>Tap to view</Text>
-            </TouchableOpacity>
+            <Text style={{position:'absolute', fontSize:11, left:'46%', top:5}}>Tap to view</Text>
+          </TouchableOpacity>
         )}
       />
       }
